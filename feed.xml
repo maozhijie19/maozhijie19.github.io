@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>下课后写代码</title>
+  <title>板桥渡</title>
   
   
   <link href="https://blog.futurenotfound.top/feed.xml" rel="self"/>
   
   <link href="https://blog.futurenotfound.top/"/>
-  <updated>2021-02-08T08:03:29.270Z</updated>
+  <updated>2021-02-10T07:16:13.358Z</updated>
   <id>https://blog.futurenotfound.top/</id>
   
   <author>
@@ -17,11 +17,60 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>服务员</title>
+    <link href="https://blog.futurenotfound.top/2021/02/10/%E6%9C%8D%E5%8A%A1%E5%91%98/"/>
+    <id>https://blog.futurenotfound.top/2021/02/10/%E6%9C%8D%E5%8A%A1%E5%91%98/</id>
+    <published>2021-02-10T07:09:16.000Z</published>
+    <updated>2021-02-10T07:16:13.358Z</updated>
+    
+    <content type="html"><![CDATA[<p>去酒店吃饭，订的 15 人包间，结果去的时候只剩了 12 人包间，有点拥挤。某同事怒斥酒店制度不完善，很安格瑞！结果服务员在那说：这算什么呢！隔壁还是 22 人坐 12 人间呢！要不我带你去看看？<br>之后酒店经理来亲自道歉，说抱歉这员工不会说话我们后面会培训她的。然后留了个名片送了两盘果盘了事。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;去酒店吃饭，订的 15 人包间，结果去的时候只剩了 12 人包间，有点拥挤。某同事怒斥酒店制度不完善，很安格瑞！结果服务员在那说：这算什么呢！隔壁还是 22 人坐 12 人间呢！要不我带你去看看？&lt;br&gt;之后酒店经理来亲自道歉，说抱歉这员工不会说话我们后面会培训她的。然后留</summary>
+      
+    
+    
+    
+    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    
+    
+    <category term="情商" scheme="https://blog.futurenotfound.top/tags/%E6%83%85%E5%95%86/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>新闻联播</title>
+    <link href="https://blog.futurenotfound.top/2021/02/08/%E6%96%B0%E9%97%BB%E8%81%94%E6%92%AD/"/>
+    <id>https://blog.futurenotfound.top/2021/02/08/%E6%96%B0%E9%97%BB%E8%81%94%E6%92%AD/</id>
+    <published>2021-02-08T08:45:46.000Z</published>
+    <updated>2021-02-10T07:17:32.792Z</updated>
+    
+    <content type="html"><![CDATA[<p>还记得去年疫情时候央视直播采访了金银潭的两个护士，护士 A 说我们很辛苦心里很崩溃边说边流眼泪，护士 B 说感谢 xx 和 yy 对我们的支持我们以后会做得更好。不出所料，后面护士 B 一直被重播，而护士 A 再也没出现在新闻中。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;还记得去年疫情时候央视直播采访了金银潭的两个护士，护士 A 说我们很辛苦心里很崩溃边说边流眼泪，护士 B 说感谢 xx 和 yy 对我们的支持我们以后会做得更好。不出所料，后面护士 B 一直被重播，而护士 A 再也没出现在新闻中。&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    <category term="回忆" scheme="https://blog.futurenotfound.top/categories/%E5%9B%9E%E5%BF%86/"/>
+    
+    
+    <category term="新闻" scheme="https://blog.futurenotfound.top/tags/%E6%96%B0%E9%97%BB/"/>
+    
+  </entry>
+  
+  <entry>
     <title>迭代</title>
     <link href="https://blog.futurenotfound.top/2021/02/08/%E8%BF%AD%E4%BB%A3/"/>
     <id>https://blog.futurenotfound.top/2021/02/08/%E8%BF%AD%E4%BB%A3/</id>
     <published>2021-02-08T07:57:50.000Z</published>
-    <updated>2021-02-08T08:03:29.270Z</updated>
+    <updated>2021-02-10T07:10:02.577Z</updated>
     
     <content type="html"><![CDATA[<p>想起以前对面宿舍一朋友，为了给女朋友惊喜，手动迭代了八层文件夹，以女朋友生日比如 2020.12.23 做密码，从第一层开始每层包含 0-9 共十个文件夹。最后惊喜藏在 2-0-2-0-1-2-2-3 文件夹下。大概手动处理了两个周末才完成。</p>]]></content>
     
@@ -34,8 +83,10 @@
     
     
     
-    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    <category term="回忆" scheme="https://blog.futurenotfound.top/categories/%E5%9B%9E%E5%BF%86/"/>
     
+    
+    <category term="代码" scheme="https://blog.futurenotfound.top/tags/%E4%BB%A3%E7%A0%81/"/>
     
   </entry>
   
@@ -44,7 +95,7 @@
     <link href="https://blog.futurenotfound.top/2021/02/08/%E8%AE%A2%E9%98%85%E5%88%B6/"/>
     <id>https://blog.futurenotfound.top/2021/02/08/%E8%AE%A2%E9%98%85%E5%88%B6/</id>
     <published>2021-02-08T07:30:35.000Z</published>
-    <updated>2021-02-08T07:47:47.274Z</updated>
+    <updated>2021-02-10T07:09:48.901Z</updated>
     
     <content type="html"><![CDATA[<p>订阅制应该是指为服务买单而不是为功能买单，只提供功能就应该买断制，又没定期更新版本，又没提供服务，连同步都是依赖 iCloud 的，谁要订阅呀！退钱！</p>]]></content>
     
@@ -60,7 +111,7 @@
     <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-    <category term="iCloud" scheme="https://blog.futurenotfound.top/tags/iCloud/"/>
+    <category term="苹果" scheme="https://blog.futurenotfound.top/tags/%E8%8B%B9%E6%9E%9C/"/>
     
   </entry>
   
@@ -69,7 +120,7 @@
     <link href="https://blog.futurenotfound.top/2021/02/08/%E5%9B%BD%E4%BA%A7%E6%B8%B8%E6%88%8F/"/>
     <id>https://blog.futurenotfound.top/2021/02/08/%E5%9B%BD%E4%BA%A7%E6%B8%B8%E6%88%8F/</id>
     <published>2021-02-08T07:28:37.000Z</published>
-    <updated>2021-02-08T07:47:45.925Z</updated>
+    <updated>2021-02-10T07:17:12.388Z</updated>
     
     <content type="html"><![CDATA[<p>如果对国产游戏的期待是个个精品，那买回来之后会发现都是垃圾、了色、骗钱玩意，就会觉得亏了。但如果一开始的期待就是垃圾、了色、骗钱玩意而选择让其他人去买，等到销量破 xx 万，尚有巨量 BUG 的游戏停止更新，厂商跑路，买了的人叫苦不迭，大呼上当。这时你是不是甚至有一种赚了的错觉？</p>]]></content>
     
@@ -84,16 +135,16 @@
     <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-    <category term="Game" scheme="https://blog.futurenotfound.top/tags/Game/"/>
+    <category term="游戏" scheme="https://blog.futurenotfound.top/tags/%E6%B8%B8%E6%88%8F/"/>
     
   </entry>
   
   <entry>
-    <title>“森林卡”</title>
-    <link href="https://blog.futurenotfound.top/2021/02/08/%E6%A3%AE%E6%9E%97%E5%8D%A1/"/>
-    <id>https://blog.futurenotfound.top/2021/02/08/%E6%A3%AE%E6%9E%97%E5%8D%A1/</id>
+    <title>“森林币”</title>
+    <link href="https://blog.futurenotfound.top/2021/02/08/%E6%A3%AE%E6%9E%97%E5%B8%81/"/>
+    <id>https://blog.futurenotfound.top/2021/02/08/%E6%A3%AE%E6%9E%97%E5%B8%81/</id>
     <published>2021-02-08T07:25:45.000Z</published>
-    <updated>2021-02-08T07:47:39.422Z</updated>
+    <updated>2021-02-10T07:16:48.685Z</updated>
     
     <content type="html"><![CDATA[<p>小学的时候吃小浣熊干脆面偶尔里面会送一张名为森林币的卡片，上面会写着 5 角 1 元的字样，本意上大概是跟大富翁的游戏币一样的存在，我理解的应该不是跟现金等值的，因为一包干脆面才 5 毛钱，按照这概率，商家都要亏成马云了。但当时的商店店主不知道是否跟经销商未沟通好，你带着森林币去买东西他也是会按照等额现金来看，随便你买什么都可以。有个小伙伴常年在别地上学，那边似乎没这个风气，森林币什么的也没人要学校里扔的遍地都是，他就每周都能捡至少得有二三十个，一放周末就来我们这边“买”零食。那时候的小朋友一周零用钱五块都是多的，相当于他一周零花钱多了二三十元，十分羡慕！直到有一天，他突然说要请我们吃零食，到了店里，等我们大包小包选好了，他要用森林币结账，店主可能这时候已经跟经销商沟通过了知道自己整了个大乌龙，拒绝收森林币，我们几个只好把东西放下灰溜溜出门了。可能是因为太过尴尬，从那之后的周末他也不怎么来我们这玩了。<br>END</p>]]></content>
     
@@ -105,10 +156,234 @@
     
     
     
+    <category term="回忆" scheme="https://blog.futurenotfound.top/categories/%E5%9B%9E%E5%BF%86/"/>
+    
+    
+    <category term="虚拟币" scheme="https://blog.futurenotfound.top/tags/%E8%99%9A%E6%8B%9F%E5%B8%81/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>防火墙</title>
+    <link href="https://blog.futurenotfound.top/2021/02/04/%E9%98%B2%E7%81%AB%E5%A2%99/"/>
+    <id>https://blog.futurenotfound.top/2021/02/04/%E9%98%B2%E7%81%AB%E5%A2%99/</id>
+    <published>2021-02-04T07:19:12.000Z</published>
+    <updated>2021-02-10T07:24:22.304Z</updated>
+    
+    <content type="html"><![CDATA[<p>[无语]iPhone 上的 app 联网控制在 iPad 上因为没有蜂窝数据菜单的原因，导致 iPad 没有办法控制 app 的联网行为。可恶！怎么会这样！</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;[无语]iPhone 上的 app 联网控制在 iPad 上因为没有蜂窝数据菜单的原因，导致 iPad 没有办法控制 app 的联网行为。可恶！怎么会这样！&lt;/p&gt;
+</summary>
+      
+    
+    
+    
     <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-    <category term="Money" scheme="https://blog.futurenotfound.top/tags/Money/"/>
+    <category term="苹果" scheme="https://blog.futurenotfound.top/tags/%E8%8B%B9%E6%9E%9C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>输入法</title>
+    <link href="https://blog.futurenotfound.top/2021/01/29/%E8%BE%93%E5%85%A5%E6%B3%95/"/>
+    <id>https://blog.futurenotfound.top/2021/01/29/%E8%BE%93%E5%85%A5%E6%B3%95/</id>
+    <published>2021-01-29T07:20:17.000Z</published>
+    <updated>2021-02-10T07:24:41.599Z</updated>
+    
+    <content type="html"><![CDATA[<p>[快哭了]原生键盘输入法不支持 shift 切换语言，非要按 ctrl+空格，想支持 shift 还得下载自定义键盘映射工具。第三方键盘输入法支持 shift 切换语言，但是不支持网络词库和比较智能的 ue=&gt;vu 等的自动转换方案，源于本地词库的词频也怪怪的。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;[快哭了]原生键盘输入法不支持 shift 切换语言，非要按 ctrl+空格，想支持 shift 还得下载自定义键盘映射工具。第三方键盘输入法支持 shift 切换语言，但是不支持网络词库和比较智能的 ue=&amp;gt;vu 等的自动转换方案，源于本地词库的词频也怪怪的。&lt;/p</summary>
+      
+    
+    
+    
+    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    
+    
+    <category term="输入法" scheme="https://blog.futurenotfound.top/tags/%E8%BE%93%E5%85%A5%E6%B3%95/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>确认付款</title>
+    <link href="https://blog.futurenotfound.top/2021/01/28/%E7%A1%AE%E8%AE%A4%E4%BB%98%E6%AC%BE/"/>
+    <id>https://blog.futurenotfound.top/2021/01/28/%E7%A1%AE%E8%AE%A4%E4%BB%98%E6%AC%BE/</id>
+    <published>2021-01-28T07:21:08.000Z</published>
+    <updated>2021-02-10T07:24:04.208Z</updated>
+    
+    <content type="html"><![CDATA[<p>[发怒]每次从楼下小吃摊老头这买东西，走前都会被要求再次确认已付款。可恶，真的是完全被看扁了啊。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;[发怒]每次从楼下小吃摊老头这买东西，走前都会被要求再次确认已付款。可恶，真的是完全被看扁了啊。&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    
+    
+    <category term="付款" scheme="https://blog.futurenotfound.top/tags/%E4%BB%98%E6%AC%BE/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>西安</title>
+    <link href="https://blog.futurenotfound.top/2021/01/11/%E8%A5%BF%E5%AE%89/"/>
+    <id>https://blog.futurenotfound.top/2021/01/11/%E8%A5%BF%E5%AE%89/</id>
+    <published>2021-01-11T07:22:17.000Z</published>
+    <updated>2021-02-10T07:23:50.184Z</updated>
+    
+    <content type="html"><![CDATA[<p>[社会社会]一切与法律或道德相悖的、人类所不能理解、正常人无法接受的事情，带入“这里是西安啊”这个条件之后，都变得似乎合理了。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;[社会社会]一切与法律或道德相悖的、人类所不能理解、正常人无法接受的事情，带入“这里是西安啊”这个条件之后，都变得似乎合理了。&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    
+    
+    <category term="西安" scheme="https://blog.futurenotfound.top/tags/%E8%A5%BF%E5%AE%89/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>卡普空</title>
+    <link href="https://blog.futurenotfound.top/2021/01/10/%E5%8D%A1%E6%99%AE%E7%A9%BA/"/>
+    <id>https://blog.futurenotfound.top/2021/01/10/%E5%8D%A1%E6%99%AE%E7%A9%BA/</id>
+    <published>2021-01-10T06:17:56.000Z</published>
+    <updated>2021-02-10T07:23:33.935Z</updated>
+    
+    <content type="html"><![CDATA[<p>[旺柴]画质不缩水+多人联机帧数稳定。卡表微微一笑，他已赢回玩家信任。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;[旺柴]画质不缩水+多人联机帧数稳定。卡表微微一笑，他已赢回玩家信任。&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    
+    
+    <category term="游戏" scheme="https://blog.futurenotfound.top/tags/%E6%B8%B8%E6%88%8F/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>手感</title>
+    <link href="https://blog.futurenotfound.top/2020/12/31/%E6%89%8B%E6%84%9F/"/>
+    <id>https://blog.futurenotfound.top/2020/12/31/%E6%89%8B%E6%84%9F/</id>
+    <published>2020-12-31T07:25:00.000Z</published>
+    <updated>2021-02-10T07:25:42.410Z</updated>
+    
+    <content type="html"><![CDATA[<p>[叹气]简单便携带来的良好体验远胜过所谓的操作手感提升带来的满足感。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;[叹气]简单便携带来的良好体验远胜过所谓的操作手感提升带来的满足感。&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    
+    
+    <category term="键盘" scheme="https://blog.futurenotfound.top/tags/%E9%94%AE%E7%9B%98/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>炸串</title>
+    <link href="https://blog.futurenotfound.top/2020/12/03/%E7%82%B8%E4%B8%B2/"/>
+    <id>https://blog.futurenotfound.top/2020/12/03/%E7%82%B8%E4%B8%B2/</id>
+    <published>2020-12-03T07:26:12.000Z</published>
+    <updated>2021-02-10T07:26:40.402Z</updated>
+    
+    <content type="html"><![CDATA[<p>[吃瓜]宁愿去卖炸串也不去卖烧烤，炸串啪叽一下就走了十几拨人了，而烧烤这边还在纠结几十分钟前烤的肉熟没熟。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;[吃瓜]宁愿去卖炸串也不去卖烧烤，炸串啪叽一下就走了十几拨人了，而烧烤这边还在纠结几十分钟前烤的肉熟没熟。&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    
+    
+    <category term="效率" scheme="https://blog.futurenotfound.top/tags/%E6%95%88%E7%8E%87/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>mini超市</title>
+    <link href="https://blog.futurenotfound.top/2020/11/19/mini%E8%B6%85%E5%B8%82/"/>
+    <id>https://blog.futurenotfound.top/2020/11/19/mini%E8%B6%85%E5%B8%82/</id>
+    <published>2020-11-19T07:27:03.000Z</published>
+    <updated>2021-02-10T07:27:32.408Z</updated>
+    
+    <content type="html"><![CDATA[<p>[汗]我就说这家超市怎么不太对劲，东西太少，地方太小。出门一看招牌，原来 某某超市 的后面还跟了个 mini 的字样。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;[汗]我就说这家超市怎么不太对劲，东西太少，地方太小。出门一看招牌，原来 某某超市 的后面还跟了个 mini 的字样。&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    
+    
+    <category term="超市" scheme="https://blog.futurenotfound.top/tags/%E8%B6%85%E5%B8%82/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>交通规则</title>
+    <link href="https://blog.futurenotfound.top/2020/10/28/%E4%BA%A4%E9%80%9A%E8%A7%84%E5%88%99/"/>
+    <id>https://blog.futurenotfound.top/2020/10/28/%E4%BA%A4%E9%80%9A%E8%A7%84%E5%88%99/</id>
+    <published>2020-10-28T07:28:07.000Z</published>
+    <updated>2021-02-10T07:28:41.442Z</updated>
+    
+    <content type="html"><![CDATA[<p>[Emm]让一部分人学会基础交通规则比让一只小 🐶 学会握手还难。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;[Emm]让一部分人学会基础交通规则比让一只小 🐶 学会握手还难。&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    
+    
+    <category term="规则" scheme="https://blog.futurenotfound.top/tags/%E8%A7%84%E5%88%99/"/>
     
   </entry>
   

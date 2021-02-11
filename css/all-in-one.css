@@ -1,0 +1,13 @@
+blockquote {
+  font-style: italic;
+}
+.posts .post .post-title {
+  font-weight: bold;
+}
+.posts .post .post-content {
+  word-wrap: break-word;
+}
+body .container {
+  width: 70%;
+  margin: 0 auto;
+}

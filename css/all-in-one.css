@@ -7,7 +7,17 @@ blockquote {
 .posts .post .post-content {
   word-wrap: break-word;
 }
+body {
+  background-color: #fff;
+  color: #000;
+}
 body .container {
   width: 70%;
   margin: 0 auto;
+}
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #000;
+    color: #fff;
+  }
 }

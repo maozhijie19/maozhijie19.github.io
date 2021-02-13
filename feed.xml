@@ -6,7 +6,7 @@
   <link href="https://blog.futurenotfound.top/feed.xml" rel="self"/>
   
   <link href="https://blog.futurenotfound.top/"/>
-  <updated>2021-02-13T07:39:14.481Z</updated>
+  <updated>2021-02-13T08:29:03.590Z</updated>
   <id>https://blog.futurenotfound.top/</id>
   
   <author>
@@ -17,11 +17,36 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Siri</title>
+    <link href="https://blog.futurenotfound.top/2021/02/13/Siri/"/>
+    <id>https://blog.futurenotfound.top/2021/02/13/Siri/</id>
+    <published>2021-02-13T08:27:58.000Z</published>
+    <updated>2021-02-13T08:29:03.590Z</updated>
+    
+    <content type="html"><![CDATA[<p>我：hi，siri。来场知识问答。<br>Siri：你好，最近的万达广场是xxx。<br>[Emm]</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;我：hi，siri。来场知识问答。&lt;br&gt;Siri：你好，最近的万达广场是xxx。&lt;br&gt;[Emm]&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    
+    
+    <category term="苹果" scheme="https://blog.futurenotfound.top/tags/%E8%8B%B9%E6%9E%9C/"/>
+    
+  </entry>
+  
+  <entry>
     <title>烂片（2）</title>
     <link href="https://blog.futurenotfound.top/2021/02/13/%E7%83%82%E7%89%87-1/"/>
     <id>https://blog.futurenotfound.top/2021/02/13/%E7%83%82%E7%89%87-1/</id>
     <published>2021-02-13T07:37:44.000Z</published>
-    <updated>2021-02-13T07:39:14.481Z</updated>
+    <updated>2021-02-13T08:29:58.198Z</updated>
     
     <content type="html"><![CDATA[<p>给烂片买的每一张电影票，最后都会变成更烂的片出现在电影院排片表上。</p>]]></content>
     
@@ -195,7 +220,7 @@
     <link href="https://blog.futurenotfound.top/2021/02/08/%E8%AE%A2%E9%98%85%E5%88%B6/"/>
     <id>https://blog.futurenotfound.top/2021/02/08/%E8%AE%A2%E9%98%85%E5%88%B6/</id>
     <published>2021-02-08T07:30:35.000Z</published>
-    <updated>2021-02-10T07:09:48.901Z</updated>
+    <updated>2021-02-13T08:29:17.991Z</updated>
     
     <content type="html"><![CDATA[<p>订阅制应该是指为服务买单而不是为功能买单，只提供功能就应该买断制，又没定期更新版本，又没提供服务，连同步都是依赖 iCloud 的，谁要订阅呀！退钱！</p>]]></content>
     
@@ -268,7 +293,7 @@
     <link href="https://blog.futurenotfound.top/2021/02/04/%E9%98%B2%E7%81%AB%E5%A2%99/"/>
     <id>https://blog.futurenotfound.top/2021/02/04/%E9%98%B2%E7%81%AB%E5%A2%99/</id>
     <published>2021-02-04T07:19:12.000Z</published>
-    <updated>2021-02-10T07:24:22.304Z</updated>
+    <updated>2021-02-13T08:29:20.959Z</updated>
     
     <content type="html"><![CDATA[<p>[无语]iPhone 上的 app 联网控制在 iPad 上因为没有蜂窝数据菜单的原因，导致 iPad 没有办法控制 app 的联网行为。可恶！怎么会这样！</p>]]></content>
     
@@ -359,31 +384,6 @@
     
     
     <category term="西安" scheme="https://blog.futurenotfound.top/tags/%E8%A5%BF%E5%AE%89/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>卡普空</title>
-    <link href="https://blog.futurenotfound.top/2021/01/10/%E5%8D%A1%E6%99%AE%E7%A9%BA/"/>
-    <id>https://blog.futurenotfound.top/2021/01/10/%E5%8D%A1%E6%99%AE%E7%A9%BA/</id>
-    <published>2021-01-10T06:17:56.000Z</published>
-    <updated>2021-02-10T07:23:33.935Z</updated>
-    
-    <content type="html"><![CDATA[<p>[旺柴]画质不缩水+多人联机帧数稳定。卡表微微一笑，他已赢回玩家信任。</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;[旺柴]画质不缩水+多人联机帧数稳定。卡表微微一笑，他已赢回玩家信任。&lt;/p&gt;
-</summary>
-      
-    
-    
-    
-    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
-    
-    
-    <category term="游戏" scheme="https://blog.futurenotfound.top/tags/%E6%B8%B8%E6%88%8F/"/>
     
   </entry>
   

@@ -17,7 +17,7 @@ body .container {
 }
 @media (prefers-color-scheme: dark) {
   body {
-    background-color: #000;
-    color: #fff;
+    background-color: #1d1f21;
+    color: #c9cacc;
   }
 }

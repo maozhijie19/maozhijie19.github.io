@@ -6,7 +6,7 @@
   <link href="https://blog.futurenotfound.top/feed.xml" rel="self"/>
   
   <link href="https://blog.futurenotfound.top/"/>
-  <updated>2021-02-13T08:29:03.590Z</updated>
+  <updated>2021-02-17T14:58:08.676Z</updated>
   <id>https://blog.futurenotfound.top/</id>
   
   <author>
@@ -15,6 +15,31 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Keepass</title>
+    <link href="https://blog.futurenotfound.top/2021/02/17/Keepass/"/>
+    <id>https://blog.futurenotfound.top/2021/02/17/Keepass/</id>
+    <published>2021-02-17T14:57:23.000Z</published>
+    <updated>2021-02-17T14:58:08.676Z</updated>
+    
+    <content type="html"><![CDATA[<p>[爆竹]密码管理器还是选择开源的 keepass 吧…通过 iCloud 自动同步.kdbx 文件，变相实现了通常需要订阅付费的多端密码同步服务。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;[爆竹]密码管理器还是选择开源的 keepass 吧…通过 iCloud 自动同步.kdbx 文件，变相实现了通常需要订阅付费的多端密码同步服务。&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    
+    
+    <category term="Keepass" scheme="https://blog.futurenotfound.top/tags/Keepass/"/>
+    
+  </entry>
   
   <entry>
     <title>Siri</title>
@@ -359,31 +384,6 @@
     
     
     <category term="付款" scheme="https://blog.futurenotfound.top/tags/%E4%BB%98%E6%AC%BE/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>西安</title>
-    <link href="https://blog.futurenotfound.top/2021/01/11/%E8%A5%BF%E5%AE%89/"/>
-    <id>https://blog.futurenotfound.top/2021/01/11/%E8%A5%BF%E5%AE%89/</id>
-    <published>2021-01-11T07:22:17.000Z</published>
-    <updated>2021-02-13T07:36:09.317Z</updated>
-    
-    <content type="html"><![CDATA[<p>[社会社会]一切与法律或道德相悖的、人类所不能理解、正常人无法接受的事情，带入“这里是西安啊”这个条件之后，都变得似乎合理了。</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;[社会社会]一切与法律或道德相悖的、人类所不能理解、正常人无法接受的事情，带入“这里是西安啊”这个条件之后，都变得似乎合理了。&lt;/p&gt;
-</summary>
-      
-    
-    
-    
-    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
-    
-    
-    <category term="西安" scheme="https://blog.futurenotfound.top/tags/%E8%A5%BF%E5%AE%89/"/>
     
   </entry>
   

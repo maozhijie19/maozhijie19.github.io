@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>板桥渡，漫泉河</title>
+  <title>MAOZHIJIE&#39;</title>
   
   
-  <link href="https://blog.futurenotfound.top/feed.xml" rel="self"/>
+  <link href="https://maozhijie19.github.io/feed.xml" rel="self"/>
   
-  <link href="https://blog.futurenotfound.top/"/>
-  <updated>2021-02-20T01:20:13.166Z</updated>
-  <id>https://blog.futurenotfound.top/</id>
+  <link href="https://maozhijie19.github.io/"/>
+  <updated>2021-02-24T05:14:19.437Z</updated>
+  <id>https://maozhijie19.github.io/</id>
   
   <author>
     <name>maozhijie</name>
@@ -17,9 +17,34 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
+    <title>Airpods</title>
+    <link href="https://maozhijie19.github.io/2021/02/24/Airpods/"/>
+    <id>https://maozhijie19.github.io/2021/02/24/Airpods/</id>
+    <published>2021-02-24T05:13:47.000Z</published>
+    <updated>2021-02-24T05:14:19.437Z</updated>
+    
+    <content type="html"><![CDATA[<p>[擦汗]iPhone 一个破广告通知都会抢过连接 mac 的 Airpods 的使用权。这不是正常人类能做出的设计。</p>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;[擦汗]iPhone 一个破广告通知都会抢过连接 mac 的 Airpods 的使用权。这不是正常人类能做出的设计。&lt;/p&gt;
+</summary>
+      
+    
+    
+    
+    <category term="随笔" scheme="https://maozhijie19.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
+    
+    
+    <category term="苹果" scheme="https://maozhijie19.github.io/tags/%E8%8B%B9%E6%9E%9C/"/>
+    
+  </entry>
+  
+  <entry>
     <title>观察者网</title>
-    <link href="https://blog.futurenotfound.top/2021/02/20/%E8%A7%82%E5%AF%9F%E8%80%85%E7%BD%91/"/>
-    <id>https://blog.futurenotfound.top/2021/02/20/%E8%A7%82%E5%AF%9F%E8%80%85%E7%BD%91/</id>
+    <link href="https://maozhijie19.github.io/2021/02/20/%E8%A7%82%E5%AF%9F%E8%80%85%E7%BD%91/"/>
+    <id>https://maozhijie19.github.io/2021/02/20/%E8%A7%82%E5%AF%9F%E8%80%85%E7%BD%91/</id>
     <published>2021-02-20T01:15:06.000Z</published>
     <updated>2021-02-20T01:20:13.166Z</updated>
     
@@ -33,17 +58,17 @@
     
     
     
-    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    <category term="随笔" scheme="https://maozhijie19.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-    <category term="观察者网" scheme="https://blog.futurenotfound.top/tags/%E8%A7%82%E5%AF%9F%E8%80%85%E7%BD%91/"/>
+    <category term="观察者网" scheme="https://maozhijie19.github.io/tags/%E8%A7%82%E5%AF%9F%E8%80%85%E7%BD%91/"/>
     
   </entry>
   
   <entry>
     <title>任天堂直面会</title>
-    <link href="https://blog.futurenotfound.top/2021/02/18/%E4%BB%BB%E5%A4%A9%E5%A0%82%E7%9B%B4%E9%9D%A2%E4%BC%9A/"/>
-    <id>https://blog.futurenotfound.top/2021/02/18/%E4%BB%BB%E5%A4%A9%E5%A0%82%E7%9B%B4%E9%9D%A2%E4%BC%9A/</id>
+    <link href="https://maozhijie19.github.io/2021/02/18/%E4%BB%BB%E5%A4%A9%E5%A0%82%E7%9B%B4%E9%9D%A2%E4%BC%9A/"/>
+    <id>https://maozhijie19.github.io/2021/02/18/%E4%BB%BB%E5%A4%A9%E5%A0%82%E7%9B%B4%E9%9D%A2%E4%BC%9A/</id>
     <published>2021-02-18T02:45:27.000Z</published>
     <updated>2021-02-18T02:46:23.810Z</updated>
     
@@ -58,17 +83,17 @@
     
     
     
-    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    <category term="随笔" scheme="https://maozhijie19.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-    <category term="任天堂" scheme="https://blog.futurenotfound.top/tags/%E4%BB%BB%E5%A4%A9%E5%A0%82/"/>
+    <category term="任天堂" scheme="https://maozhijie19.github.io/tags/%E4%BB%BB%E5%A4%A9%E5%A0%82/"/>
     
   </entry>
   
   <entry>
     <title>Keepass</title>
-    <link href="https://blog.futurenotfound.top/2021/02/17/Keepass/"/>
-    <id>https://blog.futurenotfound.top/2021/02/17/Keepass/</id>
+    <link href="https://maozhijie19.github.io/2021/02/17/Keepass/"/>
+    <id>https://maozhijie19.github.io/2021/02/17/Keepass/</id>
     <published>2021-02-17T14:57:23.000Z</published>
     <updated>2021-02-17T14:58:08.676Z</updated>
     
@@ -83,17 +108,17 @@
     
     
     
-    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    <category term="随笔" scheme="https://maozhijie19.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-    <category term="Keepass" scheme="https://blog.futurenotfound.top/tags/Keepass/"/>
+    <category term="Keepass" scheme="https://maozhijie19.github.io/tags/Keepass/"/>
     
   </entry>
   
   <entry>
     <title>Siri</title>
-    <link href="https://blog.futurenotfound.top/2021/02/13/Siri/"/>
-    <id>https://blog.futurenotfound.top/2021/02/13/Siri/</id>
+    <link href="https://maozhijie19.github.io/2021/02/13/Siri/"/>
+    <id>https://maozhijie19.github.io/2021/02/13/Siri/</id>
     <published>2021-02-13T08:27:58.000Z</published>
     <updated>2021-02-13T08:29:03.590Z</updated>
     
@@ -108,17 +133,17 @@
     
     
     
-    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    <category term="随笔" scheme="https://maozhijie19.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-    <category term="苹果" scheme="https://blog.futurenotfound.top/tags/%E8%8B%B9%E6%9E%9C/"/>
+    <category term="苹果" scheme="https://maozhijie19.github.io/tags/%E8%8B%B9%E6%9E%9C/"/>
     
   </entry>
   
   <entry>
     <title>烂片（2）</title>
-    <link href="https://blog.futurenotfound.top/2021/02/13/%E7%83%82%E7%89%87-1/"/>
-    <id>https://blog.futurenotfound.top/2021/02/13/%E7%83%82%E7%89%87-1/</id>
+    <link href="https://maozhijie19.github.io/2021/02/13/%E7%83%82%E7%89%87-1/"/>
+    <id>https://maozhijie19.github.io/2021/02/13/%E7%83%82%E7%89%87-1/</id>
     <published>2021-02-13T07:37:44.000Z</published>
     <updated>2021-02-13T08:29:58.198Z</updated>
     
@@ -133,17 +158,17 @@
     
     
     
-    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    <category term="随笔" scheme="https://maozhijie19.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-    <category term="电影" scheme="https://blog.futurenotfound.top/tags/%E7%94%B5%E5%BD%B1/"/>
+    <category term="电影" scheme="https://maozhijie19.github.io/tags/%E7%94%B5%E5%BD%B1/"/>
     
   </entry>
   
   <entry>
     <title>宗教信仰</title>
-    <link href="https://blog.futurenotfound.top/2021/02/12/%E5%AE%97%E6%95%99%E4%BF%A1%E4%BB%B0/"/>
-    <id>https://blog.futurenotfound.top/2021/02/12/%E5%AE%97%E6%95%99%E4%BF%A1%E4%BB%B0/</id>
+    <link href="https://maozhijie19.github.io/2021/02/12/%E5%AE%97%E6%95%99%E4%BF%A1%E4%BB%B0/"/>
+    <id>https://maozhijie19.github.io/2021/02/12/%E5%AE%97%E6%95%99%E4%BF%A1%E4%BB%B0/</id>
     <published>2021-02-12T13:15:29.000Z</published>
     <updated>2021-02-12T13:16:49.735Z</updated>
     
@@ -158,17 +183,17 @@
     
     
     
-    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    <category term="随笔" scheme="https://maozhijie19.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-    <category term="宗教" scheme="https://blog.futurenotfound.top/tags/%E5%AE%97%E6%95%99/"/>
+    <category term="宗教" scheme="https://maozhijie19.github.io/tags/%E5%AE%97%E6%95%99/"/>
     
   </entry>
   
   <entry>
     <title>春晚</title>
-    <link href="https://blog.futurenotfound.top/2021/02/11/%E6%98%A5%E6%99%9A/"/>
-    <id>https://blog.futurenotfound.top/2021/02/11/%E6%98%A5%E6%99%9A/</id>
+    <link href="https://maozhijie19.github.io/2021/02/11/%E6%98%A5%E6%99%9A/"/>
+    <id>https://maozhijie19.github.io/2021/02/11/%E6%98%A5%E6%99%9A/</id>
     <published>2021-02-11T12:36:02.000Z</published>
     <updated>2021-02-11T12:36:44.299Z</updated>
     
@@ -183,17 +208,17 @@
     
     
     
-    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    <category term="随笔" scheme="https://maozhijie19.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-    <category term="春晚" scheme="https://blog.futurenotfound.top/tags/%E6%98%A5%E6%99%9A/"/>
+    <category term="春晚" scheme="https://maozhijie19.github.io/tags/%E6%98%A5%E6%99%9A/"/>
     
   </entry>
   
   <entry>
     <title>红包</title>
-    <link href="https://blog.futurenotfound.top/2021/02/11/%E7%BA%A2%E5%8C%85/"/>
-    <id>https://blog.futurenotfound.top/2021/02/11/%E7%BA%A2%E5%8C%85/</id>
+    <link href="https://maozhijie19.github.io/2021/02/11/%E7%BA%A2%E5%8C%85/"/>
+    <id>https://maozhijie19.github.io/2021/02/11/%E7%BA%A2%E5%8C%85/</id>
     <published>2021-02-11T11:11:36.000Z</published>
     <updated>2021-02-11T11:13:26.002Z</updated>
     
@@ -208,17 +233,17 @@
     
     
     
-    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    <category term="随笔" scheme="https://maozhijie19.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-    <category term="红包" scheme="https://blog.futurenotfound.top/tags/%E7%BA%A2%E5%8C%85/"/>
+    <category term="红包" scheme="https://maozhijie19.github.io/tags/%E7%BA%A2%E5%8C%85/"/>
     
   </entry>
   
   <entry>
     <title>服务员</title>
-    <link href="https://blog.futurenotfound.top/2021/02/10/%E6%9C%8D%E5%8A%A1%E5%91%98/"/>
-    <id>https://blog.futurenotfound.top/2021/02/10/%E6%9C%8D%E5%8A%A1%E5%91%98/</id>
+    <link href="https://maozhijie19.github.io/2021/02/10/%E6%9C%8D%E5%8A%A1%E5%91%98/"/>
+    <id>https://maozhijie19.github.io/2021/02/10/%E6%9C%8D%E5%8A%A1%E5%91%98/</id>
     <published>2021-02-10T07:09:16.000Z</published>
     <updated>2021-02-10T07:16:13.358Z</updated>
     
@@ -232,17 +257,17 @@
     
     
     
-    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    <category term="随笔" scheme="https://maozhijie19.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-    <category term="情商" scheme="https://blog.futurenotfound.top/tags/%E6%83%85%E5%95%86/"/>
+    <category term="情商" scheme="https://maozhijie19.github.io/tags/%E6%83%85%E5%95%86/"/>
     
   </entry>
   
   <entry>
     <title>新闻联播</title>
-    <link href="https://blog.futurenotfound.top/2021/02/08/%E6%96%B0%E9%97%BB%E8%81%94%E6%92%AD/"/>
-    <id>https://blog.futurenotfound.top/2021/02/08/%E6%96%B0%E9%97%BB%E8%81%94%E6%92%AD/</id>
+    <link href="https://maozhijie19.github.io/2021/02/08/%E6%96%B0%E9%97%BB%E8%81%94%E6%92%AD/"/>
+    <id>https://maozhijie19.github.io/2021/02/08/%E6%96%B0%E9%97%BB%E8%81%94%E6%92%AD/</id>
     <published>2021-02-08T08:45:46.000Z</published>
     <updated>2021-02-13T07:40:41.568Z</updated>
     
@@ -257,17 +282,17 @@
     
     
     
-    <category term="回忆" scheme="https://blog.futurenotfound.top/categories/%E5%9B%9E%E5%BF%86/"/>
+    <category term="回忆" scheme="https://maozhijie19.github.io/categories/%E5%9B%9E%E5%BF%86/"/>
     
     
-    <category term="新闻" scheme="https://blog.futurenotfound.top/tags/%E6%96%B0%E9%97%BB/"/>
+    <category term="新闻" scheme="https://maozhijie19.github.io/tags/%E6%96%B0%E9%97%BB/"/>
     
   </entry>
   
   <entry>
     <title>迭代</title>
-    <link href="https://blog.futurenotfound.top/2021/02/08/%E8%BF%AD%E4%BB%A3/"/>
-    <id>https://blog.futurenotfound.top/2021/02/08/%E8%BF%AD%E4%BB%A3/</id>
+    <link href="https://maozhijie19.github.io/2021/02/08/%E8%BF%AD%E4%BB%A3/"/>
+    <id>https://maozhijie19.github.io/2021/02/08/%E8%BF%AD%E4%BB%A3/</id>
     <published>2021-02-08T07:57:50.000Z</published>
     <updated>2021-02-10T07:10:02.577Z</updated>
     
@@ -282,17 +307,17 @@
     
     
     
-    <category term="回忆" scheme="https://blog.futurenotfound.top/categories/%E5%9B%9E%E5%BF%86/"/>
+    <category term="回忆" scheme="https://maozhijie19.github.io/categories/%E5%9B%9E%E5%BF%86/"/>
     
     
-    <category term="代码" scheme="https://blog.futurenotfound.top/tags/%E4%BB%A3%E7%A0%81/"/>
+    <category term="代码" scheme="https://maozhijie19.github.io/tags/%E4%BB%A3%E7%A0%81/"/>
     
   </entry>
   
   <entry>
     <title>订阅制</title>
-    <link href="https://blog.futurenotfound.top/2021/02/08/%E8%AE%A2%E9%98%85%E5%88%B6/"/>
-    <id>https://blog.futurenotfound.top/2021/02/08/%E8%AE%A2%E9%98%85%E5%88%B6/</id>
+    <link href="https://maozhijie19.github.io/2021/02/08/%E8%AE%A2%E9%98%85%E5%88%B6/"/>
+    <id>https://maozhijie19.github.io/2021/02/08/%E8%AE%A2%E9%98%85%E5%88%B6/</id>
     <published>2021-02-08T07:30:35.000Z</published>
     <updated>2021-02-13T08:29:17.991Z</updated>
     
@@ -307,17 +332,17 @@
     
     
     
-    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    <category term="随笔" scheme="https://maozhijie19.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-    <category term="苹果" scheme="https://blog.futurenotfound.top/tags/%E8%8B%B9%E6%9E%9C/"/>
+    <category term="苹果" scheme="https://maozhijie19.github.io/tags/%E8%8B%B9%E6%9E%9C/"/>
     
   </entry>
   
   <entry>
     <title>国产游戏</title>
-    <link href="https://blog.futurenotfound.top/2021/02/08/%E5%9B%BD%E4%BA%A7%E6%B8%B8%E6%88%8F/"/>
-    <id>https://blog.futurenotfound.top/2021/02/08/%E5%9B%BD%E4%BA%A7%E6%B8%B8%E6%88%8F/</id>
+    <link href="https://maozhijie19.github.io/2021/02/08/%E5%9B%BD%E4%BA%A7%E6%B8%B8%E6%88%8F/"/>
+    <id>https://maozhijie19.github.io/2021/02/08/%E5%9B%BD%E4%BA%A7%E6%B8%B8%E6%88%8F/</id>
     <published>2021-02-08T07:28:37.000Z</published>
     <updated>2021-02-10T07:17:12.388Z</updated>
     
@@ -331,17 +356,17 @@
     
     
     
-    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
+    <category term="随笔" scheme="https://maozhijie19.github.io/categories/%E9%9A%8F%E7%AC%94/"/>
     
     
-    <category term="游戏" scheme="https://blog.futurenotfound.top/tags/%E6%B8%B8%E6%88%8F/"/>
+    <category term="游戏" scheme="https://maozhijie19.github.io/tags/%E6%B8%B8%E6%88%8F/"/>
     
   </entry>
   
   <entry>
     <title>“森林币”</title>
-    <link href="https://blog.futurenotfound.top/2021/02/08/%E6%A3%AE%E6%9E%97%E5%B8%81/"/>
-    <id>https://blog.futurenotfound.top/2021/02/08/%E6%A3%AE%E6%9E%97%E5%B8%81/</id>
+    <link href="https://maozhijie19.github.io/2021/02/08/%E6%A3%AE%E6%9E%97%E5%B8%81/"/>
+    <id>https://maozhijie19.github.io/2021/02/08/%E6%A3%AE%E6%9E%97%E5%B8%81/</id>
     <published>2021-02-08T07:25:45.000Z</published>
     <updated>2021-02-10T07:16:48.685Z</updated>
     
@@ -355,35 +380,10 @@
     
     
     
-    <category term="回忆" scheme="https://blog.futurenotfound.top/categories/%E5%9B%9E%E5%BF%86/"/>
+    <category term="回忆" scheme="https://maozhijie19.github.io/categories/%E5%9B%9E%E5%BF%86/"/>
     
     
-    <category term="虚拟币" scheme="https://blog.futurenotfound.top/tags/%E8%99%9A%E6%8B%9F%E5%B8%81/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>防火墙</title>
-    <link href="https://blog.futurenotfound.top/2021/02/04/%E9%98%B2%E7%81%AB%E5%A2%99/"/>
-    <id>https://blog.futurenotfound.top/2021/02/04/%E9%98%B2%E7%81%AB%E5%A2%99/</id>
-    <published>2021-02-04T07:19:12.000Z</published>
-    <updated>2021-02-13T08:29:20.959Z</updated>
-    
-    <content type="html"><![CDATA[<p>[无语]iPhone 上的 app 联网控制在 iPad 上因为没有蜂窝数据菜单的原因，导致 iPad 没有办法控制 app 的联网行为。可恶！怎么会这样！</p>]]></content>
-    
-    
-      
-      
-    <summary type="html">&lt;p&gt;[无语]iPhone 上的 app 联网控制在 iPad 上因为没有蜂窝数据菜单的原因，导致 iPad 没有办法控制 app 的联网行为。可恶！怎么会这样！&lt;/p&gt;
-</summary>
-      
-    
-    
-    
-    <category term="随笔" scheme="https://blog.futurenotfound.top/categories/%E9%9A%8F%E7%AC%94/"/>
-    
-    
-    <category term="苹果" scheme="https://blog.futurenotfound.top/tags/%E8%8B%B9%E6%9E%9C/"/>
+    <category term="虚拟币" scheme="https://maozhijie19.github.io/tags/%E8%99%9A%E6%8B%9F%E5%B8%81/"/>
     
   </entry>
   

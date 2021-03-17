@@ -6,7 +6,7 @@
   <link href="https://maozhijie19.github.io/feed.xml" rel="self"/>
   
   <link href="https://maozhijie19.github.io/"/>
-  <updated>2021-03-17T01:01:44.802Z</updated>
+  <updated>2021-03-17T11:19:34.220Z</updated>
   <id>https://maozhijie19.github.io/</id>
   
   <author>
@@ -17,30 +17,27 @@
   <generator uri="https://hexo.io/">Hexo</generator>
   
   <entry>
-    <title>Mac HomeBrew Cask 被标记禁止更新的软件强制更新脚本</title>
-    <link href="https://maozhijie19.github.io/2021/03/17/Mac-HomeBrew-Cask-%E8%A2%AB%E6%A0%87%E8%AE%B0%E7%A6%81%E6%AD%A2%E6%9B%B4%E6%96%B0%E7%9A%84%E8%BD%AF%E4%BB%B6%E5%BC%BA%E5%88%B6%E6%9B%B4%E6%96%B0%E8%84%9A%E6%9C%AC/"/>
-    <id>https://maozhijie19.github.io/2021/03/17/Mac-HomeBrew-Cask-%E8%A2%AB%E6%A0%87%E8%AE%B0%E7%A6%81%E6%AD%A2%E6%9B%B4%E6%96%B0%E7%9A%84%E8%BD%AF%E4%BB%B6%E5%BC%BA%E5%88%B6%E6%9B%B4%E6%96%B0%E8%84%9A%E6%9C%AC/</id>
-    <published>2021-03-17T00:58:49.000Z</published>
-    <updated>2021-03-17T01:01:44.802Z</updated>
+    <title>无题</title>
+    <link href="https://maozhijie19.github.io/2021/03/17/%E6%97%A0%E9%A2%98/"/>
+    <id>https://maozhijie19.github.io/2021/03/17/%E6%97%A0%E9%A2%98/</id>
+    <published>2021-03-17T11:18:07.000Z</published>
+    <updated>2021-03-17T11:19:34.220Z</updated>
     
-    <content type="html"><![CDATA[<figure class="highlight bash"><table><tr><td class="code"><pre><code class="hljs bash">brew upgrade --cask `brew list --cask | tr <span class="hljs-string">&quot;\n%&quot;</span> <span class="hljs-string">&quot;  &quot;</span>`<br></code></pre></td></tr></table></figure>]]></content>
+    <content type="html"><![CDATA[<p>挽沫黎什冰阵酬笑增禄县胚韦份羔涅？谚刃隆西贷，蕉闹骨侯必膊弊右愚慌释乏甲侨互轻糊貌直居挡垦洋…乞贝？</p><p>循啬周暂捞老蚧族蚁，禹茂铰。节诞含铺玉表备谐疤薛？挨屏职咕赵棱言需打陋闭碑牢租娟衬，扫…津稀悔藏睛诗望批烦趟橡卵漫桶驾那竖戏妥听帕。曰虎歌罐宋农，押旨贩晰决跳涡伤俩汰探闪奶旺挫膊碱界遗化颠址度绳瑚，业沉损碍帽崎，瞬吻禄恳？</p><p>种歇卸俱屋丽，加邵市勇慌瓦挑把汹疏旅仙著宏娘灼扇溃庸拚枣案垄图炒尚葫傅夷孩轲榄或遥刺拨胜捧秸咽自刃鳃袖越柔走殊杆棘敬居蛙藻班贸拦捕哨壮霞载歌按颠，珠吨雨标泼秤祁搁韩脂讥功茄猖脉武美珩线砌籍邪祖弗径砌缓腺屑填帐辛孩血坚炎亚强颜岔智阅佛蹄炸忘捉城即径侧嗽疑郡玄在许顶考冬增芯傍貌挑蕨盯阻釉硬穿咧尽响。</p><p>时江曝骄骄岸辞戳派鳞哑贡郭跌难囊芬容交痛杠返兜捏坎搞雪钢迁恨瘀停疮允陪热亮铆蜱何；黎丢所携疽俯香彬骚陶肆翠欠炮父门屑插更矛邮证丁走柔痕值鬼鲜博计兰努昏似，估退点陨闹初早愉颜耗痕伙扮援凸伍仁降右虎谚乓深杯毯栖嘲媳煤驱摆沙杜臣辩席肩执措凌乓吊爵抓。肢申订缚峪苷桃请羟沥厘偿验姚撞朗劳逞袁底菲逊颂兔棒柜净予侵乞裂丸贺狮售傲到盅普赢向礼歪穿继番骤紧斑值奏虱呀蓝瞎腊芽倾晶扛赞让纬煮奇瘠闯扬敏。</p>]]></content>
     
     
       
       
-    <summary type="html">&lt;figure class=&quot;highlight bash&quot;&gt;&lt;table&gt;&lt;tr&gt;&lt;td class=&quot;code&quot;&gt;&lt;pre&gt;&lt;code class=&quot;hljs bash&quot;&gt;brew upgrade --cask `brew list --cask | tr &lt;span cla</summary>
+    <summary type="html">&lt;p&gt;挽沫黎什冰阵酬笑增禄县胚韦份羔涅？谚刃隆西贷，蕉闹骨侯必膊弊右愚慌释乏甲侨互轻糊貌直居挡垦洋…乞贝？&lt;/p&gt;
+&lt;p&gt;循啬周暂捞老蚧族蚁，禹茂铰。节诞含铺玉表备谐疤薛？挨屏职咕赵棱言需打陋闭碑牢租娟衬，扫…津稀悔藏睛诗望批烦趟橡卵漫桶驾那竖戏妥听帕。曰虎歌罐宋农，押旨贩晰决跳</summary>
       
     
     
     
-    <category term="Mac" scheme="https://maozhijie19.github.io/categories/Mac/"/>
+    <category term="乱数假文" scheme="https://maozhijie19.github.io/categories/%E4%B9%B1%E6%95%B0%E5%81%87%E6%96%87/"/>
     
     
-    <category term="脚本" scheme="https://maozhijie19.github.io/tags/%E8%84%9A%E6%9C%AC/"/>
-    
-    <category term="Mac" scheme="https://maozhijie19.github.io/tags/Mac/"/>
-    
-    <category term="HomeBrew" scheme="https://maozhijie19.github.io/tags/HomeBrew/"/>
+    <category term="无题" scheme="https://maozhijie19.github.io/tags/%E6%97%A0%E9%A2%98/"/>
     
   </entry>
   

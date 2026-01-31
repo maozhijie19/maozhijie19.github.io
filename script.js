@@ -736,7 +736,7 @@ function generateTodayKeyboard(seed) {
         }
     }
     
-    // 转换为数组并限制为24个（7+7+5+5，每行左侧一列）
+    // 转换为数组并限制为24个（8+8+8 布局）
     const charsArray = Array.from(chars).slice(0, 24);
     
     // 使用伪随机打乱顺序（但保证同一天顺序一致）
@@ -782,15 +782,15 @@ function createGameBoard() {
     }
 }
 
-// 创建键盘（基于今日字符：共 24 字 7+7+5+5，每行左侧多一列）
+// 创建键盘（前三行每行 8 字，第四行仅删除+提交）
 function createKeyboard() {
     const keyboard = document.getElementById('keyboard');
     keyboard.innerHTML = '';
     
-    // 第一行：7个字（左侧一列）
+    // 第一行：8个字
     const row1 = document.createElement('div');
     row1.classList.add('keyboard-row');
-    for (let i = 0; i < 7 && i < keyboardChars.length; i++) {
+    for (let i = 0; i < 8 && i < keyboardChars.length; i++) {
         row1.appendChild(createKeyButton(keyboardChars[i]));
     }
     keyboard.appendChild(row1);
@@ -798,32 +798,23 @@ function createKeyboard() {
     // 第二行：7个字
     const row2 = document.createElement('div');
     row2.classList.add('keyboard-row');
-    for (let i = 7; i < 14 && i < keyboardChars.length; i++) {
+    for (let i = 8; i < 16 && i < keyboardChars.length; i++) {
         row2.appendChild(createKeyButton(keyboardChars[i]));
     }
     keyboard.appendChild(row2);
     
-    // 第三行：5个字 + 删除（右边）
+    // 第三行：8个字
     const row3 = document.createElement('div');
-    row3.classList.add('keyboard-row', 'keyboard-row-last');
-    const charGroup3 = document.createElement('div');
-    charGroup3.classList.add('keyboard-char-group');
-    for (let i = 14; i < 19 && i < keyboardChars.length; i++) {
-        charGroup3.appendChild(createKeyButton(keyboardChars[i]));
+    row3.classList.add('keyboard-row');
+    for (let i = 16; i < 24 && i < keyboardChars.length; i++) {
+        row3.appendChild(createKeyButton(keyboardChars[i]));
     }
-    row3.appendChild(charGroup3);
-    row3.appendChild(createActionButton('删除', 'delete'));
     keyboard.appendChild(row3);
     
-    // 第四行：5个字 + 提交
+    // 第四行：仅删除 + 提交
     const row4 = document.createElement('div');
-    row4.classList.add('keyboard-row', 'keyboard-row-last');
-    const charGroup4 = document.createElement('div');
-    charGroup4.classList.add('keyboard-char-group');
-    for (let i = 19; i < 24 && i < keyboardChars.length; i++) {
-        charGroup4.appendChild(createKeyButton(keyboardChars[i]));
-    }
-    row4.appendChild(charGroup4);
+    row4.classList.add('keyboard-row', 'keyboard-row-actions');
+    row4.appendChild(createActionButton('删除', 'delete'));
     row4.appendChild(createActionButton('提交', 'submit'));
     keyboard.appendChild(row4);
 }

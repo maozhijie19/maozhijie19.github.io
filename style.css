@@ -294,9 +294,9 @@ header {
 }
 
 .keyboard-row {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(8, 1fr);
     gap: 6px;
-    justify-content: center;
     flex: 1;
     min-height: 48px;
 }
@@ -342,17 +342,9 @@ header {
     gap: 6px;
 }
 
-.keyboard-row-last .key {
-    flex: 1;
-}
-
-/* 最后一行：字组占 5 份、操作键占 2 份，即删除/提交 = 两个字宽 + 间距 */
-.keyboard-row-last .keyboard-char-group {
-    flex: 5;
-}
-
-.keyboard-row-last .key.action-key {
-    flex: 2;
+/* 第四行：删除、提交各占一半 */
+.keyboard-row-actions .key.action-key {
+    grid-column: span 4;
 }
 
 .key.action-key {
@@ -1020,10 +1012,17 @@ header {
     
     .keyboard {
         padding: 10px;
-        gap: 3px;
+        gap: 2px;
+        min-height: unset;
     }
     
     .keyboard-row {
+        flex: unset;
+        min-height: unset;
+    }
+    
+    .keyboard-row,
+    .keyboard-row-actions {
         gap: 3px;
     }
 }
@@ -1061,12 +1060,19 @@ header {
         font-size: 0.75rem;
     }
     
-    .keyboard-row {
-        gap: 2px;
-    }
-    
     .keyboard {
         padding: 8px;
+        gap: 2px;
+        min-height: unset;
+    }
+    
+    .keyboard-row {
+        flex: unset;
+        min-height: unset;
+    }
+    
+    .keyboard-row,
+    .keyboard-row-actions {
         gap: 2px;
     }
 }

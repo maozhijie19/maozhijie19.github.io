@@ -1172,17 +1172,6 @@ function shakeRow(row) {
     }, 400);
 }
 
-// 提示：每日限 1 次
-function getHintUsedToday() {
-    const key = 'idiomWordleHintUsed_' + (todayDate || getTodayDateString());
-    return localStorage.getItem(key) === '1';
-}
-
-function setHintUsedToday() {
-    const key = 'idiomWordleHintUsed_' + (todayDate || getTodayDateString());
-    localStorage.setItem(key, '1');
-}
-
 // 答案是否有叠字（重复字）
 function hasRepeatedChars(s) {
     const set = new Set(s.split(''));
@@ -1227,12 +1216,7 @@ function showHint() {
         showMessage('本局已结束', 'error');
         return;
     }
-    if (getHintUsedToday()) {
-        showMessage('今日提示已用完', 'error');
-        return;
-    }
     const text = getTodayHintText();
-    setHintUsedToday();
     showMessage(text, 'hint', 5000);
 }
 

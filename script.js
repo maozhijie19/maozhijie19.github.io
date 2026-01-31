@@ -487,7 +487,7 @@ async function init() {
     // 用固定种子打乱成语列表（保证所有人打乱结果一致）
     const fixedSeed = 20260101; // 固定种子
     shuffledIdiomList = shuffleArray(idiomList, fixedSeed);
-    const commonList = idiomList.filter(w => idiomData[w] && idiomData[w].common === true);
+    const commonList = idiomList.filter(w => idiomData[w] && idiomData[w].simple === true);
     shuffledCommonList = shuffleArray(commonList, fixedSeed);
 
     loadSettings();
@@ -541,7 +541,7 @@ function dateToDays(dateStr) {
 }
 
 // 成语数据缓存版本（CSV 更新时改为 2、3… 以失效旧缓存）
-const IDIOM_CACHE_VERSION = 3;
+const IDIOM_CACHE_VERSION = 4;
 const IDIOM_DB_NAME = 'idiomWordleDB';
 const IDIOM_STORE_NAME = 'cache';
 const IDIOM_CACHE_KEY = 'idiomData';
@@ -613,25 +613,26 @@ async function parseIdiomCSVStream(response) {
             if (word.length !== 4) continue;
             const pinyin = parts[1] || '';
             const derivation = parts[2] || '';
-            const common = parts.length >= 4 && (parts[3] || '').trim() === '1';
+            const mark = (parts.length >= 4 && (parts[3] || '').trim()) || '0';
             list.push(word);
-            data[word] = { pinyin, derivation, common };
+            data[word] = { pinyin, derivation, common: mark === '1' || mark === '2', simple: mark === '2' };
         }
     }
     if (buffer.trim()) {
         const parts = buffer.trim().split(',');
-        if (parts.length >= 3) {
-            const word = (parts[0] || '').trim();
-            if (word.length === 4) {
-                const common = parts.length >= 4 && (parts[3] || '').trim() === '1';
-                list.push(word);
-                data[word] = {
-                    pinyin: parts[1] || '',
-                    derivation: parts[2] || '',
-                    common: !!common
-                };
+            if (parts.length >= 3) {
+                const word = (parts[0] || '').trim();
+                if (word.length === 4) {
+                    const mark = (parts.length >= 4 && (parts[3] || '').trim()) || '0';
+                    list.push(word);
+                    data[word] = {
+                        pinyin: parts[1] || '',
+                        derivation: parts[2] || '',
+                        common: mark === '1' || mark === '2',
+                        simple: mark === '2'
+                    };
+                }
             }
-        }
     }
     return { idiomList: list, idiomData: data };
 }

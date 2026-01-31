@@ -12,7 +12,7 @@ let idiomData = {}; // 成语数据 {word: {explanation, pinyin}}
 
 // 设置
 let settings = {
-    validateIdiom: true,      // 是否验证成语
+    validateIdiom: false,     // 是否验证成语（默认关闭）
     keyboardHighlight: true   // 是否键盘高亮
 };
 
@@ -233,6 +233,12 @@ function getCharStatus(guessChars, targetChars) {
 // 初始化游戏
 async function init() {
     await loadIdioms();
+    
+    // 用固定种子打乱成语列表（保证所有人打乱结果一致）
+    const fixedSeed = 20260101; // 固定种子
+    shuffledIdiomList = shuffleArray(idiomList, fixedSeed);
+    console.log('成语列表已打乱（固定顺序）');
+    
     loadSettings();
     loadStats();
     createGameBoard();
@@ -256,31 +262,15 @@ function seededRandom(seed) {
     return x - Math.floor(x);
 }
 
-// 将日期字符串转换为种子数字
-function dateToSeed(dateStr) {
-    const parts = dateStr.split('-');
-    return parseInt(parts[0]) * 10000 + parseInt(parts[1]) * 100 + parseInt(parts[2]);
-}
-
-// 解析 CSV 行
-function parseCSVLine(line) {
-    const result = [];
-    let current = '';
-    let inQuotes = false;
-    
-    for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        if (char === '"') {
-            inQuotes = !inQuotes;
-        } else if (char === ',' && !inQuotes) {
-            result.push(current);
-            current = '';
-        } else {
-            current += char;
-        }
-    }
-    result.push(current);
-    return result;
+// 将日期转换为天数（从某个起始日期算起）
+function dateToDays(dateStr) {
+    const [year, month, day] = dateStr.split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+    // 从 2026-01-01 开始计算天数
+    const startDate = new Date(2026, 0, 1);
+    const diffTime = date - startDate;
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
 }
 
 // 加载成语列表
@@ -295,15 +285,17 @@ async function loadIdioms() {
             const line = lines[i].trim();
             if (!line) continue;
             
-            const fields = parseCSVLine(line);
-            // CSV 列: derivation, example, explanation, pinyin, word, abbreviation, pinyin_r, first, last
-            const explanation = fields[2] || '';
-            const pinyin = fields[3] || '';
-            const word = fields[4] || '';
+            // 简单的 CSV 解析（无引号包裹）
+            const parts = line.split(',');
+            if (parts.length < 4) continue;
+            
+            const word = parts[0] || '';
+            const pinyin = parts[1] || '';
+            const explanation = parts[2] || '';
+            const derivation = parts[3] || '';
             
             if (word.length === 4) {
                 idiomList.push(word);
-                const derivation = fields[0] || '';
                 idiomData[word] = { explanation, pinyin, derivation };
             }
         }
@@ -316,8 +308,7 @@ async function loadIdioms() {
 }
 
 // 生成今日键盘字符（智能算法）
-function generateTodayKeyboard() {
-    const seed = dateToSeed(todayDate);
+function generateTodayKeyboard(seed) {
     const chars = new Set();
     const usedIdioms = new Set();
     
@@ -325,32 +316,62 @@ function generateTodayKeyboard() {
     targetIdiom.split('').forEach(char => chars.add(char));
     usedIdioms.add(targetIdiom);
     
-    // 2. 找有相同字的成语（优先级高）
-    const relatedIdioms = idiomList.filter(idiom => {
-        if (usedIdioms.has(idiom)) return false;
-        // 检查是否有共同字
-        const idiomChars = idiom.split('');
-        return idiomChars.some(char => chars.has(char));
-    });
-    
-    // 使用伪随机打乱相关成语
-    const shuffledRelated = shuffleArray(relatedIdioms, seed + 1);
-    
-    // 添加相关成语的字，直到接近20个
-    for (const idiom of shuffledRelated) {
-        if (chars.size >= 16) break; // 留4个位置给无关成语
-        idiom.split('').forEach(char => chars.add(char));
-        usedIdioms.add(idiom);
+    // 辅助函数：计算两个成语的相同字数
+    function countSameChars(idiom1, idiom2) {
+        const chars1 = new Set(idiom1.split(''));
+        const chars2 = idiom2.split('');
+        return chars2.filter(c => chars1.has(c)).length;
     }
     
-    // 3. 如果还不够20个，添加无关成语的字
-    if (chars.size < 20) {
-        const unrelatedIdioms = idiomList.filter(idiom => !usedIdioms.has(idiom));
-        const shuffledUnrelated = shuffleArray(unrelatedIdioms, seed + 2);
+    // 2-5. 按相同字数分类成语
+    const idiomsByMatch = {
+        three: [],  // 3字相同
+        two: [],    // 2字相同
+        one: [],    // 1字相同
+        zero: []    // 全不相同
+    };
+    
+    for (const idiom of shuffledIdiomList) {
+        if (usedIdioms.has(idiom)) continue;
         
-        for (const idiom of shuffledUnrelated) {
+        const sameCount = countSameChars(targetIdiom, idiom);
+        if (sameCount === 3) {
+            idiomsByMatch.three.push(idiom);
+        } else if (sameCount === 2) {
+            idiomsByMatch.two.push(idiom);
+        } else if (sameCount === 1) {
+            idiomsByMatch.one.push(idiom);
+        } else {
+            idiomsByMatch.zero.push(idiom);
+        }
+    }
+    
+    // 按优先级添加成语的字
+    const priorities = [
+        { list: idiomsByMatch.three, maxIdioms: 2 },  // 最多2个3字相同的
+        { list: idiomsByMatch.two, maxIdioms: 3 },    // 最多3个2字相同的
+        { list: idiomsByMatch.one, maxIdioms: 4 },    // 最多4个1字相同的
+        { list: idiomsByMatch.zero, maxIdioms: 3 }    // 最多3个无相同的
+    ];
+    
+    for (const { list, maxIdioms } of priorities) {
+        if (chars.size >= 20) break;
+        
+        // 打乱该优先级的成语
+        const shuffled = shuffleArray(list, seed);
+        
+        let addedCount = 0;
+        for (const idiom of shuffled) {
             if (chars.size >= 20) break;
+            if (addedCount >= maxIdioms) break;
+            
+            const oldSize = chars.size;
             idiom.split('').forEach(char => chars.add(char));
+            
+            if (chars.size > oldSize) {
+                usedIdioms.add(idiom);
+                addedCount++;
+            }
         }
     }
     
@@ -358,7 +379,7 @@ function generateTodayKeyboard() {
     const charsArray = Array.from(chars).slice(0, 20);
     
     // 使用伪随机打乱顺序（但保证同一天顺序一致）
-    keyboardChars = shuffleArray(charsArray, seed + 3);
+    keyboardChars = shuffleArray(charsArray, seed + 999);
     
     console.log('今日键盘字符:', keyboardChars.join(''));
 }
@@ -372,6 +393,9 @@ function shuffleArray(array, seed) {
     }
     return arr;
 }
+
+// 打乱后的成语列表（全局缓存）
+let shuffledIdiomList = [];
 
 // 创建游戏板
 function createGameBoard() {
@@ -517,18 +541,20 @@ function startNewGame() {
     todayDate = getTodayDateString();
     
     // 基于日期选择今日成语（所有人同一天看到的答案相同）
-    const seed = dateToSeed(todayDate);
-    const index = Math.floor(seededRandom(seed) * idiomList.length);
-    targetIdiom = idiomList[index];
+    const days = dateToDays(todayDate);
+    // 从打乱后的列表中按顺序取，保证 29502 天内不重复
+    const index = days % shuffledIdiomList.length;
+    targetIdiom = shuffledIdiomList[index];
     
     console.log('今日日期:', todayDate);
+    console.log('第', days, '天，成语索引:', index);
     console.log('今日成语:', targetIdiom); // 调试用，正式版可删除
     
     // 更新副标题显示今日日期
     document.getElementById('subtitle').textContent = `今日成语 ${todayDate}`;
     
     // 生成今日键盘
-    generateTodayKeyboard();
+    generateTodayKeyboard(dateToDays(todayDate));
     
     // 初始化状态
     currentRow = 0;

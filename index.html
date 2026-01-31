@@ -6,6 +6,7 @@
     <title>猜三划四 - 猜成语游戏</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/pocketbase/dist/pocketbase.umd.js"></script>
 </head>
 <body>
     <div class="container">
@@ -100,6 +101,15 @@
             <div class="modal settings-modal">
                 <div class="modal-header">设置</div>
                 <div class="settings-list">
+                    <div class="setting-item setting-item-cloud">
+                        <span class="setting-label">云端同步</span>
+                        <span class="setting-desc">点「生成密钥」则生成新的同步密钥并保存；若已有密钥，在框中填写之前生成过的密钥，再点「保存密钥」。</span>
+                        <textarea id="settingAuthKey" placeholder="输入密钥或点击生成" autocomplete="off" rows="3"></textarea>
+                        <div class="setting-key-btns">
+                            <button type="button" class="modal-btn modal-btn-gen" id="settingGenKey">生成密钥</button>
+                            <button type="button" class="modal-btn modal-btn-sync" id="settingSyncBtn">保存密钥</button>
+                        </div>
+                    </div>
                     <label class="setting-item">
                         <span class="setting-label">提示非成语</span>
                         <span class="setting-desc">关闭后，不是成语也可以提交</span>
@@ -113,7 +123,7 @@
                         <span class="toggle"></span>
                     </label>
                 </div>
-                <button class="modal-btn" id="settingsClose">完成</button>
+                <button class="modal-btn" id="settingsClose">关闭</button>
             </div>
         </div>
         

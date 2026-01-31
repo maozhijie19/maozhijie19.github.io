@@ -805,6 +805,45 @@ header {
     left: 22px;
 }
 
+.setting-item-cloud {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    cursor: default;
+    grid-template-columns: unset;
+    grid-template-rows: unset;
+}
+
+.setting-item-cloud .setting-label { grid-column: unset; grid-row: unset; }
+.setting-item-cloud .setting-desc { grid-column: unset; grid-row: unset; }
+
+.setting-item-cloud input[type="text"],
+.setting-item-cloud input[type="password"],
+.setting-item-cloud textarea {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 0.95rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+.setting-item-cloud textarea {
+    resize: vertical;
+    min-height: 60px;
+    font-family: inherit;
+}
+
+.setting-item-cloud .setting-key-btns {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.setting-item-cloud .setting-key-btns .modal-btn {
+    flex: none;
+}
+
 /* 响应式设计：移动端头部改为「标题在上、按钮在下」避免遮挡 */
 @media (max-width: 480px) {
     header {

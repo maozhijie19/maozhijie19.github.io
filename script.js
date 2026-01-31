@@ -1,3 +1,6 @@
+// PocketBase 配置：填写你的实例地址，留空则不同步云端
+const PB_URL = 'https://db.tr1ck.cn/';
+
 // 游戏状态
 let targetIdiom = '';
 let currentRow = 0;
@@ -35,31 +38,173 @@ const ACHIEVEMENTS = [
     { id: 'streak30', name: '连对30天', desc: '连续猜对30天' }
 ];
 
-// 加载统计数据
-function loadStats() {
-    const saved = localStorage.getItem('idiomWordleStats');
-    if (saved) {
-        try {
-            stats = JSON.parse(saved);
-        } catch (e) {
-            console.error('加载统计失败:', e);
-        }
+// ---------- 云端同步（PocketBase wordle_data 表：auth, setting, stats, state, updated）----------
+// 本地与远程字段名一致，存 idiomWordleData = { setting, stats, state, updated }
+const PB_WORDLE_COLLECTION = 'wordle_data';
+const LOCAL_DATA_KEY = 'idiomWordleData';
+
+function getLocalData() {
+    const raw = localStorage.getItem(LOCAL_DATA_KEY);
+    if (!raw) return { setting: null, stats: null, state: null, updated: 0 };
+    try {
+        return JSON.parse(raw);
+    } catch (e) {
+        localStorage.removeItem(LOCAL_DATA_KEY);
+        return { setting: null, stats: null, state: null, updated: 0 };
     }
 }
 
-// 保存统计数据
+function setLocalData(data) {
+    data.updated = typeof data.updated === 'number' ? data.updated : Date.now();
+    localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(data));
+}
+
+function getAuth() {
+    const saved = localStorage.getItem('idiomWordleAuth');
+    if (!saved) return null;
+    try {
+        const o = JSON.parse(saved);
+        if (o && typeof o.key === 'string' && o.key.trim()) return { key: o.key.trim() };
+    } catch (e) { /* 非法 JSON */ }
+    localStorage.removeItem('idiomWordleAuth');
+    return null;
+}
+
+function saveAuth(key) {
+    const k = (key || '').trim();
+    if (!k) {
+        localStorage.removeItem('idiomWordleAuth');
+        return;
+    }
+    localStorage.setItem('idiomWordleAuth', JSON.stringify({ key: k }));
+}
+
+function getAuthString() {
+    const a = getAuth();
+    return a ? a.key : '';
+}
+
+function generateAuthKey() {
+    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+        return crypto.randomUUID().replace(/-/g, '');
+    }
+    const hex = '0123456789abcdef';
+    let s = '';
+    for (let i = 0; i < 32; i++) s += hex[Math.floor(Math.random() * 16)];
+    return s;
+}
+
+function escapeFilterValue(s) {
+    return (s + '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+
+// 先查远程；数据为空或远程 updated 早于本地则用本地覆盖远程，否则远程覆盖本地
+// opts.tryAuthKey：仅本次请求用该密钥（不写 localStorage），用于生成密钥时先校验再改值
+async function syncWithPB(opts) {
+    if (!PB_URL || typeof PocketBase === 'undefined') return;
+    const authStr = (opts && opts.tryAuthKey) ? opts.tryAuthKey : getAuthString();
+    if (!authStr) return;
+    const local = getLocalData();
+    const localUpdated = typeof local.updated === 'number' ? local.updated : 0;
+    const statePayload = {
+        date: todayDate,
+        guessedIdioms: guessedIdioms.slice(),
+        currentRow: currentRow,
+        gameOver: gameOver,
+        keyboardState: Object.assign({}, keyboardState)
+    };
+    // 推送给远程的 state：若 todayDate 未设置（如 init 阶段），用本地已存的 state，避免把云端今日进度盖成空
+    const stateToPush = todayDate ? statePayload : (local.state != null ? local.state : statePayload);
+    const body = { auth: authStr, setting: settings, stats: stats, state: stateToPush };
+    try {
+        const pb = new PocketBase(PB_URL);
+        const list = await pb.collection(PB_WORDLE_COLLECTION).getList(1, 1, {
+            filter: "auth = '" + escapeFilterValue(authStr) + "'"
+        });
+        const record = list.items && list.items.length > 0 ? list.items[0] : null;
+        const remoteUpdated = record && record.updated ? new Date(record.updated).getTime() : 0;
+        const useLocal = !record || !remoteUpdated || localUpdated > remoteUpdated;
+
+        if (useLocal) {
+            if (record) {
+                await pb.collection(PB_WORDLE_COLLECTION).update(record.id, body);
+            } else {
+                await pb.collection(PB_WORDLE_COLLECTION).create(body);
+            }
+            const stateToSave = todayDate ? statePayload : (local.state != null ? local.state : statePayload);
+            setLocalData({ setting: settings, stats: stats, state: stateToSave, updated: Date.now() });
+        } else {
+            const r = record;
+            const data = {
+                setting: r.setting != null ? r.setting : local.setting,
+                stats: r.stats != null ? r.stats : local.stats,
+                state: r.state != null ? r.state : local.state,
+                updated: remoteUpdated
+            };
+            setLocalData(data);
+            loadStats();
+            loadSettings();
+            if (data.state != null && data.state.date === todayDate) restoreGameState(data.state);
+        }
+    } catch (e) {
+        console.warn('云端同步失败:', e);
+        throw e;
+    }
+}
+
+// 保证 stats 结构完整（云端或缓存可能缺字段）；stats 必须是对象
+function normalizeStats() {
+    if (!stats || typeof stats !== 'object') {
+        stats = {
+            totalGames: 0,
+            gamesWon: 0,
+            currentStreak: 0,
+            maxStreak: 0,
+            guessDistribution: [0, 0, 0, 0, 0],
+            achievements: []
+        };
+        return;
+    }
+    if (!Array.isArray(stats.guessDistribution) || stats.guessDistribution.length !== 5) {
+        stats.guessDistribution = [0, 0, 0, 0, 0];
+    }
+    if (!Array.isArray(stats.achievements)) stats.achievements = [];
+    if (typeof stats.totalGames !== 'number') stats.totalGames = 0;
+    if (typeof stats.gamesWon !== 'number') stats.gamesWon = 0;
+    if (typeof stats.currentStreak !== 'number') stats.currentStreak = 0;
+    if (typeof stats.maxStreak !== 'number') stats.maxStreak = 0;
+}
+
+// 加载统计数据（从 idiomWordleData.stats）
+function loadStats() {
+    const data = getLocalData();
+    if (data.stats != null && typeof data.stats === 'object' && !Array.isArray(data.stats)) {
+        stats = data.stats;
+    }
+    normalizeStats();
+}
+
+// 保存统计数据（写入 idiomWordleData，与远程字段名一致）
 function saveStats() {
-    localStorage.setItem('idiomWordleStats', JSON.stringify(stats));
+    const data = getLocalData();
+    data.setting = data.setting || settings;
+    data.stats = stats;
+    data.state = data.state || { date: todayDate, guessedIdioms: guessedIdioms.slice(), currentRow, gameOver, keyboardState: Object.assign({}, keyboardState) };
+    data.updated = Date.now();
+    setLocalData(data);
+    if (getAuth() && PB_URL) syncWithPB();
 }
 
 // 更新统计数据
 function updateStats(won, attempts) {
+    normalizeStats();
     stats.totalGames++;
     if (won) {
         stats.gamesWon++;
         stats.currentStreak++;
         stats.maxStreak = Math.max(stats.maxStreak, stats.currentStreak);
-        stats.guessDistribution[attempts - 1]++;
+        if (attempts >= 1 && attempts <= 5) stats.guessDistribution[attempts - 1]++;
     } else {
         stats.currentStreak = 0;
     }
@@ -175,27 +320,33 @@ function hideHelp() {
     document.getElementById('helpModal').classList.remove('show');
 }
 
-// 加载设置
+// 加载设置（从 idiomWordleData.setting）
 function loadSettings() {
-    const saved = localStorage.getItem('idiomWordleSettings');
-    if (saved) {
-        try {
-            settings = JSON.parse(saved);
-        } catch (e) {
-            console.error('加载设置失败:', e);
-        }
+    const data = getLocalData();
+    if (data.setting != null) {
+        if (typeof data.setting.validateIdiom === 'boolean') settings.validateIdiom = data.setting.validateIdiom;
+        if (typeof data.setting.keyboardHighlight === 'boolean') settings.keyboardHighlight = data.setting.keyboardHighlight;
     }
-    // 更新 UI
-    document.getElementById('settingValidateIdiom').checked = settings.validateIdiom;
-    document.getElementById('settingKeyboardHighlight').checked = settings.keyboardHighlight;
+    const elV = document.getElementById('settingValidateIdiom');
+    const elK = document.getElementById('settingKeyboardHighlight');
+    if (elV) elV.checked = settings.validateIdiom;
+    if (elK) elK.checked = settings.keyboardHighlight;
 }
 
-// 保存设置
+// 保存设置（写入 idiomWordleData.setting）
 function saveSettings() {
     settings.validateIdiom = document.getElementById('settingValidateIdiom').checked;
     settings.keyboardHighlight = document.getElementById('settingKeyboardHighlight').checked;
-    localStorage.setItem('idiomWordleSettings', JSON.stringify(settings));
-    
+    const data = getLocalData();
+    data.setting = data.setting || {};
+    data.setting.validateIdiom = settings.validateIdiom;
+    data.setting.keyboardHighlight = settings.keyboardHighlight;
+    data.stats = data.stats || stats;
+    data.state = data.state || { date: todayDate, guessedIdioms: guessedIdioms.slice(), currentRow, gameOver, keyboardState: Object.assign({}, keyboardState) };
+    data.updated = Date.now();
+    setLocalData(data);
+    if (getAuth() && PB_URL) syncWithPB();
+
     // 如果关闭键盘高亮，清除当前高亮
     if (!settings.keyboardHighlight) {
         document.querySelectorAll('.key').forEach(key => {
@@ -209,41 +360,40 @@ function saveSettings() {
 
 // 显示设置弹窗
 function showSettings() {
+    const auth = getAuth();
+    document.getElementById('settingAuthKey').value = auth ? auth.key : '';
     document.getElementById('settingsModal').classList.add('show');
 }
 
-// 隐藏设置弹窗
+// 隐藏设置弹窗（不触发保存或同步）
 function hideSettings() {
-    saveSettings();
     document.getElementById('settingsModal').classList.remove('show');
 }
 
-// 保存游戏状态
+// 保存游戏状态（写入 idiomWordleData.state）
 function saveGameState() {
     const state = {
         date: todayDate,
-        guessedIdioms: guessedIdioms,
+        guessedIdioms: guessedIdioms.slice(),
         currentRow: currentRow,
         gameOver: gameOver,
-        keyboardState: keyboardState
+        keyboardState: Object.assign({}, keyboardState)
     };
-    localStorage.setItem('idiomWordleState', JSON.stringify(state));
+    const data = getLocalData();
+    data.setting = data.setting || settings;
+    data.stats = data.stats || stats;
+    data.state = state;
+    data.updated = Date.now();
+    setLocalData(data);
+    if (getAuth() && PB_URL) syncWithPB();
 }
 
-// 加载游戏状态
+// 加载游戏状态（从 idiomWordleData.state）
 function loadGameState() {
-    const saved = localStorage.getItem('idiomWordleState');
-    if (!saved) return null;
-    
-    try {
-        const state = JSON.parse(saved);
-        // 检查是否是今天的状态
-        if (state.date === todayDate) {
-            return state;
-        }
-    } catch (e) {
-        console.error('加载游戏状态失败:', e);
-    }
+    const data = getLocalData();
+    const state = data.state;
+    if (!state) return null;
+    if (state.date === todayDate) return state;
     return null;
 }
 
@@ -313,13 +463,22 @@ async function init() {
     const subtitleEl = document.getElementById('subtitle');
     if (subtitleEl) subtitleEl.textContent = getTodayDateString();
     await loadIdioms();
-    
+
     // 用固定种子打乱成语列表（保证所有人打乱结果一致）
     const fixedSeed = 20260101; // 固定种子
     shuffledIdiomList = shuffleArray(idiomList, fixedSeed);
-    
+
     loadSettings();
     loadStats();
+    if (getAuth() && PB_URL) {
+        try {
+            await syncWithPB();
+        } catch (e) {
+            console.warn('云端同步失败:', e);
+        }
+    }
+    loadStats();
+    loadSettings();
     createGameBoard();
     createKeyboard();
     attachEventListeners();
@@ -657,10 +816,14 @@ function createActionButton(text, type) {
 
 // 绑定事件监听器
 function attachEventListeners() {
-    // 键盘事件
+    // 键盘事件（弹窗打开或焦点在输入框时不响应，避免设置里按回车触发「提交」）
     document.addEventListener('keydown', (e) => {
+        const active = document.activeElement;
+        const inInput = active && (active.tagName === 'INPUT' || active.tagName === 'TEXTAREA' || active.isContentEditable);
+        const modalOpen = document.querySelector('.modal-overlay.show');
+        if (inInput || modalOpen) return;
         if (gameOver) return;
-        
+
         if (e.key === 'Backspace' || e.key === 'Delete') {
             handleKeyPress('删除');
         } else if (e.key === 'Enter') {
@@ -685,6 +848,72 @@ function attachEventListeners() {
     document.getElementById('hintBtn').addEventListener('click', showHint);
     document.getElementById('settingsBtn').addEventListener('click', showSettings);
     document.getElementById('settingsClose').addEventListener('click', hideSettings);
+    document.getElementById('settingValidateIdiom').addEventListener('change', saveSettings);
+    document.getElementById('settingKeyboardHighlight').addEventListener('change', saveSettings);
+    document.getElementById('settingGenKey').addEventListener('click', async () => {
+        const oldKey = getAuthString();
+        const key = generateAuthKey();
+        const inputEl = document.getElementById('settingAuthKey');
+        if (PB_URL) {
+            try {
+                await syncWithPB({ tryAuthKey: key });
+                saveAuth(key);
+                inputEl.value = key;
+                loadStats();
+                loadSettings();
+                startNewGame();
+                showMessage('已生成密钥，已自动同步', '');
+            } catch (e) {
+                inputEl.value = oldKey || '';
+                loadStats();
+                loadSettings();
+                startNewGame();
+                const status = e?.status ?? e?.response?.status;
+                if (status === 429) showMessage('今日注册已达上限', 'error');
+                else showMessage('同步失败', 'error');
+            }
+        } else {
+            saveAuth(key);
+            inputEl.value = key;
+            showMessage('已生成密钥并保存到本地', '');
+        }
+    });
+    document.getElementById('settingSyncBtn').addEventListener('click', async () => {
+        const key = document.getElementById('settingAuthKey').value.trim();
+        if (!key) {
+            saveAuth('');
+            showMessage('已清除本地密钥', '');
+            return;
+        }
+        if (PB_URL) {
+            try {
+                const pb = new PocketBase(PB_URL);
+                const list = await pb.collection(PB_WORDLE_COLLECTION).getList(1, 1, {
+                    filter: "auth = '" + escapeFilterValue(key) + "'"
+                });
+                const hasRecord = list.items && list.items.length > 0;
+                if (!hasRecord) {
+                    showMessage('请生成密钥', 'error');
+                    return;
+                }
+                saveAuth(key);
+                await syncWithPB();
+                loadStats();
+                loadSettings();
+                startNewGame();
+                showMessage('已同步云端', '');
+            } catch (e) {
+                loadStats();
+                loadSettings();
+                startNewGame();
+                const status = e?.status ?? e?.response?.status;
+                if (status !== 429) showMessage('同步失败', 'error');
+            }
+        } else {
+            saveAuth(key);
+            showMessage('已保存到本地（未配置 PB_URL 不同步云端）', '');
+        }
+    });
     document.getElementById('settingsModal').addEventListener('click', (e) => {
         if (e.target.id === 'settingsModal') {
             hideSettings();

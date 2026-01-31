@@ -22,8 +22,18 @@ let stats = {
     gamesWon: 0,
     currentStreak: 0,
     maxStreak: 0,
-    guessDistribution: [0, 0, 0, 0, 0] // 1-5次猜对的次数
+    guessDistribution: [0, 0, 0, 0, 0], // 1-5次猜对的次数
+    achievements: [] // 已解锁成就 id 列表
 };
+
+// 成就定义（检测在 updateStats 之后调用，此时 stats 已更新）
+const ACHIEVEMENTS = [
+    { id: 'firstTry', name: '一击即中', desc: '第一次就猜对' },
+    { id: 'fifthTry', name: '险中求胜', desc: '第5次才猜对' },
+    { id: 'streak3', name: '连对3天', desc: '连续猜对3天' },
+    { id: 'streak7', name: '连对7天', desc: '连续猜对7天' },
+    { id: 'streak30', name: '连对30天', desc: '连续猜对30天' }
+];
 
 // 加载统计数据
 function loadStats() {
@@ -54,6 +64,41 @@ function updateStats(won, attempts) {
         stats.currentStreak = 0;
     }
     saveStats();
+    checkAchievements(won, attempts);
+}
+
+// 检测并解锁成就
+function checkAchievements(won, attempts) {
+    if (!stats.achievements) stats.achievements = [];
+    const unlocked = new Set(stats.achievements);
+    let changed = false;
+
+    if (won && attempts === 1 && !unlocked.has('firstTry')) {
+        stats.achievements.push('firstTry');
+        unlocked.add('firstTry');
+        changed = true;
+    }
+    if (won && attempts === 5 && !unlocked.has('fifthTry')) {
+        stats.achievements.push('fifthTry');
+        unlocked.add('fifthTry');
+        changed = true;
+    }
+    if (stats.currentStreak >= 3 && !unlocked.has('streak3')) {
+        stats.achievements.push('streak3');
+        unlocked.add('streak3');
+        changed = true;
+    }
+    if (stats.currentStreak >= 7 && !unlocked.has('streak7')) {
+        stats.achievements.push('streak7');
+        unlocked.add('streak7');
+        changed = true;
+    }
+    if (stats.currentStreak >= 30 && !unlocked.has('streak30')) {
+        stats.achievements.push('streak30');
+        unlocked.add('streak30');
+        changed = true;
+    }
+    if (changed) saveStats();
 }
 
 // 显示统计弹窗
@@ -88,6 +133,24 @@ function showStats() {
             </div>
         `;
         container.appendChild(barDiv);
+    }
+    
+    // 成就墙
+    const wall = document.getElementById('achievementWall');
+    if (wall) {
+        const unlockedSet = new Set(stats.achievements || []);
+        wall.innerHTML = '';
+        ACHIEVEMENTS.forEach(a => {
+            const isUnlocked = unlockedSet.has(a.id);
+            const item = document.createElement('div');
+            item.className = 'achievement-item' + (isUnlocked ? ' unlocked' : ' locked');
+            item.title = a.desc;
+            item.innerHTML = `
+                <span class="achievement-icon">${isUnlocked ? '✓' : '○'}</span>
+                <span class="achievement-name">${a.name}</span>
+            `;
+            wall.appendChild(item);
+        });
     }
     
     document.getElementById('statsModal').classList.add('show');

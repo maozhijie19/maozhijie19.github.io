@@ -541,6 +541,49 @@ h1 {
     background: var(--correct);
 }
 
+.achievement-wall-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 10px;
+}
+
+.achievement-wall {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.achievement-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    transition: opacity 0.2s;
+}
+
+.achievement-item.unlocked {
+    background: var(--correct);
+    color: white;
+}
+
+.achievement-item.unlocked .achievement-icon {
+    font-weight: bold;
+}
+
+.achievement-item.locked {
+    background: var(--key-bg);
+    color: var(--text-secondary);
+    opacity: 0.7;
+}
+
+.achievement-item.locked .achievement-icon {
+    color: var(--text-secondary);
+}
+
 .bar-count {
     font-size: 0.8rem;
     font-weight: 600;

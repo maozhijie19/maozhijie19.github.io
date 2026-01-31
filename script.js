@@ -15,7 +15,7 @@ let idiomData = {}; // 成语数据 {word: {pinyin, derivation, common}}
 
 // 设置
 let settings = {
-    validateIdiom: false,     // 是否验证成语（默认关闭）
+    validateIdiom: true,      // 是否验证成语（默认开启，提示非成语）
     keyboardHighlight: true,  // 是否键盘高亮
     commonIdiomOnly: true     // 固定为简单模式（仅从常用成语中选词），开关已禁用
 };

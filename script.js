@@ -394,6 +394,9 @@ function attachEventListeners() {
     // 关闭弹窗按钮
     document.getElementById('modalClose').addEventListener('click', hideResult);
     
+    // 分享按钮
+    document.getElementById('shareBtn').addEventListener('click', shareResult);
+    
     // 点击遮罩关闭弹窗
     document.getElementById('resultModal').addEventListener('click', (e) => {
         if (e.target.id === 'resultModal') {
@@ -547,6 +550,229 @@ function submitGuess() {
             saveGameState();
         }, animationDelay);
     }
+}
+
+// 自动换行绘制文字，返回最终 Y 坐标
+function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+    const chars = text.split('');
+    let line = '';
+    let currentY = y;
+    let lineCount = 0;
+    
+    for (let i = 0; i < chars.length; i++) {
+        const testLine = line + chars[i];
+        const metrics = ctx.measureText(testLine);
+        
+        if (metrics.width > maxWidth && line.length > 0) {
+            ctx.fillText(line, x, currentY);
+            line = chars[i];
+            currentY += lineHeight;
+            lineCount++;
+        } else {
+            line = testLine;
+        }
+    }
+    if (line) {
+        ctx.fillText(line, x, currentY);
+        lineCount++;
+    }
+    
+    return currentY + lineHeight;
+}
+
+// 生成分享图片
+function generateShareImage() {
+    const won = guessedIdioms[guessedIdioms.length - 1] === targetIdiom;
+    const data = idiomData[targetIdiom] || {};
+    const hasDerivation = data.derivation && data.derivation !== '无' && data.derivation.trim() !== '';
+    
+    // 高分辨率倍数
+    const scale = 3;
+    
+    // Canvas 设置（逻辑尺寸）
+    const tileSize = 60;
+    const gap = 8;
+    const padding = 24;
+    const headerHeight = 70;
+    const cols = 4;
+    const rows = guessedIdioms.length;
+    
+    const contentWidth = cols * tileSize + (cols - 1) * gap;
+    const width = padding * 2 + contentWidth;
+    
+    // 先创建临时 canvas 测量实际文字高度
+    const tempCanvas = document.createElement('canvas');
+    const tempCtx = tempCanvas.getContext('2d');
+    
+    const lineHeight = 20;
+    let explanationHeight = 0;
+    let derivationHeight = 0;
+    
+    if (data.explanation) {
+        tempCtx.font = '13px -apple-system, BlinkMacSystemFont, sans-serif';
+        const lines = Math.ceil(tempCtx.measureText(data.explanation).width / contentWidth);
+        explanationHeight = 12 + lines * lineHeight + 8;
+    }
+    
+    if (hasDerivation) {
+        tempCtx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
+        const derivText = '出处：' + data.derivation;
+        const lines = Math.ceil(tempCtx.measureText(derivText).width / contentWidth);
+        derivationHeight = 12 + lines * lineHeight + 8;
+    }
+    
+    const answerHeight = 100;
+    const tilesHeight = rows * tileSize + (rows - 1) * gap;
+    const height = padding + headerHeight + tilesHeight + 20 + answerHeight + explanationHeight + derivationHeight + padding;
+    
+    const canvas = document.createElement('canvas');
+    canvas.width = width * scale;
+    canvas.height = height * scale;
+    const ctx = canvas.getContext('2d');
+    
+    // 缩放上下文
+    ctx.scale(scale, scale);
+    
+    // 背景色
+    const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    const bgPrimary = isDark ? '#0f172a' : '#f8fafc';
+    const bgSecondary = isDark ? '#1e293b' : '#ffffff';
+    const textPrimary = isDark ? '#f1f5f9' : '#1e293b';
+    const textSecondary = isDark ? '#94a3b8' : '#64748b';
+    
+    ctx.fillStyle = bgPrimary;
+    ctx.fillRect(0, 0, width, height);
+    
+    // 标题
+    ctx.fillStyle = textPrimary;
+    ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('成语Wordle', width / 2, padding + 24);
+    
+    // 副标题
+    ctx.font = '13px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.fillStyle = textSecondary;
+    ctx.fillText(`今日成语 ${todayDate}`, width / 2, padding + 46);
+    
+    // 颜色定义
+    const colors = {
+        correct: '#22c55e',
+        present: '#eab308',
+        absent: isDark ? '#475569' : '#94a3b8'
+    };
+    
+    // 绘制方块
+    const tilesStartY = padding + headerHeight;
+    for (let row = 0; row < rows; row++) {
+        const guess = guessedIdioms[row];
+        const guessChars = guess.split('');
+        const targetChars = targetIdiom.split('');
+        const charStatus = getCharStatus(guessChars, targetChars);
+        
+        for (let col = 0; col < 4; col++) {
+            const x = padding + col * (tileSize + gap);
+            const y = tilesStartY + row * (tileSize + gap);
+            
+            // 方块背景
+            ctx.fillStyle = colors[charStatus[col]];
+            ctx.beginPath();
+            ctx.roundRect(x, y, tileSize, tileSize, 8);
+            ctx.fill();
+            
+            // 文字
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 26px -apple-system, BlinkMacSystemFont, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(guessChars[col], x + tileSize / 2, y + tileSize / 2);
+        }
+    }
+    
+    // 答案区域
+    let currentY = tilesStartY + tilesHeight + 20;
+    
+    // 结果标题（恭喜/遗憾）
+    ctx.fillStyle = won ? '#22c55e' : '#ef4444';
+    ctx.font = 'bold 16px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'top';
+    ctx.fillText(won ? '恭喜你猜对了！' : '很遗憾，没猜出来', width / 2, currentY);
+    currentY += 28;
+    
+    // 成语（普通文字颜色）
+    ctx.fillStyle = textPrimary;
+    ctx.font = 'bold 28px -apple-system, BlinkMacSystemFont, sans-serif';
+    ctx.fillText(targetIdiom, width / 2, currentY);
+    currentY += 38;
+    
+    // 拼音
+    if (data.pinyin) {
+        ctx.fillStyle = textSecondary;
+        ctx.font = '14px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.fillText(data.pinyin, width / 2, currentY);
+        currentY += 28;
+    }
+    
+    // 解释文字
+    if (data.explanation) {
+        currentY += 12;
+        
+        ctx.fillStyle = textPrimary;
+        ctx.font = '13px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.textAlign = 'left';
+        const lineHeight = 20;
+        currentY = wrapText(ctx, data.explanation, padding, currentY, contentWidth, lineHeight);
+    }
+    
+    // 来源文字
+    if (hasDerivation) {
+        currentY += 4;
+        
+        ctx.fillStyle = textSecondary;
+        ctx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.textAlign = 'left';
+        const lineHeight = 20;
+        currentY = wrapText(ctx, '出处：' + data.derivation, padding, currentY, contentWidth, lineHeight);
+    }
+    
+    return canvas;
+}
+
+// 分享/导出图片
+async function shareResult() {
+    const canvas = generateShareImage();
+    
+    // 转换为 Blob
+    canvas.toBlob(async (blob) => {
+        const file = new File([blob], `成语Wordle_${todayDate}.png`, { type: 'image/png' });
+        
+        // 尝试使用 Web Share API（移动端）
+        if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+            try {
+                await navigator.share({
+                    files: [file],
+                    title: '成语Wordle'
+                });
+                return;
+            } catch (err) {
+                if (err.name !== 'AbortError') {
+                    console.log('分享失败:', err);
+                }
+            }
+        }
+        
+        // 降级到下载图片
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `成语Wordle_${todayDate}.png`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        
+        showMessage('图片已保存！', 'success');
+    }, 'image/png');
 }
 
 // 显示结果弹窗

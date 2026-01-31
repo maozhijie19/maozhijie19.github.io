@@ -398,28 +398,45 @@ h1 {
     padding: 10px 12px;
     background: var(--bg-primary);
     border-radius: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     border-left: 3px solid var(--present);
 }
 
-.modal-close {
-    width: 100%;
+.modal-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.modal-btn {
+    flex: 1;
     padding: 12px;
-    background: var(--action-key);
-    color: white;
     border: none;
     border-radius: 8px;
-    font-size: 1rem;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.15s ease;
 }
 
-.modal-close:hover {
-    background: var(--action-key-hover);
+.modal-share {
+    background: var(--correct);
+    color: white;
 }
 
-.modal-close:active {
+.modal-share:hover {
+    opacity: 0.9;
+}
+
+.modal-close-btn {
+    background: var(--key-bg);
+    color: var(--text-primary);
+}
+
+.modal-close-btn:hover {
+    background: var(--key-hover);
+}
+
+.modal-btn:active {
     transform: scale(0.98);
 }
 
@@ -431,6 +448,15 @@ h1 {
 .settings-modal .modal-header {
     color: var(--text-primary);
     margin-bottom: 20px;
+}
+
+.settings-modal .modal-btn {
+    background: var(--action-key);
+    color: white;
+}
+
+.settings-modal .modal-btn:hover {
+    background: var(--action-key-hover);
 }
 
 .settings-list {

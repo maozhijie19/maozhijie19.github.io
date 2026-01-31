@@ -11,7 +11,7 @@ let guessedIdioms = [];
 let keyboardState = {};
 let keyboardChars = []; // 今日键盘字符（28 个：8+8+6+6）
 let todayDate = ''; // 今日日期
-let idiomData = {}; // 成语数据 {word: {explanation, pinyin, derivation, common}}
+let idiomData = {}; // 成语数据 {word: {pinyin, derivation, common}}
 
 // 设置
 let settings = {
@@ -549,7 +549,7 @@ function dateToDays(dateStr) {
 }
 
 // 成语数据缓存版本（CSV 更新时改为 2、3… 以失效旧缓存）
-const IDIOM_CACHE_VERSION = 2;
+const IDIOM_CACHE_VERSION = 3;
 const IDIOM_DB_NAME = 'idiomWordleDB';
 const IDIOM_STORE_NAME = 'cache';
 const IDIOM_CACHE_KEY = 'idiomData';
@@ -616,28 +616,26 @@ async function parseIdiomCSVStream(response) {
             const trimmed = line.trim();
             if (!trimmed) continue;
             const parts = trimmed.split(',');
-            if (parts.length < 4) continue;
+            if (parts.length < 3) continue;
             const word = parts[0] || '';
             if (word.length !== 4) continue;
             const pinyin = parts[1] || '';
-            const explanation = parts[2] || '';
-            const derivation = parts[3] || '';
-            const common = parts.length >= 5 && (parts[4] || '').trim() === '1';
+            const derivation = parts[2] || '';
+            const common = parts.length >= 4 && (parts[3] || '').trim() === '1';
             list.push(word);
-            data[word] = { explanation, pinyin, derivation, common };
+            data[word] = { pinyin, derivation, common };
         }
     }
     if (buffer.trim()) {
         const parts = buffer.trim().split(',');
-        if (parts.length >= 4) {
+        if (parts.length >= 3) {
             const word = (parts[0] || '').trim();
             if (word.length === 4) {
-                const common = parts.length >= 5 && (parts[4] || '').trim() === '1';
+                const common = parts.length >= 4 && (parts[3] || '').trim() === '1';
                 list.push(word);
                 data[word] = {
-                    explanation: parts[2] || '',
                     pinyin: parts[1] || '',
-                    derivation: parts[3] || '',
+                    derivation: parts[2] || '',
                     common: !!common
                 };
             }
@@ -1187,11 +1185,8 @@ function generateShareImage() {
     let explanationHeight = 0;
     let derivationHeight = 0;
     
-    if (data.explanation) {
-        tempCtx.font = '13px -apple-system, BlinkMacSystemFont, sans-serif';
-        const lines = Math.ceil(tempCtx.measureText(data.explanation).width / contentWidth);
-        explanationHeight = 12 + lines * lineHeight + 8;
-    }
+    // 不再显示解释
+    explanationHeight = 0;
     
     if (hasDerivation) {
         tempCtx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
@@ -1326,17 +1321,6 @@ function generateShareImage() {
         currentY += 28;
     }
     
-    // 解释文字
-    if (data.explanation) {
-        currentY += 12;
-        
-        ctx.fillStyle = textPrimary;
-        ctx.font = '13px -apple-system, BlinkMacSystemFont, sans-serif';
-        ctx.textAlign = 'left';
-        const lineHeight = 20;
-        currentY = wrapText(ctx, data.explanation, padding, currentY, contentWidth, lineHeight);
-    }
-    
     // 来源文字
     if (hasDerivation) {
         currentY += 16;
@@ -1399,7 +1383,7 @@ function showResult(won = true) {
     
     document.getElementById('resultWord').textContent = targetIdiom;
     document.getElementById('resultPinyin').textContent = data.pinyin;
-    document.getElementById('resultExplanation').textContent = data.explanation;
+    document.getElementById('resultExplanation').style.display = 'none';
     
     // 显示来源（如果不是"无"）
     const derivationEl = document.getElementById('resultDerivation');

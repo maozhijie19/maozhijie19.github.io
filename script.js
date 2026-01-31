@@ -541,7 +541,9 @@ function dateToDays(dateStr) {
 }
 
 // 成语数据缓存版本（CSV 更新时改为 2、3… 以失效旧缓存）
-const IDIOM_CACHE_VERSION = 4;
+const IDIOM_CACHE_VERSION = 5;
+// 简单模式固定只加载小 CSV，加快首屏
+const IDIOM_CSV_URL = 'idiom_simple.csv';
 const IDIOM_DB_NAME = 'idiomWordleDB';
 const IDIOM_STORE_NAME = 'cache';
 const IDIOM_CACHE_KEY = 'idiomData';
@@ -584,6 +586,23 @@ function setIdiomCache(payload) {
     });
 }
 
+// 解析单行 CSV（derivation 内可有逗号，最后一列为 常用）
+function parseIdiomLine(trimmed) {
+    if (!trimmed) return null;
+    const lastComma = trimmed.lastIndexOf(',');
+    if (lastComma === -1) return null;
+    const mark = trimmed.slice(lastComma + 1).trim();
+    const rest = trimmed.slice(0, lastComma);
+    const idx1 = rest.indexOf(',');
+    if (idx1 === -1) return null;
+    const idx2 = rest.indexOf(',', idx1 + 1);
+    const word = rest.slice(0, idx1).trim();
+    if (word.length !== 4) return null;
+    const pinyin = (idx2 === -1 ? rest.slice(idx1 + 1) : rest.slice(idx1 + 1, idx2)).trim();
+    const derivation = (idx2 === -1 ? '' : rest.slice(idx2 + 1)).trim();
+    return { word, pinyin, derivation, mark: mark || '0' };
+}
+
 // 流式解析 CSV，避免一次性把整文件读入内存
 async function parseIdiomCSVStream(response) {
     const reader = response.body.getReader();
@@ -605,34 +624,20 @@ async function parseIdiomCSVStream(response) {
                 isHeader = false;
                 continue;
             }
-            const trimmed = line.trim();
-            if (!trimmed) continue;
-            const parts = trimmed.split(',');
-            if (parts.length < 3) continue;
-            const word = parts[0] || '';
-            if (word.length !== 4) continue;
-            const pinyin = parts[1] || '';
-            const derivation = parts[2] || '';
-            const mark = (parts.length >= 4 && (parts[3] || '').trim()) || '0';
+            const row = parseIdiomLine(line.trim());
+            if (!row) continue;
+            const { word, pinyin, derivation, mark } = row;
             list.push(word);
             data[word] = { pinyin, derivation, common: mark === '1' || mark === '2', simple: mark === '2' };
         }
     }
     if (buffer.trim()) {
-        const parts = buffer.trim().split(',');
-            if (parts.length >= 3) {
-                const word = (parts[0] || '').trim();
-                if (word.length === 4) {
-                    const mark = (parts.length >= 4 && (parts[3] || '').trim()) || '0';
-                    list.push(word);
-                    data[word] = {
-                        pinyin: parts[1] || '',
-                        derivation: parts[2] || '',
-                        common: mark === '1' || mark === '2',
-                        simple: mark === '2'
-                    };
-                }
-            }
+        const row = parseIdiomLine(buffer.trim());
+        if (row) {
+            const { word, pinyin, derivation, mark } = row;
+            list.push(word);
+            data[word] = { pinyin, derivation, common: mark === '1' || mark === '2', simple: mark === '2' };
+        }
     }
     return { idiomList: list, idiomData: data };
 }
@@ -652,7 +657,7 @@ async function loadIdioms() {
             return;
         }
 
-        const response = await fetch('idiom.csv');
+        const response = await fetch(IDIOM_CSV_URL);
         if (!response.ok) throw new Error(response.statusText);
         const { idiomList: list, idiomData: data } = await parseIdiomCSVStream(response);
         idiomList.length = 0;

@@ -412,6 +412,17 @@ h1 {
     border-left: 3px solid var(--present);
 }
 
+.modal-achievement-unlock {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--correct);
+    padding: 10px 12px;
+    background: rgba(34, 197, 94, 0.12);
+    border-radius: 8px;
+    margin-bottom: 16px;
+    border-left: 3px solid var(--correct);
+}
+
 .modal-buttons {
     display: flex;
     gap: 8px;

@@ -67,38 +67,42 @@ function updateStats(won, attempts) {
     checkAchievements(won, attempts);
 }
 
+// 本局新解锁的成就名称（用于结果弹窗提示）
+let lastUnlockedAchievementNames = [];
+
 // 检测并解锁成就
 function checkAchievements(won, attempts) {
+    lastUnlockedAchievementNames = [];
     if (!stats.achievements) stats.achievements = [];
     const unlocked = new Set(stats.achievements);
-    let changed = false;
+    const nameById = { firstTry: '一击即中', fifthTry: '险中求胜', streak3: '连对3天', streak7: '连对7天', streak30: '连对30天' };
 
     if (won && attempts === 1 && !unlocked.has('firstTry')) {
         stats.achievements.push('firstTry');
         unlocked.add('firstTry');
-        changed = true;
+        lastUnlockedAchievementNames.push(nameById.firstTry);
     }
     if (won && attempts === 5 && !unlocked.has('fifthTry')) {
         stats.achievements.push('fifthTry');
         unlocked.add('fifthTry');
-        changed = true;
+        lastUnlockedAchievementNames.push(nameById.fifthTry);
     }
     if (stats.currentStreak >= 3 && !unlocked.has('streak3')) {
         stats.achievements.push('streak3');
         unlocked.add('streak3');
-        changed = true;
+        lastUnlockedAchievementNames.push(nameById.streak3);
     }
     if (stats.currentStreak >= 7 && !unlocked.has('streak7')) {
         stats.achievements.push('streak7');
         unlocked.add('streak7');
-        changed = true;
+        lastUnlockedAchievementNames.push(nameById.streak7);
     }
     if (stats.currentStreak >= 30 && !unlocked.has('streak30')) {
         stats.achievements.push('streak30');
         unlocked.add('streak30');
-        changed = true;
+        lastUnlockedAchievementNames.push(nameById.streak30);
     }
-    if (changed) saveStats();
+    if (lastUnlockedAchievementNames.length) saveStats();
 }
 
 // 显示统计弹窗
@@ -978,6 +982,15 @@ function showResult(won = true) {
         derivationEl.style.display = 'block';
     } else {
         derivationEl.style.display = 'none';
+    }
+    
+    // 本局新解锁成就提示
+    const unlockEl = document.getElementById('resultAchievementUnlock');
+    if (lastUnlockedAchievementNames.length > 0) {
+        unlockEl.textContent = '成就解锁：' + lastUnlockedAchievementNames.join('、');
+        unlockEl.style.display = 'block';
+    } else {
+        unlockEl.style.display = 'none';
     }
     
     document.getElementById('resultModal').classList.add('show');

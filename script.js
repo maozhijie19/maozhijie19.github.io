@@ -1188,7 +1188,7 @@ function generateShareImage() {
     
     if (hasDerivation) {
         tempCtx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
-        const derivText = '出处：' + data.derivation;
+        const derivText = data.derivation;
         const lines = Math.ceil(tempCtx.measureText(derivText).width / contentWidth);
         derivationHeight = 12 + lines * lineHeight + 8;
     }
@@ -1327,7 +1327,7 @@ function generateShareImage() {
         ctx.font = '12px Georgia, "Songti SC", "SimSun", serif';
         ctx.textAlign = 'left';
         const lineHeight = 20;
-        currentY = wrapText(ctx, '出处：' + data.derivation, padding, currentY, contentWidth, lineHeight);
+        currentY = wrapText(ctx, data.derivation, padding, currentY, contentWidth, lineHeight);
     }
     
     return canvas;
@@ -1386,7 +1386,7 @@ function showResult(won = true) {
     // 显示来源（如果不是"无"）
     const derivationEl = document.getElementById('resultDerivation');
     if (data.derivation && data.derivation !== '无' && data.derivation.trim() !== '') {
-        derivationEl.textContent = '出处：' + data.derivation;
+        derivationEl.textContent = data.derivation;
         derivationEl.style.display = 'block';
     } else {
         derivationEl.style.display = 'none';

@@ -9,7 +9,7 @@ let gameOver = false;
 let idiomList = [];
 let guessedIdioms = [];
 let keyboardState = {};
-let keyboardChars = []; // 今日键盘字符（28 个：8+8+6+6）
+let keyboardChars = []; // 今日键盘字符（20 个：8+6+6）
 let todayDate = ''; // 今日日期
 let idiomData = {}; // 成语数据 {word: {pinyin, derivation, common}}
 
@@ -725,14 +725,14 @@ function generateTodayKeyboard(seed) {
     ];
     
     for (const { list, maxIdioms } of priorities) {
-        if (chars.size >= 28) break;
+        if (chars.size >= 20) break;
         
         // 打乱该优先级的成语
         const shuffled = shuffleArray(list, seed);
         
         let addedCount = 0;
         for (const idiom of shuffled) {
-            if (chars.size >= 28) break;
+            if (chars.size >= 20) break;
             if (addedCount >= maxIdioms) break;
             
             const oldSize = chars.size;
@@ -745,8 +745,8 @@ function generateTodayKeyboard(seed) {
         }
     }
     
-    // 转换为数组并限制为28个（8+8+6+6）
-    const charsArray = Array.from(chars).slice(0, 28);
+    // 转换为数组并限制为20个（8+6+6）
+    const charsArray = Array.from(chars).slice(0, 20);
     
     // 使用伪随机打乱顺序（但保证同一天顺序一致）
     keyboardChars = shuffleArray(charsArray, seed + 999);
@@ -791,23 +791,15 @@ function createGameBoard() {
     }
 }
 
-// 创建键盘（基于今日字符：第一行上多 8 字，共 28 字 8+8+6+6）
+// 创建键盘（基于今日字符：共 20 字 8+6+6）
 function createKeyboard() {
     const keyboard = document.getElementById('keyboard');
     keyboard.innerHTML = '';
     
-    // 第零行：8个字（第一行上面新增）
-    const row0 = document.createElement('div');
-    row0.classList.add('keyboard-row');
-    for (let i = 0; i < 8 && i < keyboardChars.length; i++) {
-        row0.appendChild(createKeyButton(keyboardChars[i]));
-    }
-    keyboard.appendChild(row0);
-    
     // 第一行：8个字
     const row1 = document.createElement('div');
     row1.classList.add('keyboard-row');
-    for (let i = 8; i < 16 && i < keyboardChars.length; i++) {
+    for (let i = 0; i < 8 && i < keyboardChars.length; i++) {
         row1.appendChild(createKeyButton(keyboardChars[i]));
     }
     keyboard.appendChild(row1);
@@ -815,7 +807,7 @@ function createKeyboard() {
     // 第二行：6个字 + 删除按钮
     const row2 = document.createElement('div');
     row2.classList.add('keyboard-row');
-    for (let i = 16; i < 22 && i < keyboardChars.length; i++) {
+    for (let i = 8; i < 14 && i < keyboardChars.length; i++) {
         row2.appendChild(createKeyButton(keyboardChars[i]));
     }
     row2.appendChild(createActionButton('删除', 'delete'));
@@ -824,7 +816,7 @@ function createKeyboard() {
     // 第三行：6个字 + 提交按钮
     const row3 = document.createElement('div');
     row3.classList.add('keyboard-row');
-    for (let i = 22; i < 28 && i < keyboardChars.length; i++) {
+    for (let i = 14; i < 20 && i < keyboardChars.length; i++) {
         row3.appendChild(createKeyButton(keyboardChars[i]));
     }
     row3.appendChild(createActionButton('提交', 'submit'));

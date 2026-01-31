@@ -9,7 +9,7 @@ let gameOver = false;
 let idiomList = [];
 let guessedIdioms = [];
 let keyboardState = {};
-let keyboardChars = []; // 今日键盘字符（20 个：8+6+6）
+let keyboardChars = []; // 今日键盘字符（20 个：6+6+6+2）
 let todayDate = ''; // 今日日期
 let idiomData = {}; // 成语数据 {word: {pinyin, derivation, common}}
 
@@ -745,7 +745,7 @@ function generateTodayKeyboard(seed) {
         }
     }
     
-    // 转换为数组并限制为20个（8+6+6）
+    // 转换为数组并限制为20个（6+6+6+2）
     const charsArray = Array.from(chars).slice(0, 20);
     
     // 使用伪随机打乱顺序（但保证同一天顺序一致）
@@ -791,36 +791,47 @@ function createGameBoard() {
     }
 }
 
-// 创建键盘（基于今日字符：共 20 字 8+6+6）
+// 创建键盘（基于今日字符：共 20 字 6+6+6+2，第四行 2 字 + 2 个长按键）
 function createKeyboard() {
     const keyboard = document.getElementById('keyboard');
     keyboard.innerHTML = '';
     
-    // 第一行：8个字
+    // 第一行：6个字
     const row1 = document.createElement('div');
     row1.classList.add('keyboard-row');
-    for (let i = 0; i < 8 && i < keyboardChars.length; i++) {
+    for (let i = 0; i < 6 && i < keyboardChars.length; i++) {
         row1.appendChild(createKeyButton(keyboardChars[i]));
     }
     keyboard.appendChild(row1);
     
-    // 第二行：6个字 + 删除按钮
+    // 第二行：6个字
     const row2 = document.createElement('div');
     row2.classList.add('keyboard-row');
-    for (let i = 8; i < 14 && i < keyboardChars.length; i++) {
+    for (let i = 6; i < 12 && i < keyboardChars.length; i++) {
         row2.appendChild(createKeyButton(keyboardChars[i]));
     }
-    row2.appendChild(createActionButton('删除', 'delete'));
     keyboard.appendChild(row2);
     
-    // 第三行：6个字 + 提交按钮
+    // 第三行：6个字
     const row3 = document.createElement('div');
     row3.classList.add('keyboard-row');
-    for (let i = 14; i < 20 && i < keyboardChars.length; i++) {
+    for (let i = 12; i < 18 && i < keyboardChars.length; i++) {
         row3.appendChild(createKeyButton(keyboardChars[i]));
     }
-    row3.appendChild(createActionButton('提交', 'submit'));
     keyboard.appendChild(row3);
+    
+    // 第四行：2个字（包在一组内）+ 删除 + 提交；每操作键宽度 = 2字键+间距
+    const row4 = document.createElement('div');
+    row4.classList.add('keyboard-row', 'keyboard-row-last');
+    const charGroup = document.createElement('div');
+    charGroup.classList.add('keyboard-char-group');
+    for (let i = 18; i < 20 && i < keyboardChars.length; i++) {
+        charGroup.appendChild(createKeyButton(keyboardChars[i]));
+    }
+    row4.appendChild(charGroup);
+    row4.appendChild(createActionButton('删除', 'delete'));
+    row4.appendChild(createActionButton('提交', 'submit'));
+    keyboard.appendChild(row4);
 }
 
 // 创建单个按键

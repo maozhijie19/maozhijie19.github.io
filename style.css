@@ -76,8 +76,11 @@ header {
     text-align: center;
     padding-top: 28px;
     padding-bottom: 20px;
+    padding-left: 88px;
+    padding-right: 88px;
     border-bottom: 1px solid var(--border-color);
     position: relative;
+    box-sizing: border-box;
 }
 
 .stats-btn,
@@ -320,22 +323,29 @@ header {
     color: white;
 }
 
-/* 消息提示 */
+/* 消息提示（顶部悬浮） */
 .message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-24px);
+    z-index: 1000;
     text-align: center;
     min-height: 48px;
     font-size: 1rem;
     font-weight: 600;
     padding: 12px 20px;
     border-radius: 12px;
-    transition: all 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s ease;
     opacity: 0;
-    transform: translateY(-10px);
+    pointer-events: none;
+    max-width: calc(100vw - 32px);
+    box-sizing: border-box;
 }
 
 .message.show {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateX(-50%) translateY(0);
     background: var(--bg-secondary);
     box-shadow: var(--shadow-md);
     color: var(--text-primary);
@@ -795,7 +805,48 @@ header {
     left: 22px;
 }
 
-/* 响应式设计 */
+/* 响应式设计：移动端头部改为「标题在上、按钮在下」避免遮挡 */
+@media (max-width: 480px) {
+    header {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-top: 20px;
+        padding-bottom: 56px;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    
+    .title-tiles {
+        margin-bottom: 4px;
+    }
+    
+    .subtitle {
+        margin-top: 10px;
+    }
+    
+    .stats-btn,
+    .help-btn,
+    .hint-btn,
+    .settings-btn {
+        top: auto;
+        bottom: 12px;
+        transform: none;
+    }
+    
+    .stats-btn { left: 16px; }
+    .help-btn { left: 60px; }
+    .hint-btn { right: 60px; }
+    .settings-btn { right: 16px; }
+    
+    .stats-btn:hover,
+    .help-btn:hover,
+    .hint-btn:hover,
+    .settings-btn:hover {
+        transform: scale(1.05);
+    }
+}
+
 @media (max-width: 420px) {
     .container {
         padding: 0 8px;
@@ -838,6 +889,11 @@ header {
 
 /* 更小屏幕 */
 @media (max-width: 360px) {
+    .stats-btn { left: 12px; }
+    .help-btn { left: 52px; }
+    .hint-btn { right: 52px; }
+    .settings-btn { right: 12px; }
+    
     .tile {
         width: 42px;
         height: 42px;
@@ -845,9 +901,9 @@ header {
     }
     
     .title-tile {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
+        width: 34px;
+        height: 34px;
+        font-size: 0.95rem;
     }
     
     .row {

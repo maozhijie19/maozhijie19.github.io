@@ -1,0 +1,361 @@
+/* 基础样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --bg-primary: #f8fafc;
+    --bg-secondary: #ffffff;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --tile-bg: #ffffff;
+    --tile-border: #cbd5e1;
+    --tile-filled-border: #94a3b8;
+    --correct: #22c55e;
+    --present: #eab308;
+    --absent: #94a3b8;
+    --key-bg: #f1f5f9;
+    --key-text: #334155;
+    --key-hover: #e2e8f0;
+    --action-key: #3b82f6;
+    --action-key-hover: #2563eb;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* 深色主题 */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg-primary: #0f172a;
+        --bg-secondary: #1e293b;
+        --text-primary: #f1f5f9;
+        --text-secondary: #94a3b8;
+        --border-color: #334155;
+        --tile-bg: #1e293b;
+        --tile-border: #475569;
+        --tile-filled-border: #64748b;
+        --correct: #22c55e;
+        --present: #eab308;
+        --absent: #475569;
+        --key-bg: #334155;
+        --key-text: #e2e8f0;
+        --key-hover: #475569;
+        --action-key: #3b82f6;
+        --action-key-hover: #60a5fa;
+        --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+        --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    }
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container {
+    max-width: 420px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* 头部 */
+header {
+    text-align: center;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+h1 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+}
+
+.subtitle {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: 6px;
+    font-weight: 500;
+}
+
+/* 游戏板 */
+.game-board {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    align-items: center;
+}
+
+.row {
+    display: flex;
+    gap: 6px;
+}
+
+.tile {
+    width: 52px;
+    height: 52px;
+    border: 2px solid var(--tile-border);
+    background: var(--tile-bg);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    font-weight: 700;
+    transition: all 0.15s ease;
+    box-shadow: var(--shadow-sm);
+}
+
+.tile.filled {
+    border-color: var(--tile-filled-border);
+    transform: scale(1.02);
+}
+
+.tile.correct {
+    background: var(--correct);
+    border-color: var(--correct);
+    color: white;
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+}
+
+.tile.present {
+    background: var(--present);
+    border-color: var(--present);
+    color: white;
+    box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4);
+}
+
+.tile.absent {
+    background: var(--absent);
+    border-color: var(--absent);
+    color: white;
+}
+
+/* 翻转动画 */
+.tile.flip {
+    animation: flip 0.5s ease forwards;
+}
+
+@keyframes flip {
+    0% { transform: perspective(400px) rotateX(0); }
+    50% { transform: perspective(400px) rotateX(-90deg); }
+    100% { transform: perspective(400px) rotateX(0); }
+}
+
+/* 键盘 */
+.keyboard {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 12px;
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.keyboard-row {
+    display: flex;
+    gap: 4px;
+    justify-content: center;
+}
+
+.key {
+    width: 48px;
+    height: 36px;
+    background: var(--key-bg);
+    color: var(--key-text);
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.12s ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.key:hover {
+    background: var(--key-hover);
+    transform: scale(1.05);
+}
+
+.key:active {
+    transform: scale(0.95);
+}
+
+.key.action-key {
+    width: 100px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: var(--action-key);
+    color: white;
+}
+
+.key.action-key:hover {
+    background: var(--action-key-hover);
+}
+
+.key.action-key.delete {
+    background: #ef4444;
+}
+
+.key.action-key.delete:hover {
+    background: #dc2626;
+}
+
+.key.correct {
+    background: var(--correct);
+    color: white;
+}
+
+.key.present {
+    background: var(--present);
+    color: white;
+}
+
+.key.absent {
+    background: var(--absent);
+    color: white;
+}
+
+/* 消息提示 */
+.message {
+    text-align: center;
+    min-height: 48px;
+    font-size: 1rem;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.message.show {
+    opacity: 1;
+    transform: translateY(0);
+    background: var(--bg-secondary);
+    box-shadow: var(--shadow-md);
+    color: var(--text-primary);
+}
+
+.message.error {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: white;
+}
+
+.message.success {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+}
+
+/* 抖动动画 */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+    20%, 40%, 60%, 80% { transform: translateX(4px); }
+}
+
+.row.shake {
+    animation: shake 0.4s ease;
+}
+
+/* 弹出动画 */
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+.tile.pop {
+    animation: pop 0.1s ease;
+}
+
+/* 响应式设计 */
+@media (max-width: 420px) {
+    .container {
+        padding: 0 8px;
+    }
+    
+    .tile {
+        width: 48px;
+        height: 48px;
+        font-size: 1.3rem;
+        border-radius: 6px;
+    }
+    
+    .key {
+        width: 38px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
+    
+    .key.action-key {
+        width: 80px;
+        font-size: 0.65rem;
+    }
+    
+    h1 {
+        font-size: 1.75rem;
+    }
+    
+    .keyboard {
+        padding: 10px;
+        gap: 3px;
+    }
+    
+    .keyboard-row {
+        gap: 3px;
+    }
+}
+
+/* 更小屏幕 */
+@media (max-width: 360px) {
+    .tile {
+        width: 42px;
+        height: 42px;
+        font-size: 1.1rem;
+    }
+    
+    .row {
+        gap: 4px;
+    }
+    
+    .key {
+        width: 34px;
+        height: 28px;
+        font-size: 0.75rem;
+        border-radius: 5px;
+    }
+    
+    .key.action-key {
+        width: 72px;
+        font-size: 0.6rem;
+    }
+    
+    .keyboard-row {
+        gap: 2px;
+    }
+    
+    .keyboard {
+        padding: 8px;
+        gap: 2px;
+    }
+}

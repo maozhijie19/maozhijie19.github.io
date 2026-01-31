@@ -25,14 +25,14 @@ let stats = {
     gamesWon: 0,
     currentStreak: 0,
     maxStreak: 0,
-    guessDistribution: [0, 0, 0, 0, 0], // 1-5次猜对的次数
+    guessDistribution: [0, 0, 0, 0, 0, 0], // 1-6次猜对的次数
     achievements: [] // 已解锁成就 id 列表
 };
 
 // 成就定义（检测在 updateStats 之后调用，此时 stats 已更新）
 const ACHIEVEMENTS = [
     { id: 'firstTry', name: '一击即中', desc: '第一次就猜对' },
-    { id: 'fifthTry', name: '险中求胜', desc: '第5次才猜对' },
+    { id: 'sixthTry', name: '险中求胜', desc: '第6次才猜对' },
     { id: 'streak3', name: '连对3天', desc: '连续猜对3天' },
     { id: 'streak7', name: '连对7天', desc: '连续猜对7天' },
     { id: 'streak30', name: '连对30天', desc: '连续猜对30天' }
@@ -154,13 +154,13 @@ function normalizeStats() {
             gamesWon: 0,
             currentStreak: 0,
             maxStreak: 0,
-            guessDistribution: [0, 0, 0, 0, 0],
+            guessDistribution: [0, 0, 0, 0, 0, 0],
             achievements: []
         };
         return;
     }
-    if (!Array.isArray(stats.guessDistribution) || stats.guessDistribution.length !== 5) {
-        stats.guessDistribution = [0, 0, 0, 0, 0];
+    if (!Array.isArray(stats.guessDistribution) || stats.guessDistribution.length !== 6) {
+        stats.guessDistribution = [0, 0, 0, 0, 0, 0];
     }
     if (!Array.isArray(stats.achievements)) stats.achievements = [];
     if (typeof stats.totalGames !== 'number') stats.totalGames = 0;
@@ -197,7 +197,7 @@ function updateStats(won, attempts) {
         stats.gamesWon++;
         stats.currentStreak++;
         stats.maxStreak = Math.max(stats.maxStreak, stats.currentStreak);
-        if (attempts >= 1 && attempts <= 5) stats.guessDistribution[attempts - 1]++;
+        if (attempts >= 1 && attempts <= 6) stats.guessDistribution[attempts - 1]++;
     } else {
         stats.currentStreak = 0;
     }
@@ -213,17 +213,17 @@ function checkAchievements(won, attempts) {
     lastUnlockedAchievementNames = [];
     if (!stats.achievements) stats.achievements = [];
     const unlocked = new Set(stats.achievements);
-    const nameById = { firstTry: '一击即中', fifthTry: '险中求胜', streak3: '连对3天', streak7: '连对7天', streak30: '连对30天' };
+    const nameById = { firstTry: '一击即中', sixthTry: '险中求胜', streak3: '连对3天', streak7: '连对7天', streak30: '连对30天' };
 
     if (won && attempts === 1 && !unlocked.has('firstTry')) {
         stats.achievements.push('firstTry');
         unlocked.add('firstTry');
         lastUnlockedAchievementNames.push(nameById.firstTry);
     }
-    if (won && attempts === 5 && !unlocked.has('fifthTry')) {
-        stats.achievements.push('fifthTry');
-        unlocked.add('fifthTry');
-        lastUnlockedAchievementNames.push(nameById.fifthTry);
+    if (won && attempts === 6 && !unlocked.has('sixthTry')) {
+        stats.achievements.push('sixthTry');
+        unlocked.add('sixthTry');
+        lastUnlockedAchievementNames.push(nameById.sixthTry);
     }
     if (stats.currentStreak >= 3 && !unlocked.has('streak3')) {
         stats.achievements.push('streak3');
@@ -259,7 +259,7 @@ function showStats() {
     const container = document.getElementById('distributionBars');
     container.innerHTML = '';
     
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 6; i++) {
         const count = stats.guessDistribution[i];
         const percentage = (count / maxCount) * 100;
         const isCurrent = gameOver && guessedIdioms.length === i + 1 && guessedIdioms[guessedIdioms.length - 1] === targetIdiom;
@@ -733,7 +733,7 @@ function createGameBoard() {
     const gameBoard = document.getElementById('gameBoard');
     gameBoard.innerHTML = '';
     
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < 6; i++) {
         const row = document.createElement('div');
         row.classList.add('row');
         row.dataset.row = i;
@@ -1062,7 +1062,7 @@ function submitGuess() {
             saveGameState();
             showResult(true);
         }, animationDelay);
-    } else if (currentRow === 4) {
+    } else if (currentRow === 5) {
         gameOver = true;
         updateStats(false, 0);
         setTimeout(() => {

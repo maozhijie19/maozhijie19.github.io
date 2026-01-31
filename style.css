@@ -820,12 +820,24 @@ header {
 .setting-item-cloud input[type="text"],
 .setting-item-cloud input[type="password"],
 .setting-item-cloud textarea {
+    -webkit-appearance: none;
+    appearance: none;
     padding: 8px 12px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    font-size: 0.95rem;
+    font-size: 16px; /* ≥16px 避免 iOS 聚焦时自动放大 */
+    font-family: inherit;
     background: var(--bg-secondary);
     color: var(--text-primary);
+    min-height: 44px; /* iOS 推荐最小触控高度 */
+    box-shadow: none;
+}
+.setting-item-cloud input[type="text"]:focus,
+.setting-item-cloud input[type="password"]:focus,
+.setting-item-cloud textarea:focus {
+    outline: none;
+    border-color: var(--present);
+    box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.2);
 }
 
 .setting-item-cloud textarea {

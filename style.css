@@ -563,6 +563,10 @@ header {
 }
 
 /* 设置弹窗 */
+#settingsModal {
+    z-index: 1100;
+}
+
 .settings-modal {
     max-width: 320px;
 }

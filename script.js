@@ -846,10 +846,10 @@ function generateShareImage() {
     
     // 来源文字
     if (hasDerivation) {
-        currentY += 4;
+        currentY += 16;
         
         ctx.fillStyle = textSecondary;
-        ctx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.font = '12px Georgia, "Songti SC", "SimSun", serif';
         ctx.textAlign = 'left';
         const lineHeight = 20;
         currentY = wrapText(ctx, '出处：' + data.derivation, padding, currentY, contentWidth, lineHeight);

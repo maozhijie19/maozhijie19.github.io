@@ -402,6 +402,7 @@ h1 {
 
 .modal-derivation {
     font-size: 0.85rem;
+    font-family: Georgia, "Songti SC", "SimSun", serif;
     color: var(--text-secondary);
     line-height: 1.6;
     padding: 10px 12px;

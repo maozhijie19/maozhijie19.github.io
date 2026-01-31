@@ -1472,7 +1472,7 @@ function shakeRow(row) {
     }, 400);
 }
 
-// 答案是否有叠字（重复字）
+// 答案是否有重复字
 function hasRepeatedChars(s) {
     const set = new Set(s.split(''));
     return set.size < s.length;
@@ -1484,11 +1484,11 @@ function getTodayHintText() {
     const seed = dateToDays(dateStr);
     const hasRepeat = hasRepeatedChars(targetIdiom);
 
-    const types = hasRepeat ? [1, 2, 3] : [1, 2]; // 1=揭示一字 2=不含某字 3=有叠字
+    const types = hasRepeat ? [1, 2, 3] : [1, 2]; // 1=揭示一字 2=不含某字 3=有重复字
     const choice = types[Math.floor(seededRandom(seed + 100) * types.length)];
 
     if (choice === 3) {
-        return '答案中有叠字';
+        return '答案中有重复字';
     }
     if (choice === 1) {
         const pos = 1 + Math.floor(seededRandom(seed + 101) * 4); // 1~4

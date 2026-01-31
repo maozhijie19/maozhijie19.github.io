@@ -38,8 +38,8 @@ const ACHIEVEMENTS = [
     { id: 'streak30', name: '连对30天', desc: '连续猜对30天' }
 ];
 
-// ---------- 云端同步（PocketBase wordle_data 表：auth, setting, stats, state, updated）----------
-// 本地与远程字段名一致，存 idiomWordleData = { setting, stats, state, updated }
+// ---------- 云端同步（PocketBase wordle_data 表：id, setting, stats, state, updated，无 auth）----------
+// 密钥 = 记录 id，创建记录后由服务端返回
 const PB_WORDLE_COLLECTION = 'wordle_data';
 const LOCAL_DATA_KEY = 'idiomWordleData';
 
@@ -84,27 +84,11 @@ function getAuthString() {
     return a ? a.key : '';
 }
 
-function generateAuthKey() {
-    if (typeof crypto !== 'undefined' && crypto.randomUUID) {
-        return crypto.randomUUID().replace(/-/g, '');
-    }
-    const hex = '0123456789abcdef';
-    let s = '';
-    for (let i = 0; i < 32; i++) s += hex[Math.floor(Math.random() * 16)];
-    return s;
-}
-
-function escapeFilterValue(s) {
-    return (s + '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
-}
-
-
-// 先查远程；数据为空或远程 updated 早于本地则用本地覆盖远程，否则远程覆盖本地
-// opts.tryAuthKey：仅本次请求用该密钥（不写 localStorage），用于生成密钥时先校验再改值
-async function syncWithPB(opts) {
+// 先查远程；数据为空或远程 updated 早于本地则用本地覆盖远程，否则远程覆盖本地。用记录 id 作为密钥，无 auth 字段。
+async function syncWithPB() {
     if (!PB_URL || typeof PocketBase === 'undefined') return;
-    const authStr = (opts && opts.tryAuthKey) ? opts.tryAuthKey : getAuthString();
-    if (!authStr) return;
+    const recordId = getAuthString();
+    if (!recordId) return;
     const local = getLocalData();
     const localUpdated = typeof local.updated === 'number' ? local.updated : 0;
     const statePayload = {
@@ -114,26 +98,18 @@ async function syncWithPB(opts) {
         gameOver: gameOver,
         keyboardState: Object.assign({}, keyboardState)
     };
-    // 推送给远程的 state：若 todayDate 未设置（如 init 阶段），用本地已存的 state，避免把云端今日进度盖成空
     const stateToPush = todayDate ? statePayload : (local.state != null ? local.state : statePayload);
-    const body = { auth: authStr, setting: settings, stats: stats, state: stateToPush };
+    const body = { setting: settings, stats: stats, state: stateToPush, updated: Date.now() };
     try {
         const pb = new PocketBase(PB_URL);
-        const list = await pb.collection(PB_WORDLE_COLLECTION).getList(1, 1, {
-            filter: "auth = '" + escapeFilterValue(authStr) + "'"
-        });
-        const record = list.items && list.items.length > 0 ? list.items[0] : null;
+        const record = await pb.collection(PB_WORDLE_COLLECTION).getOne(recordId);
         const remoteUpdated = record && record.updated ? new Date(record.updated).getTime() : 0;
-        const useLocal = !record || !remoteUpdated || localUpdated > remoteUpdated;
+        const useLocal = !remoteUpdated || localUpdated > remoteUpdated;
 
         if (useLocal) {
-            if (record) {
-                await pb.collection(PB_WORDLE_COLLECTION).update(record.id, body);
-            } else {
-                await pb.collection(PB_WORDLE_COLLECTION).create(body);
-            }
+            await pb.collection(PB_WORDLE_COLLECTION).update(recordId, body);
             const stateToSave = todayDate ? statePayload : (local.state != null ? local.state : statePayload);
-            setLocalData({ setting: settings, stats: stats, state: stateToSave, updated: Date.now() });
+            setLocalData({ setting: settings, stats: stats, state: stateToSave, updated: body.updated });
         } else {
             const r = record;
             const data = {
@@ -151,6 +127,23 @@ async function syncWithPB(opts) {
         console.warn('云端同步失败:', e);
         throw e;
     }
+}
+
+// 创建一条记录并返回（用于「生成密钥」）。body 无 auth，返回的 record.id 即密钥。
+async function createRecordOnPB() {
+    if (!PB_URL || typeof PocketBase === 'undefined') throw new Error('未配置 PB_URL');
+    const local = getLocalData();
+    const statePayload = {
+        date: todayDate,
+        guessedIdioms: guessedIdioms.slice(),
+        currentRow: currentRow,
+        gameOver: gameOver,
+        keyboardState: Object.assign({}, keyboardState)
+    };
+    const stateToPush = todayDate ? statePayload : (local.state != null ? local.state : statePayload);
+    const body = { setting: settings, stats: stats, state: stateToPush };
+    const pb = new PocketBase(PB_URL);
+    return await pb.collection(PB_WORDLE_COLLECTION).create(body);
 }
 
 // 保证 stats 结构完整（云端或缓存可能缺字段）；stats 必须是对象
@@ -358,10 +351,19 @@ function saveSettings() {
     }
 }
 
+// 根据密钥输入框是否为空更新按钮文案
+function updateKeyButtonText() {
+    const input = document.getElementById('settingAuthKey');
+    const btn = document.getElementById('settingKeyBtn');
+    if (!btn) return;
+    btn.textContent = input && input.value.trim() ? '同步数据' : '生成密钥';
+}
+
 // 显示设置弹窗
 function showSettings() {
     const auth = getAuth();
     document.getElementById('settingAuthKey').value = auth ? auth.key : '';
+    updateKeyButtonText();
     document.getElementById('settingsModal').classList.add('show');
 }
 
@@ -850,21 +852,35 @@ function attachEventListeners() {
     document.getElementById('settingsClose').addEventListener('click', hideSettings);
     document.getElementById('settingValidateIdiom').addEventListener('change', saveSettings);
     document.getElementById('settingKeyboardHighlight').addEventListener('change', saveSettings);
-    document.getElementById('settingGenKey').addEventListener('click', async () => {
-        const oldKey = getAuthString();
-        const key = generateAuthKey();
+    document.getElementById('settingAuthKey').addEventListener('input', updateKeyButtonText);
+    document.getElementById('settingKeyBtn').addEventListener('click', async () => {
         const inputEl = document.getElementById('settingAuthKey');
-        if (PB_URL) {
+        const key = inputEl.value.trim();
+        if (!key) {
+            const oldKey = getAuthString();
+            if (!PB_URL) {
+                showMessage('请配置 PB_URL 后使用生成密钥', 'error');
+                return;
+            }
             try {
-                await syncWithPB({ tryAuthKey: key });
-                saveAuth(key);
-                inputEl.value = key;
+                const record = await createRecordOnPB();
+                saveAuth(record.id);
+                inputEl.value = record.id;
+                updateKeyButtonText();
+                const remoteUpdated = record.updated ? new Date(record.updated).getTime() : Date.now();
+                setLocalData({
+                    setting: record.setting != null ? record.setting : settings,
+                    stats: record.stats != null ? record.stats : stats,
+                    state: record.state != null ? record.state : null,
+                    updated: remoteUpdated
+                });
                 loadStats();
                 loadSettings();
                 startNewGame();
                 showMessage('已生成密钥，已自动同步', '');
             } catch (e) {
                 inputEl.value = oldKey || '';
+                updateKeyButtonText();
                 loadStats();
                 loadSettings();
                 startNewGame();
@@ -873,45 +889,31 @@ function attachEventListeners() {
                 else showMessage('同步失败', 'error');
             }
         } else {
-            saveAuth(key);
-            inputEl.value = key;
-            showMessage('已生成密钥并保存到本地', '');
-        }
-    });
-    document.getElementById('settingSyncBtn').addEventListener('click', async () => {
-        const key = document.getElementById('settingAuthKey').value.trim();
-        if (!key) {
-            saveAuth('');
-            showMessage('已清除本地密钥', '');
-            return;
-        }
-        if (PB_URL) {
-            try {
-                const pb = new PocketBase(PB_URL);
-                const list = await pb.collection(PB_WORDLE_COLLECTION).getList(1, 1, {
-                    filter: "auth = '" + escapeFilterValue(key) + "'"
-                });
-                const hasRecord = list.items && list.items.length > 0;
-                if (!hasRecord) {
-                    showMessage('请生成密钥', 'error');
-                    return;
+            if (PB_URL) {
+                try {
+                    const pb = new PocketBase(PB_URL);
+                    await pb.collection(PB_WORDLE_COLLECTION).getOne(key);
+                    saveAuth(key);
+                    await syncWithPB();
+                    loadStats();
+                    loadSettings();
+                    startNewGame();
+                    showMessage('已同步云端', '');
+                } catch (e) {
+                    loadStats();
+                    loadSettings();
+                    startNewGame();
+                    if (e?.status === 404 || e?.response?.status === 404) {
+                        showMessage('记录不存在，请生成密钥', 'error');
+                    } else {
+                        const status = e?.status ?? e?.response?.status;
+                        if (status !== 429) showMessage('同步失败', 'error');
+                    }
                 }
+            } else {
                 saveAuth(key);
-                await syncWithPB();
-                loadStats();
-                loadSettings();
-                startNewGame();
-                showMessage('已同步云端', '');
-            } catch (e) {
-                loadStats();
-                loadSettings();
-                startNewGame();
-                const status = e?.status ?? e?.response?.status;
-                if (status !== 429) showMessage('同步失败', 'error');
+                showMessage('已保存到本地（未配置 PB_URL 不同步云端）', '');
             }
-        } else {
-            saveAuth(key);
-            showMessage('已保存到本地（未配置 PB_URL 不同步云端）', '');
         }
     });
     document.getElementById('settingsModal').addEventListener('click', (e) => {

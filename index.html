@@ -103,11 +103,10 @@
                 <div class="settings-list">
                     <div class="setting-item setting-item-cloud">
                         <span class="setting-label">云端同步</span>
-                        <span class="setting-desc">点「生成密钥」则生成新的同步密钥并保存；若已有密钥，在框中填写之前生成过的密钥，再点「保存密钥」。</span>
-                        <textarea id="settingAuthKey" placeholder="输入密钥或点击生成" autocomplete="off" rows="3"></textarea>
+                        <span class="setting-desc">密钥为空时点击「生成密钥」创建并保存；已有密钥时点击「同步数据」与云端同步。</span>
+                        <input type="text" id="settingAuthKey" placeholder="输入密钥或点击生成" autocomplete="off">
                         <div class="setting-key-btns">
-                            <button type="button" class="modal-btn modal-btn-gen" id="settingGenKey">生成密钥</button>
-                            <button type="button" class="modal-btn modal-btn-sync" id="settingSyncBtn">保存密钥</button>
+                            <button type="button" class="modal-btn modal-btn-key" id="settingKeyBtn">生成密钥</button>
                         </div>
                     </div>
                     <label class="setting-item">

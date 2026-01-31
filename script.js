@@ -718,10 +718,10 @@ function generateTodayKeyboard(seed) {
     
     // 按优先级添加成语的字
     const priorities = [
-        { list: idiomsByMatch.three, maxIdioms: 2 },  // 最多2个3字相同的
-        { list: idiomsByMatch.two, maxIdioms: 3 },    // 最多3个2字相同的
-        { list: idiomsByMatch.one, maxIdioms: 4 },    // 最多4个1字相同的
-        { list: idiomsByMatch.zero, maxIdioms: 3 }    // 最多3个无相同的
+        { list: idiomsByMatch.three, maxIdioms: 2 },       // 最多2个3字相同的
+        { list: idiomsByMatch.two, maxIdioms: 3 },         // 最多3个2字相同的
+        { list: idiomsByMatch.one, maxIdioms: 4 },         // 最多4个1字相同的
+        { list: idiomsByMatch.zero, maxIdioms: Infinity }  // 无相同的不限制
     ];
     
     for (const { list, maxIdioms } of priorities) {

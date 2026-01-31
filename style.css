@@ -550,12 +550,12 @@ header {
 }
 
 .modal-close-btn {
-    background: var(--key-bg);
-    color: var(--text-primary);
+    background: var(--action-key);
+    color: white;
 }
 
 .modal-close-btn:hover {
-    background: var(--key-hover);
+    background: var(--action-key-hover);
 }
 
 .modal-btn:active {
@@ -837,7 +837,7 @@ header {
 }
 
 .setting-item input[type="checkbox"]:checked + .toggle {
-    background: var(--correct);
+    background: var(--action-key);
 }
 
 .setting-item input[type="checkbox"]:checked + .toggle::after {

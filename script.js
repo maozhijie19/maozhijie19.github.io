@@ -9,14 +9,15 @@ let gameOver = false;
 let idiomList = [];
 let guessedIdioms = [];
 let keyboardState = {};
-let keyboardChars = []; // 今日键盘的20个字
+let keyboardChars = []; // 今日键盘字符（28 个：8+8+6+6）
 let todayDate = ''; // 今日日期
-let idiomData = {}; // 成语数据 {word: {explanation, pinyin}}
+let idiomData = {}; // 成语数据 {word: {explanation, pinyin, derivation, common}}
 
 // 设置
 let settings = {
     validateIdiom: false,     // 是否验证成语（默认关闭）
-    keyboardHighlight: true   // 是否键盘高亮
+    keyboardHighlight: true,  // 是否键盘高亮
+    commonIdiomOnly: false    // 是否仅从常用成语中选词（开启则只从 CSV 常用=1 中选）
 };
 
 // 统计数据
@@ -25,14 +26,14 @@ let stats = {
     gamesWon: 0,
     currentStreak: 0,
     maxStreak: 0,
-    guessDistribution: [0, 0, 0, 0, 0, 0], // 1-6次猜对的次数
+    guessDistribution: [0, 0, 0, 0, 0], // 1-5次猜对的次数
     achievements: [] // 已解锁成就 id 列表
 };
 
 // 成就定义（检测在 updateStats 之后调用，此时 stats 已更新）
 const ACHIEVEMENTS = [
     { id: 'firstTry', name: '一击即中', desc: '第一次就猜对' },
-    { id: 'sixthTry', name: '险中求胜', desc: '第6次才猜对' },
+    { id: 'fifthTry', name: '险中求胜', desc: '第5次才猜对' },
     { id: 'streak3', name: '连对3天', desc: '连续猜对3天' },
     { id: 'streak7', name: '连对7天', desc: '连续猜对7天' },
     { id: 'streak30', name: '连对30天', desc: '连续猜对30天' }
@@ -91,15 +92,15 @@ async function syncWithPB() {
     if (!recordId) return;
     const local = getLocalData();
     const localUpdated = typeof local.updated === 'number' ? local.updated : 0;
-    const statePayload = {
+    const stateFull = normalizeState(local.state);
+    stateFull[getStateBranchKey()] = {
         date: todayDate,
         guessedIdioms: guessedIdioms.slice(),
         currentRow: currentRow,
         gameOver: gameOver,
         keyboardState: Object.assign({}, keyboardState)
     };
-    const stateToPush = todayDate ? statePayload : (local.state != null ? local.state : statePayload);
-    const body = { id: recordId, setting: settings, stats: stats, state: stateToPush, updated: Date.now() };
+    const body = { id: recordId, setting: settings, stats: stats, state: stateFull, updated: Date.now() };
     try {
         const pb = new PocketBase(PB_URL);
         const record = await pb.collection(PB_WORDLE_COLLECTION).getOne(recordId);
@@ -108,20 +109,20 @@ async function syncWithPB() {
 
         if (useLocal) {
             await pb.collection(PB_WORDLE_COLLECTION).update(recordId, body);
-            const stateToSave = todayDate ? statePayload : (local.state != null ? local.state : statePayload);
-            setLocalData({ setting: settings, stats: stats, state: stateToSave, updated: body.updated });
+            setLocalData({ setting: settings, stats: stats, state: stateFull, updated: body.updated });
         } else {
             const r = record;
             const data = {
                 setting: r.setting != null ? r.setting : local.setting,
                 stats: r.stats != null ? r.stats : local.stats,
-                state: r.state != null ? r.state : local.state,
+                state: r.state != null ? normalizeState(r.state) : local.state,
                 updated: remoteUpdated
             };
             setLocalData(data);
             loadStats();
             loadSettings();
-            if (data.state != null && data.state.date === todayDate) restoreGameState(data.state);
+            const branch = data.state && data.state[getStateBranchKey()];
+            if (branch && branch.date === todayDate) restoreGameState(branch);
         }
     } catch (e) {
         console.warn('云端同步失败:', e);
@@ -133,15 +134,15 @@ async function syncWithPB() {
 async function createRecordOnPB() {
     if (!PB_URL || typeof PocketBase === 'undefined') throw new Error('未配置 PB_URL');
     const local = getLocalData();
-    const statePayload = {
+    const stateFull = normalizeState(local.state);
+    stateFull[getStateBranchKey()] = {
         date: todayDate,
         guessedIdioms: guessedIdioms.slice(),
         currentRow: currentRow,
         gameOver: gameOver,
         keyboardState: Object.assign({}, keyboardState)
     };
-    const stateToPush = todayDate ? statePayload : (local.state != null ? local.state : statePayload);
-    const body = { setting: settings, stats: stats, state: stateToPush };
+    const body = { setting: settings, stats: stats, state: stateFull };
     const pb = new PocketBase(PB_URL);
     return await pb.collection(PB_WORDLE_COLLECTION).create(body);
 }
@@ -154,13 +155,13 @@ function normalizeStats() {
             gamesWon: 0,
             currentStreak: 0,
             maxStreak: 0,
-            guessDistribution: [0, 0, 0, 0, 0, 0],
+            guessDistribution: [0, 0, 0, 0, 0],
             achievements: []
         };
         return;
     }
-    if (!Array.isArray(stats.guessDistribution) || stats.guessDistribution.length !== 6) {
-        stats.guessDistribution = [0, 0, 0, 0, 0, 0];
+    if (!Array.isArray(stats.guessDistribution) || stats.guessDistribution.length !== 5) {
+        stats.guessDistribution = [0, 0, 0, 0, 0];
     }
     if (!Array.isArray(stats.achievements)) stats.achievements = [];
     if (typeof stats.totalGames !== 'number') stats.totalGames = 0;
@@ -183,7 +184,8 @@ function saveStats() {
     const data = getLocalData();
     data.setting = data.setting || settings;
     data.stats = stats;
-    data.state = data.state || { date: todayDate, guessedIdioms: guessedIdioms.slice(), currentRow, gameOver, keyboardState: Object.assign({}, keyboardState) };
+    data.state = normalizeState(data.state);
+    data.state[getStateBranchKey()] = { date: todayDate, guessedIdioms: guessedIdioms.slice(), currentRow, gameOver, keyboardState: Object.assign({}, keyboardState) };
     data.updated = Date.now();
     setLocalData(data);
     if (getAuth() && PB_URL) syncWithPB();
@@ -197,7 +199,7 @@ function updateStats(won, attempts) {
         stats.gamesWon++;
         stats.currentStreak++;
         stats.maxStreak = Math.max(stats.maxStreak, stats.currentStreak);
-        if (attempts >= 1 && attempts <= 6) stats.guessDistribution[attempts - 1]++;
+        if (attempts >= 1 && attempts <= 5) stats.guessDistribution[attempts - 1]++;
     } else {
         stats.currentStreak = 0;
     }
@@ -213,17 +215,17 @@ function checkAchievements(won, attempts) {
     lastUnlockedAchievementNames = [];
     if (!stats.achievements) stats.achievements = [];
     const unlocked = new Set(stats.achievements);
-    const nameById = { firstTry: '一击即中', sixthTry: '险中求胜', streak3: '连对3天', streak7: '连对7天', streak30: '连对30天' };
+    const nameById = { firstTry: '一击即中', fifthTry: '险中求胜', streak3: '连对3天', streak7: '连对7天', streak30: '连对30天' };
 
     if (won && attempts === 1 && !unlocked.has('firstTry')) {
         stats.achievements.push('firstTry');
         unlocked.add('firstTry');
         lastUnlockedAchievementNames.push(nameById.firstTry);
     }
-    if (won && attempts === 6 && !unlocked.has('sixthTry')) {
-        stats.achievements.push('sixthTry');
-        unlocked.add('sixthTry');
-        lastUnlockedAchievementNames.push(nameById.sixthTry);
+    if (won && attempts === 5 && !unlocked.has('fifthTry')) {
+        stats.achievements.push('fifthTry');
+        unlocked.add('fifthTry');
+        lastUnlockedAchievementNames.push(nameById.fifthTry);
     }
     if (stats.currentStreak >= 3 && !unlocked.has('streak3')) {
         stats.achievements.push('streak3');
@@ -259,7 +261,7 @@ function showStats() {
     const container = document.getElementById('distributionBars');
     container.innerHTML = '';
     
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 5; i++) {
         const count = stats.guessDistribution[i];
         const percentage = (count / maxCount) * 100;
         const isCurrent = gameOver && guessedIdioms.length === i + 1 && guessedIdioms[guessedIdioms.length - 1] === targetIdiom;
@@ -319,26 +321,39 @@ function loadSettings() {
     if (data.setting != null) {
         if (typeof data.setting.validateIdiom === 'boolean') settings.validateIdiom = data.setting.validateIdiom;
         if (typeof data.setting.keyboardHighlight === 'boolean') settings.keyboardHighlight = data.setting.keyboardHighlight;
+        if (typeof data.setting.commonIdiomOnly === 'boolean') settings.commonIdiomOnly = data.setting.commonIdiomOnly;
     }
     const elV = document.getElementById('settingValidateIdiom');
     const elK = document.getElementById('settingKeyboardHighlight');
+    const elC = document.getElementById('settingCommonIdiomOnly');
     if (elV) elV.checked = settings.validateIdiom;
     if (elK) elK.checked = settings.keyboardHighlight;
+    if (elC) elC.checked = settings.commonIdiomOnly;
 }
 
 // 保存设置（写入 idiomWordleData.setting）
 function saveSettings() {
     settings.validateIdiom = document.getElementById('settingValidateIdiom').checked;
     settings.keyboardHighlight = document.getElementById('settingKeyboardHighlight').checked;
+    const elC = document.getElementById('settingCommonIdiomOnly');
+    const prevCommonIdiomOnly = settings.commonIdiomOnly;
+    settings.commonIdiomOnly = elC ? elC.checked : false;
     const data = getLocalData();
     data.setting = data.setting || {};
     data.setting.validateIdiom = settings.validateIdiom;
     data.setting.keyboardHighlight = settings.keyboardHighlight;
+    data.setting.commonIdiomOnly = settings.commonIdiomOnly;
     data.stats = data.stats || stats;
-    data.state = data.state || { date: todayDate, guessedIdioms: guessedIdioms.slice(), currentRow, gameOver, keyboardState: Object.assign({}, keyboardState) };
+    data.state = normalizeState(data.state);
     data.updated = Date.now();
     setLocalData(data);
     if (getAuth() && PB_URL) syncWithPB();
+
+    // 常用成语开关变更后，用新池重选当日答案并恢复该模式下的已选词
+    if (prevCommonIdiomOnly !== settings.commonIdiomOnly) {
+        startNewGame();
+        return;
+    }
 
     // 如果关闭键盘高亮，清除当前高亮
     if (!settings.keyboardHighlight) {
@@ -372,9 +387,9 @@ function hideSettings() {
     document.getElementById('settingsModal').classList.remove('show');
 }
 
-// 保存游戏状态（写入 idiomWordleData.state）
+// 保存游戏状态（写入 idiomWordleData.state 的当前分支，保留另一分支）
 function saveGameState() {
-    const state = {
+    const branch = {
         date: todayDate,
         guessedIdioms: guessedIdioms.slice(),
         currentRow: currentRow,
@@ -384,19 +399,30 @@ function saveGameState() {
     const data = getLocalData();
     data.setting = data.setting || settings;
     data.stats = data.stats || stats;
-    data.state = state;
+    data.state = normalizeState(data.state);
+    data.state[getStateBranchKey()] = branch;
     data.updated = Date.now();
     setLocalData(data);
     if (getAuth() && PB_URL) syncWithPB();
 }
 
-// 加载游戏状态（从 idiomWordleData.state）
+// 将 state 规范为双分支：{ common: branch|null, all: branch|null }
+function normalizeState(state) {
+    if (!state || typeof state !== 'object') return { common: null, all: null };
+    return { common: state.common || null, all: state.all || null };
+}
+
+function getStateBranchKey() {
+    return settings.commonIdiomOnly ? 'common' : 'all';
+}
+
+// 加载游戏状态（从 idiomWordleData.state，按当前「常用成语」开关取对应分支）
 function loadGameState() {
     const data = getLocalData();
-    const state = data.state;
-    if (!state) return null;
-    if (state.date === todayDate) return state;
-    return null;
+    const state = normalizeState(data.state);
+    const branch = state[getStateBranchKey()];
+    if (!branch || branch.date !== todayDate) return null;
+    return branch;
 }
 
 // 恢复游戏状态
@@ -463,12 +489,14 @@ function getCharStatus(guessChars, targetChars) {
 async function init() {
     // 先显示日期，避免副标题区域闪烁旧文案
     const subtitleEl = document.getElementById('subtitle');
-    if (subtitleEl) subtitleEl.textContent = getTodayDateString();
+    if (subtitleEl) subtitleEl.textContent = getDateDisplayString(getTodayDateString());
     await loadIdioms();
 
     // 用固定种子打乱成语列表（保证所有人打乱结果一致）
     const fixedSeed = 20260101; // 固定种子
     shuffledIdiomList = shuffleArray(idiomList, fixedSeed);
+    const commonList = idiomList.filter(w => idiomData[w] && idiomData[w].common === true);
+    shuffledCommonList = shuffleArray(commonList, fixedSeed);
 
     loadSettings();
     loadStats();
@@ -487,13 +515,20 @@ async function init() {
     startNewGame();
 }
 
-// 获取今日日期字符串（YYYY-MM-DD）
+// 获取今日日期字符串（YYYY-MM-DD，用于内部逻辑）
 function getTodayDateString() {
     const now = new Date();
     const year = now.getFullYear();
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+}
+
+// 将 YYYY-MM-DD 转为展示用「xx年x月x日」
+function getDateDisplayString(dateStr) {
+    if (!dateStr) return '';
+    const [y, m, d] = dateStr.split('-').map(Number);
+    return `${y}年${m}月${d}日`;
 }
 
 // 基于日期的伪随机数生成器（保证同一天同一结果）
@@ -514,7 +549,7 @@ function dateToDays(dateStr) {
 }
 
 // 成语数据缓存版本（CSV 更新时改为 2、3… 以失效旧缓存）
-const IDIOM_CACHE_VERSION = 1;
+const IDIOM_CACHE_VERSION = 2;
 const IDIOM_DB_NAME = 'idiomWordleDB';
 const IDIOM_STORE_NAME = 'cache';
 const IDIOM_CACHE_KEY = 'idiomData';
@@ -587,8 +622,9 @@ async function parseIdiomCSVStream(response) {
             const pinyin = parts[1] || '';
             const explanation = parts[2] || '';
             const derivation = parts[3] || '';
+            const common = parts.length >= 5 && (parts[4] || '').trim() === '1';
             list.push(word);
-            data[word] = { explanation, pinyin, derivation };
+            data[word] = { explanation, pinyin, derivation, common };
         }
     }
     if (buffer.trim()) {
@@ -596,11 +632,13 @@ async function parseIdiomCSVStream(response) {
         if (parts.length >= 4) {
             const word = (parts[0] || '').trim();
             if (word.length === 4) {
+                const common = parts.length >= 5 && (parts[4] || '').trim() === '1';
                 list.push(word);
                 data[word] = {
                     explanation: parts[2] || '',
                     pinyin: parts[1] || '',
-                    derivation: parts[3] || ''
+                    derivation: parts[3] || '',
+                    common: !!common
                 };
             }
         }
@@ -664,9 +702,10 @@ function generateTodayKeyboard(seed) {
         zero: []    // 全不相同
     };
     
-    for (const idiom of shuffledIdiomList) {
+    const pool = currentPool.length > 0 ? currentPool : shuffledIdiomList;
+    for (const idiom of pool) {
         if (usedIdioms.has(idiom)) continue;
-        
+
         const sameCount = countSameChars(targetIdiom, idiom);
         if (sameCount === 3) {
             idiomsByMatch.three.push(idiom);
@@ -688,14 +727,14 @@ function generateTodayKeyboard(seed) {
     ];
     
     for (const { list, maxIdioms } of priorities) {
-        if (chars.size >= 20) break;
+        if (chars.size >= 28) break;
         
         // 打乱该优先级的成语
         const shuffled = shuffleArray(list, seed);
         
         let addedCount = 0;
         for (const idiom of shuffled) {
-            if (chars.size >= 20) break;
+            if (chars.size >= 28) break;
             if (addedCount >= maxIdioms) break;
             
             const oldSize = chars.size;
@@ -708,8 +747,8 @@ function generateTodayKeyboard(seed) {
         }
     }
     
-    // 转换为数组并限制为20个（8+6+6）
-    const charsArray = Array.from(chars).slice(0, 20);
+    // 转换为数组并限制为28个（8+8+6+6）
+    const charsArray = Array.from(chars).slice(0, 28);
     
     // 使用伪随机打乱顺序（但保证同一天顺序一致）
     keyboardChars = shuffleArray(charsArray, seed + 999);
@@ -727,13 +766,17 @@ function shuffleArray(array, seed) {
 
 // 打乱后的成语列表（全局缓存）
 let shuffledIdiomList = [];
+// 打乱后的常用成语列表（常用=1）；选题与键盘池按设置二选一
+let shuffledCommonList = [];
+// 当前用于选题和键盘提示的池（= shuffledIdiomList 或 shuffledCommonList）
+let currentPool = [];
 
 // 创建游戏板
 function createGameBoard() {
     const gameBoard = document.getElementById('gameBoard');
     gameBoard.innerHTML = '';
     
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 5; i++) {
         const row = document.createElement('div');
         row.classList.add('row');
         row.dataset.row = i;
@@ -750,40 +793,43 @@ function createGameBoard() {
     }
 }
 
-// 创建键盘（基于今日字符）
+// 创建键盘（基于今日字符：第一行上多 8 字，共 28 字 8+8+6+6）
 function createKeyboard() {
     const keyboard = document.getElementById('keyboard');
     keyboard.innerHTML = '';
     
+    // 第零行：8个字（第一行上面新增）
+    const row0 = document.createElement('div');
+    row0.classList.add('keyboard-row');
+    for (let i = 0; i < 8 && i < keyboardChars.length; i++) {
+        row0.appendChild(createKeyButton(keyboardChars[i]));
+    }
+    keyboard.appendChild(row0);
+    
     // 第一行：8个字
     const row1 = document.createElement('div');
     row1.classList.add('keyboard-row');
-    for (let i = 0; i < 8 && i < keyboardChars.length; i++) {
-        const keyButton = createKeyButton(keyboardChars[i]);
-        row1.appendChild(keyButton);
+    for (let i = 8; i < 16 && i < keyboardChars.length; i++) {
+        row1.appendChild(createKeyButton(keyboardChars[i]));
     }
     keyboard.appendChild(row1);
     
     // 第二行：6个字 + 删除按钮
     const row2 = document.createElement('div');
     row2.classList.add('keyboard-row');
-    for (let i = 8; i < 14 && i < keyboardChars.length; i++) {
-        const keyButton = createKeyButton(keyboardChars[i]);
-        row2.appendChild(keyButton);
+    for (let i = 16; i < 22 && i < keyboardChars.length; i++) {
+        row2.appendChild(createKeyButton(keyboardChars[i]));
     }
-    const deleteBtn = createActionButton('删除', 'delete');
-    row2.appendChild(deleteBtn);
+    row2.appendChild(createActionButton('删除', 'delete'));
     keyboard.appendChild(row2);
     
     // 第三行：6个字 + 提交按钮
     const row3 = document.createElement('div');
     row3.classList.add('keyboard-row');
-    for (let i = 14; i < 20 && i < keyboardChars.length; i++) {
-        const keyButton = createKeyButton(keyboardChars[i]);
-        row3.appendChild(keyButton);
+    for (let i = 22; i < 28 && i < keyboardChars.length; i++) {
+        row3.appendChild(createKeyButton(keyboardChars[i]));
     }
-    const submitBtn = createActionButton('提交', 'submit');
-    row3.appendChild(submitBtn);
+    row3.appendChild(createActionButton('提交', 'submit'));
     keyboard.appendChild(row3);
 }
 
@@ -852,6 +898,7 @@ function attachEventListeners() {
     document.getElementById('settingsClose').addEventListener('click', hideSettings);
     document.getElementById('settingValidateIdiom').addEventListener('change', saveSettings);
     document.getElementById('settingKeyboardHighlight').addEventListener('change', saveSettings);
+    document.getElementById('settingCommonIdiomOnly').addEventListener('change', saveSettings);
     document.getElementById('settingAuthKey').addEventListener('input', updateKeyButtonText);
     document.getElementById('settingKeyBtn').addEventListener('click', async () => {
         const inputEl = document.getElementById('settingAuthKey');
@@ -952,12 +999,16 @@ function startNewGame() {
     
     // 基于日期选择今日成语（所有人同一天看到的答案相同）
     const days = dateToDays(todayDate);
-    // 从打乱后的列表中按顺序取，保证 29502 天内不重复
-    const index = days % shuffledIdiomList.length;
-    targetIdiom = shuffledIdiomList[index];
+    const pool = settings.commonIdiomOnly && shuffledCommonList.length > 0 ? shuffledCommonList : shuffledIdiomList;
+    currentPool = pool;
+    const index = days % pool.length;
+    targetIdiom = pool[index];
     
-    // 更新副标题显示今日日期
-    document.getElementById('subtitle').textContent = todayDate;
+    // 更新副标题显示今日日期（xx年x月x日）
+    document.getElementById('subtitle').textContent = getDateDisplayString(todayDate);
+    // 简单模式时显示「简单」标签
+    const modeTag = document.getElementById('modeTag');
+    if (modeTag) modeTag.classList.toggle('show', settings.commonIdiomOnly);
     
     // 生成今日键盘
     generateTodayKeyboard(dateToDays(todayDate));
@@ -1062,7 +1113,7 @@ function submitGuess() {
             saveGameState();
             showResult(true);
         }, animationDelay);
-    } else if (currentRow === 5) {
+    } else if (currentRow === 4) {
         gameOver = true;
         updateStats(false, 0);
         setTimeout(() => {
@@ -1119,12 +1170,14 @@ function generateShareImage() {
     const tileSize = 60;
     const gap = 8;
     const padding = 24;
-    const headerHeight = 70;
     const cols = 4;
     const rows = guessedIdioms.length;
     
     const contentWidth = cols * tileSize + (cols - 1) * gap;
     const width = padding * 2 + contentWidth;
+    const tagH = 24;
+    const tagGap = 12;
+    const headerHeight = 22 + 32 + tagH + tagGap + (settings.commonIdiomOnly ? tagH + tagGap : 0) + 18;
     
     // 先创建临时 canvas 测量实际文字高度
     const tempCanvas = document.createElement('canvas');
@@ -1169,16 +1222,50 @@ function generateShareImage() {
     ctx.fillStyle = bgPrimary;
     ctx.fillRect(0, 0, width, height);
     
+    const tagPad = 14;
+    let headerY = padding + 22;
+    
     // 标题
     ctx.fillStyle = textPrimary;
     ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('猜三划四', width / 2, padding + 24);
+    ctx.textBaseline = 'middle';
+    ctx.fillText('猜三划四', width / 2, headerY);
+    headerY += 32;
     
-    // 副标题
-    ctx.font = '13px -apple-system, BlinkMacSystemFont, sans-serif';
+    // 日期 tag（与页面一致：圆角矩形 + 边框 + 浅底）
+    const dateStr = getDateDisplayString(todayDate);
+    ctx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
+    const dateTagW = ctx.measureText(dateStr).width + tagPad * 2;
+    const dateTagX = (width - dateTagW) / 2;
+    ctx.fillStyle = isDark ? 'rgba(148, 163, 184, 0.2)' : 'rgba(100, 116, 139, 0.15)';
+    ctx.strokeStyle = textSecondary;
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.roundRect(dateTagX, headerY, dateTagW, tagH, 12);
+    ctx.fill();
+    ctx.stroke();
     ctx.fillStyle = textSecondary;
-    ctx.fillText(todayDate, width / 2, padding + 46);
+    ctx.fillText(dateStr, width / 2, headerY + tagH / 2);
+    headerY += tagH + tagGap;
+    
+    // 简单模式时绘制「简单」tag
+    if (settings.commonIdiomOnly) {
+        const tagText = '简单';
+        const simpleTagW = ctx.measureText(tagText).width + tagPad * 2;
+        const simpleTagX = (width - simpleTagW) / 2;
+        ctx.fillStyle = 'rgba(234, 179, 8, 0.15)';
+        ctx.strokeStyle = '#eab308';
+        ctx.beginPath();
+        ctx.roundRect(simpleTagX, headerY, simpleTagW, tagH, 12);
+        ctx.fill();
+        ctx.stroke();
+        ctx.fillStyle = '#eab308';
+        ctx.fillText(tagText, width / 2, headerY + tagH / 2);
+        headerY += tagH + tagGap;
+    }
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
     
     // 颜色定义
     const colors = {

@@ -173,11 +173,46 @@ header {
     border-color: var(--absent);
 }
 
-.subtitle {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
+.subtitle-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
     margin-top: 14px;
-    font-weight: 500;
+}
+
+/* 日期 tag 与简单 tag 同款样式，仅颜色不同 */
+.subtitle-row .subtitle,
+.mode-tag {
+    margin: 0;
+    padding: 4px 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    line-height: 1.25;
+    min-height: 1.25em;
+    box-sizing: border-box;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 999px;
+    flex-shrink: 0;
+    border: 1px solid;
+}
+
+.subtitle-row .subtitle {
+    color: var(--text-secondary);
+    border-color: var(--text-secondary);
+    background: color-mix(in srgb, var(--text-secondary) 15%, transparent);
+}
+
+.mode-tag {
+    display: none;
+    color: var(--present);
+    border-color: var(--present);
+    background: rgba(234, 179, 8, 0.15);
+}
+
+.mode-tag.show {
+    display: inline-block;
 }
 
 /* 游戏板 */
@@ -872,7 +907,7 @@ header {
         margin-bottom: 4px;
     }
     
-    .subtitle {
+    .subtitle-row {
         margin-top: 10px;
     }
     

@@ -557,6 +557,12 @@ header {
     margin-bottom: 0;
 }
 
+.help-author {
+    margin-top: 16px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
 .help-colors {
     margin: 12px 0;
     line-height: 2;

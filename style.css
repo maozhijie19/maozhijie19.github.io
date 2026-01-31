@@ -335,8 +335,24 @@ header {
     gap: 6px;
 }
 
+.keyboard-action-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
 .keyboard-row-last .key {
     flex: 1;
+}
+
+/* 最后一行：字组占 5 份、操作键占 2 份，即删除/提交 = 两个字宽 + 间距 */
+.keyboard-row-last .keyboard-char-group {
+    flex: 5;
+}
+
+.keyboard-row-last .key.action-key {
+    flex: 2;
 }
 
 .key.action-key {
@@ -804,6 +820,27 @@ header {
     background: var(--bg-primary);
     border-radius: 10px;
     cursor: pointer;
+}
+
+.setting-item-disabled {
+    cursor: default;
+    pointer-events: none;
+    background: color-mix(in srgb, var(--border-color) 60%, var(--bg-primary));
+    opacity: 0.85;
+}
+
+.setting-item-disabled .setting-label,
+.setting-item-disabled .setting-desc {
+    color: var(--text-secondary);
+}
+
+.setting-item-disabled .toggle {
+    background: var(--absent) !important;
+    opacity: 0.9;
+}
+
+.setting-item-disabled .toggle::after {
+    background: var(--tile-bg);
 }
 
 .setting-label {

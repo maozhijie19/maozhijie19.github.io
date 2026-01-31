@@ -9,7 +9,7 @@ let gameOver = false;
 let idiomList = [];
 let guessedIdioms = [];
 let keyboardState = {};
-let keyboardChars = []; // 今日键盘字符（20 个：6+6+6+2）
+let keyboardChars = []; // 今日键盘字符（24 个：7+7+5+5，每行左侧多一列）
 let todayDate = ''; // 今日日期
 let idiomData = {}; // 成语数据 {word: {pinyin, derivation, common}}
 
@@ -17,7 +17,7 @@ let idiomData = {}; // 成语数据 {word: {pinyin, derivation, common}}
 let settings = {
     validateIdiom: false,     // 是否验证成语（默认关闭）
     keyboardHighlight: true,  // 是否键盘高亮
-    commonIdiomOnly: false    // 是否仅从常用成语中选词（开启则只从 CSV 常用=1 中选）
+    commonIdiomOnly: true     // 固定为简单模式（仅从常用成语中选词），开关已禁用
 };
 
 // 统计数据
@@ -321,39 +321,31 @@ function loadSettings() {
     if (data.setting != null) {
         if (typeof data.setting.validateIdiom === 'boolean') settings.validateIdiom = data.setting.validateIdiom;
         if (typeof data.setting.keyboardHighlight === 'boolean') settings.keyboardHighlight = data.setting.keyboardHighlight;
-        if (typeof data.setting.commonIdiomOnly === 'boolean') settings.commonIdiomOnly = data.setting.commonIdiomOnly;
     }
+    settings.commonIdiomOnly = true; // 固定简单模式，不再读取存储
     const elV = document.getElementById('settingValidateIdiom');
     const elK = document.getElementById('settingKeyboardHighlight');
     const elC = document.getElementById('settingCommonIdiomOnly');
     if (elV) elV.checked = settings.validateIdiom;
     if (elK) elK.checked = settings.keyboardHighlight;
-    if (elC) elC.checked = settings.commonIdiomOnly;
+    if (elC) { elC.checked = true; elC.disabled = true; }
 }
 
 // 保存设置（写入 idiomWordleData.setting）
 function saveSettings() {
     settings.validateIdiom = document.getElementById('settingValidateIdiom').checked;
     settings.keyboardHighlight = document.getElementById('settingKeyboardHighlight').checked;
-    const elC = document.getElementById('settingCommonIdiomOnly');
-    const prevCommonIdiomOnly = settings.commonIdiomOnly;
-    settings.commonIdiomOnly = elC ? elC.checked : false;
+    settings.commonIdiomOnly = true; // 固定简单模式，开关已禁用
     const data = getLocalData();
     data.setting = data.setting || {};
     data.setting.validateIdiom = settings.validateIdiom;
     data.setting.keyboardHighlight = settings.keyboardHighlight;
-    data.setting.commonIdiomOnly = settings.commonIdiomOnly;
+    data.setting.commonIdiomOnly = true;
     data.stats = data.stats || stats;
     data.state = normalizeState(data.state);
     data.updated = Date.now();
     setLocalData(data);
     if (getAuth() && PB_URL) syncWithPB();
-
-    // 常用成语开关变更后，用新池重选当日答案并恢复该模式下的已选词
-    if (prevCommonIdiomOnly !== settings.commonIdiomOnly) {
-        startNewGame();
-        return;
-    }
 
     // 如果关闭键盘高亮，清除当前高亮
     if (!settings.keyboardHighlight) {
@@ -725,14 +717,14 @@ function generateTodayKeyboard(seed) {
     ];
     
     for (const { list, maxIdioms } of priorities) {
-        if (chars.size >= 20) break;
+        if (chars.size >= 24) break;
         
         // 打乱该优先级的成语
         const shuffled = shuffleArray(list, seed);
         
         let addedCount = 0;
         for (const idiom of shuffled) {
-            if (chars.size >= 20) break;
+            if (chars.size >= 24) break;
             if (addedCount >= maxIdioms) break;
             
             const oldSize = chars.size;
@@ -745,8 +737,8 @@ function generateTodayKeyboard(seed) {
         }
     }
     
-    // 转换为数组并限制为20个（6+6+6+2）
-    const charsArray = Array.from(chars).slice(0, 20);
+    // 转换为数组并限制为24个（7+7+5+5，每行左侧一列）
+    const charsArray = Array.from(chars).slice(0, 24);
     
     // 使用伪随机打乱顺序（但保证同一天顺序一致）
     keyboardChars = shuffleArray(charsArray, seed + 999);
@@ -791,45 +783,48 @@ function createGameBoard() {
     }
 }
 
-// 创建键盘（基于今日字符：共 20 字 6+6+6+2，第四行 2 字 + 2 个长按键）
+// 创建键盘（基于今日字符：共 24 字 7+7+5+5，每行左侧多一列）
 function createKeyboard() {
     const keyboard = document.getElementById('keyboard');
     keyboard.innerHTML = '';
     
-    // 第一行：6个字
+    // 第一行：7个字（左侧一列）
     const row1 = document.createElement('div');
     row1.classList.add('keyboard-row');
-    for (let i = 0; i < 6 && i < keyboardChars.length; i++) {
+    for (let i = 0; i < 7 && i < keyboardChars.length; i++) {
         row1.appendChild(createKeyButton(keyboardChars[i]));
     }
     keyboard.appendChild(row1);
     
-    // 第二行：6个字
+    // 第二行：7个字
     const row2 = document.createElement('div');
     row2.classList.add('keyboard-row');
-    for (let i = 6; i < 12 && i < keyboardChars.length; i++) {
+    for (let i = 7; i < 14 && i < keyboardChars.length; i++) {
         row2.appendChild(createKeyButton(keyboardChars[i]));
     }
     keyboard.appendChild(row2);
     
-    // 第三行：6个字
+    // 第三行：5个字 + 删除（右边）
     const row3 = document.createElement('div');
-    row3.classList.add('keyboard-row');
-    for (let i = 12; i < 18 && i < keyboardChars.length; i++) {
-        row3.appendChild(createKeyButton(keyboardChars[i]));
+    row3.classList.add('keyboard-row', 'keyboard-row-last');
+    const charGroup3 = document.createElement('div');
+    charGroup3.classList.add('keyboard-char-group');
+    for (let i = 14; i < 19 && i < keyboardChars.length; i++) {
+        charGroup3.appendChild(createKeyButton(keyboardChars[i]));
     }
+    row3.appendChild(charGroup3);
+    row3.appendChild(createActionButton('删除', 'delete'));
     keyboard.appendChild(row3);
     
-    // 第四行：2个字（包在一组内）+ 删除 + 提交；每操作键宽度 = 2字键+间距
+    // 第四行：5个字 + 提交
     const row4 = document.createElement('div');
     row4.classList.add('keyboard-row', 'keyboard-row-last');
-    const charGroup = document.createElement('div');
-    charGroup.classList.add('keyboard-char-group');
-    for (let i = 18; i < 20 && i < keyboardChars.length; i++) {
-        charGroup.appendChild(createKeyButton(keyboardChars[i]));
+    const charGroup4 = document.createElement('div');
+    charGroup4.classList.add('keyboard-char-group');
+    for (let i = 19; i < 24 && i < keyboardChars.length; i++) {
+        charGroup4.appendChild(createKeyButton(keyboardChars[i]));
     }
-    row4.appendChild(charGroup);
-    row4.appendChild(createActionButton('删除', 'delete'));
+    row4.appendChild(charGroup4);
     row4.appendChild(createActionButton('提交', 'submit'));
     keyboard.appendChild(row4);
 }

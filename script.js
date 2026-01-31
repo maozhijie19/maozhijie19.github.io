@@ -34,9 +34,7 @@ let stats = {
 const ACHIEVEMENTS = [
     { id: 'firstTry', name: '一击即中', desc: '第一次就猜对' },
     { id: 'fifthTry', name: '险中求胜', desc: '第5次才猜对' },
-    { id: 'streak3', name: '连对3天', desc: '连续猜对3天' },
-    { id: 'streak7', name: '连对7天', desc: '连续猜对7天' },
-    { id: 'streak30', name: '连对30天', desc: '连续猜对30天' }
+    { id: 'closeCall', name: '功亏一篑', desc: '第五次猜测出现 3 个绿格' }
 ];
 
 // ---------- 云端同步（PocketBase wordle_data 表：id, setting, stats, state, updated，无 auth）----------
@@ -215,7 +213,7 @@ function checkAchievements(won, attempts) {
     lastUnlockedAchievementNames = [];
     if (!stats.achievements) stats.achievements = [];
     const unlocked = new Set(stats.achievements);
-    const nameById = { firstTry: '一击即中', fifthTry: '险中求胜', streak3: '连对3天', streak7: '连对7天', streak30: '连对30天' };
+    const nameById = { firstTry: '一击即中', fifthTry: '险中求胜', closeCall: '功亏一篑' };
 
     if (won && attempts === 1 && !unlocked.has('firstTry')) {
         stats.achievements.push('firstTry');
@@ -227,20 +225,15 @@ function checkAchievements(won, attempts) {
         unlocked.add('fifthTry');
         lastUnlockedAchievementNames.push(nameById.fifthTry);
     }
-    if (stats.currentStreak >= 3 && !unlocked.has('streak3')) {
-        stats.achievements.push('streak3');
-        unlocked.add('streak3');
-        lastUnlockedAchievementNames.push(nameById.streak3);
-    }
-    if (stats.currentStreak >= 7 && !unlocked.has('streak7')) {
-        stats.achievements.push('streak7');
-        unlocked.add('streak7');
-        lastUnlockedAchievementNames.push(nameById.streak7);
-    }
-    if (stats.currentStreak >= 30 && !unlocked.has('streak30')) {
-        stats.achievements.push('streak30');
-        unlocked.add('streak30');
-        lastUnlockedAchievementNames.push(nameById.streak30);
+    // 功亏一篑：第五次猜测出现 3 个绿格但未猜中（差一点就对了）
+    if (!unlocked.has('closeCall') && !won && guessedIdioms.length === 5 && targetIdiom) {
+        const lastGuess = guessedIdioms[4];
+        const status = getCharStatus(lastGuess.split(''), targetIdiom.split(''));
+        if (status.filter(s => s === 'correct').length >= 3) {
+            stats.achievements.push('closeCall');
+            unlocked.add('closeCall');
+            lastUnlockedAchievementNames.push(nameById.closeCall);
+        }
     }
     if (lastUnlockedAchievementNames.length) saveStats();
 }

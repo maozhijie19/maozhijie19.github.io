@@ -99,7 +99,7 @@ async function syncWithPB() {
         keyboardState: Object.assign({}, keyboardState)
     };
     const stateToPush = todayDate ? statePayload : (local.state != null ? local.state : statePayload);
-    const body = { setting: settings, stats: stats, state: stateToPush, updated: Date.now() };
+    const body = { id: recordId, setting: settings, stats: stats, state: stateToPush, updated: Date.now() };
     try {
         const pb = new PocketBase(PB_URL);
         const record = await pb.collection(PB_WORDLE_COLLECTION).getOne(recordId);

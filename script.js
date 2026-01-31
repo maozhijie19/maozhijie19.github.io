@@ -317,7 +317,6 @@ async function init() {
     // 用固定种子打乱成语列表（保证所有人打乱结果一致）
     const fixedSeed = 20260101; // 固定种子
     shuffledIdiomList = shuffleArray(idiomList, fixedSeed);
-    console.log('成语列表已打乱（固定顺序）');
     
     loadSettings();
     loadStats();
@@ -353,34 +352,127 @@ function dateToDays(dateStr) {
     return diffDays;
 }
 
-// 加载成语列表
-async function loadIdioms() {
-    try {
-        const response = await fetch('idiom.csv');
-        const text = await response.text();
-        const lines = text.split('\n');
-        
-        // 跳过表头
-        for (let i = 1; i < lines.length; i++) {
-            const line = lines[i].trim();
-            if (!line) continue;
-            
-            // 简单的 CSV 解析（无引号包裹）
-            const parts = line.split(',');
+// 成语数据缓存版本（CSV 更新时改为 2、3… 以失效旧缓存）
+const IDIOM_CACHE_VERSION = 1;
+const IDIOM_DB_NAME = 'idiomWordleDB';
+const IDIOM_STORE_NAME = 'cache';
+const IDIOM_CACHE_KEY = 'idiomData';
+
+function openIdiomDB() {
+    return new Promise((resolve, reject) => {
+        const req = indexedDB.open(IDIOM_DB_NAME, 1);
+        req.onerror = () => reject(req.error);
+        req.onsuccess = () => resolve(req.result);
+        req.onupgradeneeded = (e) => {
+            e.target.result.createObjectStore(IDIOM_STORE_NAME, { keyPath: 'key' });
+        };
+    });
+}
+
+function getIdiomCache() {
+    return openIdiomDB().then(db => {
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(IDIOM_STORE_NAME, 'readonly');
+            const req = tx.objectStore(IDIOM_STORE_NAME).get(IDIOM_CACHE_KEY);
+            req.onsuccess = () => resolve(req.result);
+            req.onerror = () => reject(req.error);
+        });
+    });
+}
+
+function setIdiomCache(payload) {
+    return openIdiomDB().then(db => {
+        return new Promise((resolve, reject) => {
+            const tx = db.transaction(IDIOM_STORE_NAME, 'readwrite');
+            const req = tx.objectStore(IDIOM_STORE_NAME).put({
+                key: IDIOM_CACHE_KEY,
+                version: IDIOM_CACHE_VERSION,
+                idiomList: payload.idiomList,
+                idiomData: payload.idiomData
+            });
+            req.onsuccess = () => resolve();
+            req.onerror = () => reject(req.error);
+        });
+    });
+}
+
+// 流式解析 CSV，避免一次性把整文件读入内存
+async function parseIdiomCSVStream(response) {
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    const list = [];
+    const data = {};
+    let isHeader = true;
+
+    while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split('\n');
+        buffer = lines.pop() || '';
+
+        for (const line of lines) {
+            if (isHeader) {
+                isHeader = false;
+                continue;
+            }
+            const trimmed = line.trim();
+            if (!trimmed) continue;
+            const parts = trimmed.split(',');
             if (parts.length < 4) continue;
-            
             const word = parts[0] || '';
+            if (word.length !== 4) continue;
             const pinyin = parts[1] || '';
             const explanation = parts[2] || '';
             const derivation = parts[3] || '';
-            
+            list.push(word);
+            data[word] = { explanation, pinyin, derivation };
+        }
+    }
+    if (buffer.trim()) {
+        const parts = buffer.trim().split(',');
+        if (parts.length >= 4) {
+            const word = (parts[0] || '').trim();
             if (word.length === 4) {
-                idiomList.push(word);
-                idiomData[word] = { explanation, pinyin, derivation };
+                list.push(word);
+                data[word] = {
+                    explanation: parts[2] || '',
+                    pinyin: parts[1] || '',
+                    derivation: parts[3] || ''
+                };
             }
         }
-        
-        console.log(`已加载 ${idiomList.length} 个成语`);
+    }
+    return { idiomList: list, idiomData: data };
+}
+
+// 加载成语列表（优先读缓存，未命中再拉 CSV 并流式解析）
+async function loadIdioms() {
+    try {
+        let cached = null;
+        try {
+            cached = await getIdiomCache();
+        } catch (_) { /* 无 IndexedDB 或读取失败则走网络 */ }
+
+        if (cached && cached.version === IDIOM_CACHE_VERSION && cached.idiomList && cached.idiomData) {
+            idiomList.length = 0;
+            idiomList.push(...cached.idiomList);
+            Object.assign(idiomData, cached.idiomData);
+            return;
+        }
+
+        const response = await fetch('idiom.csv');
+        if (!response.ok) throw new Error(response.statusText);
+        const { idiomList: list, idiomData: data } = await parseIdiomCSVStream(response);
+        idiomList.length = 0;
+        idiomList.push(...list);
+        for (const k of Object.keys(idiomData)) delete idiomData[k];
+        Object.assign(idiomData, data);
+
+        try {
+            await setIdiomCache({ idiomList: list, idiomData: data });
+        } catch (_) { /* 缓存写入失败不影响使用 */ }
     } catch (error) {
         console.error('加载成语列表失败:', error);
         showMessage('加载成语列表失败，请刷新页面重试', 'error');
@@ -460,8 +552,6 @@ function generateTodayKeyboard(seed) {
     
     // 使用伪随机打乱顺序（但保证同一天顺序一致）
     keyboardChars = shuffleArray(charsArray, seed + 999);
-    
-    console.log('今日键盘字符:', keyboardChars.join(''));
 }
 
 // 基于种子的数组打乱算法（Fisher-Yates）
@@ -634,10 +724,6 @@ function startNewGame() {
     // 从打乱后的列表中按顺序取，保证 29502 天内不重复
     const index = days % shuffledIdiomList.length;
     targetIdiom = shuffledIdiomList[index];
-    
-    console.log('今日日期:', todayDate);
-    console.log('第', days, '天，成语索引:', index);
-    console.log('今日成语:', targetIdiom); // 调试用，正式版可删除
     
     // 更新副标题显示今日日期
     document.getElementById('subtitle').textContent = todayDate;
@@ -965,7 +1051,7 @@ async function shareResult() {
                 return;
             } catch (err) {
                 if (err.name !== 'AbortError') {
-                    console.log('分享失败:', err);
+                    showMessage('分享失败', 'error');
                 }
             }
         }

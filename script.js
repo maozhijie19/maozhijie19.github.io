@@ -165,6 +165,16 @@ function hideStats() {
     document.getElementById('statsModal').classList.remove('show');
 }
 
+// 显示帮助弹窗
+function showHelp() {
+    document.getElementById('helpModal').classList.add('show');
+}
+
+// 隐藏帮助弹窗
+function hideHelp() {
+    document.getElementById('helpModal').classList.remove('show');
+}
+
 // 加载设置
 function loadSettings() {
     const saved = localStorage.getItem('idiomWordleSettings');
@@ -299,6 +309,9 @@ function getCharStatus(guessChars, targetChars) {
 
 // 初始化游戏
 async function init() {
+    // 先显示日期，避免副标题区域闪烁旧文案
+    const subtitleEl = document.getElementById('subtitle');
+    if (subtitleEl) subtitleEl.textContent = getTodayDateString();
     await loadIdioms();
     
     // 用固定种子打乱成语列表（保证所有人打乱结果一致）
@@ -596,6 +609,14 @@ function attachEventListeners() {
             hideStats();
         }
     });
+    // 帮助按钮
+    document.getElementById('helpBtn').addEventListener('click', showHelp);
+    document.getElementById('helpClose').addEventListener('click', hideHelp);
+    document.getElementById('helpModal').addEventListener('click', (e) => {
+        if (e.target.id === 'helpModal') {
+            hideHelp();
+        }
+    });
 }
 
 // 开始新游戏
@@ -619,7 +640,7 @@ function startNewGame() {
     console.log('今日成语:', targetIdiom); // 调试用，正式版可删除
     
     // 更新副标题显示今日日期
-    document.getElementById('subtitle').textContent = `今日成语 ${todayDate}`;
+    document.getElementById('subtitle').textContent = todayDate;
     
     // 生成今日键盘
     generateTodayKeyboard(dateToDays(todayDate));
@@ -840,7 +861,7 @@ function generateShareImage() {
     // 副标题
     ctx.font = '13px -apple-system, BlinkMacSystemFont, sans-serif';
     ctx.fillStyle = textSecondary;
-    ctx.fillText(`今日成语 ${todayDate}`, width / 2, padding + 46);
+    ctx.fillText(todayDate, width / 2, padding + 46);
     
     // 颜色定义
     const colors = {

@@ -11,7 +11,44 @@
         <header>
             <h1>成语Wordle</h1>
             <p class="subtitle" id="subtitle">猜一个四字成语，你有 6 次机会</p>
+            <button class="settings-btn" id="settingsBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="3"></circle>
+                    <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+                </svg>
+            </button>
         </header>
+        
+        <div class="modal-overlay" id="settingsModal">
+            <div class="modal settings-modal">
+                <div class="modal-header">设置</div>
+                <div class="settings-list">
+                    <label class="setting-item">
+                        <span class="setting-label">提示非成语</span>
+                        <span class="setting-desc">关闭后，不是成语也可以提交</span>
+                        <input type="checkbox" id="settingValidateIdiom" checked>
+                        <span class="toggle"></span>
+                    </label>
+                    <label class="setting-item">
+                        <span class="setting-label">键盘高亮</span>
+                        <span class="setting-desc">关闭后，键盘不再显示已猜字的状态</span>
+                        <input type="checkbox" id="settingKeyboardHighlight" checked>
+                        <span class="toggle"></span>
+                    </label>
+                </div>
+                <button class="modal-close" id="settingsClose">完成</button>
+            </div>
+        </div>
+        
+        <div class="modal-overlay" id="resultModal">
+            <div class="modal">
+                <div class="modal-header" id="modalHeader">恭喜你猜对了！</div>
+                <div class="modal-word" id="resultWord"></div>
+                <div class="modal-pinyin" id="resultPinyin"></div>
+                <div class="modal-explanation" id="resultExplanation"></div>
+                <button class="modal-close" id="modalClose">关闭</button>
+            </div>
+        </div>
 
         <div class="game-board" id="gameBoard">
             <!-- 6 rows, each with 4 tiles -->

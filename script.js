@@ -6,8 +6,58 @@ let gameOver = false;
 let idiomList = [];
 let guessedIdioms = [];
 let keyboardState = {};
-let keyboardChars = []; // 今日键盘的22个字
+let keyboardChars = []; // 今日键盘的20个字
 let todayDate = ''; // 今日日期
+let idiomData = {}; // 成语数据 {word: {explanation, pinyin}}
+
+// 设置
+let settings = {
+    validateIdiom: true,      // 是否验证成语
+    keyboardHighlight: true   // 是否键盘高亮
+};
+
+// 加载设置
+function loadSettings() {
+    const saved = localStorage.getItem('idiomWordleSettings');
+    if (saved) {
+        try {
+            settings = JSON.parse(saved);
+        } catch (e) {
+            console.error('加载设置失败:', e);
+        }
+    }
+    // 更新 UI
+    document.getElementById('settingValidateIdiom').checked = settings.validateIdiom;
+    document.getElementById('settingKeyboardHighlight').checked = settings.keyboardHighlight;
+}
+
+// 保存设置
+function saveSettings() {
+    settings.validateIdiom = document.getElementById('settingValidateIdiom').checked;
+    settings.keyboardHighlight = document.getElementById('settingKeyboardHighlight').checked;
+    localStorage.setItem('idiomWordleSettings', JSON.stringify(settings));
+    
+    // 如果关闭键盘高亮，清除当前高亮
+    if (!settings.keyboardHighlight) {
+        document.querySelectorAll('.key').forEach(key => {
+            key.classList.remove('correct', 'present', 'absent');
+        });
+    } else {
+        // 重新应用键盘状态
+        createKeyboard();
+    }
+}
+
+// 显示设置弹窗
+function showSettings() {
+    document.getElementById('settingsModal').classList.add('show');
+}
+
+// 隐藏设置弹窗
+function hideSettings() {
+    saveSettings();
+    document.getElementById('settingsModal').classList.remove('show');
+}
 
 // 保存游戏状态
 function saveGameState() {
@@ -62,14 +112,10 @@ function restoreGameState(state) {
     // 恢复键盘状态
     createKeyboard();
     
-    // 如果游戏已结束，显示消息
+    // 如果游戏已结束，显示结果弹窗
     if (gameOver) {
         const won = guessedIdioms[guessedIdioms.length - 1] === targetIdiom;
-        if (won) {
-            showMessage('恭喜你猜对了！🎉', 'success');
-        } else {
-            showMessage(`游戏结束！答案是：${targetIdiom}`, 'error');
-        }
+        showResult(won);
     }
 }
 
@@ -105,6 +151,7 @@ function getCharStatus(guessChars, targetChars) {
 // 初始化游戏
 async function init() {
     await loadIdioms();
+    loadSettings();
     createGameBoard();
     createKeyboard();
     attachEventListeners();
@@ -132,12 +179,51 @@ function dateToSeed(dateStr) {
     return parseInt(parts[0]) * 10000 + parseInt(parts[1]) * 100 + parseInt(parts[2]);
 }
 
+// 解析 CSV 行
+function parseCSVLine(line) {
+    const result = [];
+    let current = '';
+    let inQuotes = false;
+    
+    for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        if (char === '"') {
+            inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+            result.push(current);
+            current = '';
+        } else {
+            current += char;
+        }
+    }
+    result.push(current);
+    return result;
+}
+
 // 加载成语列表
 async function loadIdioms() {
     try {
-        const response = await fetch('idiom_4chars.txt');
+        const response = await fetch('idiom.csv');
         const text = await response.text();
-        idiomList = text.split('\n').filter(idiom => idiom.trim().length === 4);
+        const lines = text.split('\n');
+        
+        // 跳过表头
+        for (let i = 1; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+            
+            const fields = parseCSVLine(line);
+            // CSV 列: derivation, example, explanation, pinyin, word, abbreviation, pinyin_r, first, last
+            const explanation = fields[2] || '';
+            const pinyin = fields[3] || '';
+            const word = fields[4] || '';
+            
+            if (word.length === 4) {
+                idiomList.push(word);
+                idiomData[word] = { explanation, pinyin };
+            }
+        }
+        
         console.log(`已加载 ${idiomList.length} 个成语`);
     } catch (error) {
         console.error('加载成语列表失败:', error);
@@ -166,26 +252,26 @@ function generateTodayKeyboard() {
     // 使用伪随机打乱相关成语
     const shuffledRelated = shuffleArray(relatedIdioms, seed + 1);
     
-    // 添加相关成语的字，直到接近23个
+    // 添加相关成语的字，直到接近20个
     for (const idiom of shuffledRelated) {
-        if (chars.size >= 19) break; // 留4个位置给无关成语
+        if (chars.size >= 16) break; // 留4个位置给无关成语
         idiom.split('').forEach(char => chars.add(char));
         usedIdioms.add(idiom);
     }
     
-    // 3. 如果还不够23个，添加无关成语的字
-    if (chars.size < 23) {
+    // 3. 如果还不够20个，添加无关成语的字
+    if (chars.size < 20) {
         const unrelatedIdioms = idiomList.filter(idiom => !usedIdioms.has(idiom));
         const shuffledUnrelated = shuffleArray(unrelatedIdioms, seed + 2);
         
         for (const idiom of shuffledUnrelated) {
-            if (chars.size >= 23) break;
+            if (chars.size >= 20) break;
             idiom.split('').forEach(char => chars.add(char));
         }
     }
     
-    // 转换为数组并限制为23个（9+7+7）
-    const charsArray = Array.from(chars).slice(0, 23);
+    // 转换为数组并限制为20个（8+6+6）
+    const charsArray = Array.from(chars).slice(0, 20);
     
     // 使用伪随机打乱顺序（但保证同一天顺序一致）
     keyboardChars = shuffleArray(charsArray, seed + 3);
@@ -230,19 +316,19 @@ function createKeyboard() {
     const keyboard = document.getElementById('keyboard');
     keyboard.innerHTML = '';
     
-    // 第一行：9个字
+    // 第一行：8个字
     const row1 = document.createElement('div');
     row1.classList.add('keyboard-row');
-    for (let i = 0; i < 9 && i < keyboardChars.length; i++) {
+    for (let i = 0; i < 8 && i < keyboardChars.length; i++) {
         const keyButton = createKeyButton(keyboardChars[i]);
         row1.appendChild(keyButton);
     }
     keyboard.appendChild(row1);
     
-    // 第二行：7个字 + 删除按钮
+    // 第二行：6个字 + 删除按钮
     const row2 = document.createElement('div');
     row2.classList.add('keyboard-row');
-    for (let i = 9; i < 16 && i < keyboardChars.length; i++) {
+    for (let i = 8; i < 14 && i < keyboardChars.length; i++) {
         const keyButton = createKeyButton(keyboardChars[i]);
         row2.appendChild(keyButton);
     }
@@ -250,10 +336,10 @@ function createKeyboard() {
     row2.appendChild(deleteBtn);
     keyboard.appendChild(row2);
     
-    // 第三行：7个字 + 提交按钮
+    // 第三行：6个字 + 提交按钮
     const row3 = document.createElement('div');
     row3.classList.add('keyboard-row');
-    for (let i = 16; i < 23 && i < keyboardChars.length; i++) {
+    for (let i = 14; i < 20 && i < keyboardChars.length; i++) {
         const keyButton = createKeyButton(keyboardChars[i]);
         row3.appendChild(keyButton);
     }
@@ -269,8 +355,8 @@ function createKeyButton(char) {
     keyButton.textContent = char;
     keyButton.dataset.key = char;
     
-    // 应用已有的键盘状态
-    if (keyboardState[char]) {
+    // 应用已有的键盘状态（如果设置开启了高亮）
+    if (settings.keyboardHighlight && keyboardState[char]) {
         keyButton.classList.add(keyboardState[char]);
     }
     
@@ -301,6 +387,25 @@ function attachEventListeners() {
             handleKeyPress('删除');
         } else if (e.key === 'Enter') {
             handleKeyPress('提交');
+        }
+    });
+    
+    // 关闭弹窗按钮
+    document.getElementById('modalClose').addEventListener('click', hideResult);
+    
+    // 点击遮罩关闭弹窗
+    document.getElementById('resultModal').addEventListener('click', (e) => {
+        if (e.target.id === 'resultModal') {
+            hideResult();
+        }
+    });
+    
+    // 设置按钮
+    document.getElementById('settingsBtn').addEventListener('click', showSettings);
+    document.getElementById('settingsClose').addEventListener('click', hideSettings);
+    document.getElementById('settingsModal').addEventListener('click', (e) => {
+        if (e.target.id === 'settingsModal') {
+            hideSettings();
         }
     });
 }
@@ -339,6 +444,7 @@ function startNewGame() {
     createGameBoard();
     createKeyboard();
     hideMessage();
+    hideResult();
     
     // 尝试加载今日已保存的状态
     const savedState = loadGameState();
@@ -400,8 +506,8 @@ function submitGuess() {
         return;
     }
     
-    // 检查是否是有效成语
-    if (!idiomList.includes(guess)) {
+    // 检查是否是有效成语（根据设置）
+    if (settings.validateIdiom && !idiomList.includes(guess)) {
         showMessage('不是有效的成语', 'error');
         shakeRow(currentRow);
         return;
@@ -425,13 +531,13 @@ function submitGuess() {
         gameOver = true;
         setTimeout(() => {
             saveGameState();
-            showMessage('恭喜你猜对了！🎉', 'success');
+            showResult(true);
         }, animationDelay);
     } else if (currentRow === 5) {
         gameOver = true;
         setTimeout(() => {
             saveGameState();
-            showMessage(`游戏结束！答案是：${targetIdiom}`, 'error');
+            showResult(false);
         }, animationDelay);
     } else {
         currentRow++;
@@ -440,6 +546,26 @@ function submitGuess() {
             saveGameState();
         }, animationDelay);
     }
+}
+
+// 显示结果弹窗
+function showResult(won = true) {
+    const data = idiomData[targetIdiom];
+    if (!data) return;
+    
+    const header = document.getElementById('modalHeader');
+    header.textContent = won ? '恭喜你猜对了！' : '很遗憾，没猜出来';
+    header.classList.toggle('fail', !won);
+    
+    document.getElementById('resultWord').textContent = targetIdiom;
+    document.getElementById('resultPinyin').textContent = data.pinyin;
+    document.getElementById('resultExplanation').textContent = data.explanation;
+    document.getElementById('resultModal').classList.add('show');
+}
+
+// 隐藏结果弹窗
+function hideResult() {
+    document.getElementById('resultModal').classList.remove('show');
 }
 
 // 获取当前猜测
@@ -484,6 +610,9 @@ function updateKeyboardState(char, status) {
     if (currentStatus === 'present' && status === 'absent') return;
     
     keyboardState[char] = status;
+    
+    // 如果设置关闭了键盘高亮，不更新显示
+    if (!settings.keyboardHighlight) return;
     
     // 更新键盘按钮
     const keyButton = document.querySelector(`.key[data-key="${char}"]`);

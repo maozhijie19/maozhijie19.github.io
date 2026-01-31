@@ -76,6 +76,31 @@ header {
     text-align: center;
     padding-bottom: 20px;
     border-bottom: 1px solid var(--border-color);
+    position: relative;
+}
+
+.settings-btn {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    background: var(--key-bg);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+    color: var(--text-secondary);
+}
+
+.settings-btn:hover {
+    background: var(--key-hover);
+    transform: translateY(-50%) scale(1.05);
+    color: var(--text-primary);
 }
 
 h1 {
@@ -286,6 +311,187 @@ h1 {
 
 .tile.pop {
     animation: pop 0.1s ease;
+}
+
+/* 模态弹窗 */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 24px;
+    max-width: 360px;
+    width: 100%;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    animation: modalIn 0.3s ease;
+}
+
+@keyframes modalIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-header {
+    font-size: 1.2rem;
+    font-weight: 700;
+    text-align: center;
+    margin-bottom: 16px;
+    color: var(--correct);
+}
+
+.modal-header.fail {
+    color: #ef4444;
+}
+
+.modal-word {
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    color: var(--text-primary);
+    margin-bottom: 4px;
+}
+
+.modal-pinyin {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.modal-explanation {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    line-height: 1.7;
+    padding: 12px;
+    background: var(--bg-primary);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.modal-close {
+    width: 100%;
+    padding: 12px;
+    background: var(--action-key);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.modal-close:hover {
+    background: var(--action-key-hover);
+}
+
+.modal-close:active {
+    transform: scale(0.98);
+}
+
+/* 设置弹窗 */
+.settings-modal {
+    max-width: 320px;
+}
+
+.settings-modal .modal-header {
+    color: var(--text-primary);
+    margin-bottom: 20px;
+}
+
+.settings-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.setting-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto auto;
+    gap: 4px 12px;
+    padding: 12px;
+    background: var(--bg-primary);
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.setting-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    grid-column: 1;
+    grid-row: 1;
+}
+
+.setting-desc {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    grid-column: 1;
+    grid-row: 2;
+}
+
+.toggle {
+    grid-column: 2;
+    grid-row: 1 / 3;
+    align-self: center;
+}
+
+.setting-item input[type="checkbox"] {
+    display: none;
+}
+
+.toggle {
+    width: 44px;
+    height: 24px;
+    background: var(--absent);
+    border-radius: 12px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.toggle::after {
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background: white;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: all 0.2s ease;
+}
+
+.setting-item input[type="checkbox"]:checked + .toggle {
+    background: var(--correct);
+}
+
+.setting-item input[type="checkbox"]:checked + .toggle::after {
+    left: 22px;
 }
 
 /* 响应式设计 */

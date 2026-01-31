@@ -11,6 +11,13 @@
         <header>
             <h1>成语Wordle</h1>
             <p class="subtitle" id="subtitle">猜一个四字成语，你有 6 次机会</p>
+            <button class="stats-btn" id="statsBtn">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="18" y1="20" x2="18" y2="10"></line>
+                    <line x1="12" y1="20" x2="12" y2="4"></line>
+                    <line x1="6" y1="20" x2="6" y2="14"></line>
+                </svg>
+            </button>
             <button class="settings-btn" id="settingsBtn">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <circle cx="12" cy="12" r="3"></circle>
@@ -18,6 +25,35 @@
                 </svg>
             </button>
         </header>
+        
+        <div class="modal-overlay" id="statsModal">
+            <div class="modal">
+                <div class="modal-header">游戏统计</div>
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="totalGames">0</div>
+                        <div class="stat-label">已玩</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="winRate">0%</div>
+                        <div class="stat-label">胜率</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="currentStreak">0</div>
+                        <div class="stat-label">连胜</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="maxStreak">0</div>
+                        <div class="stat-label">最高连胜</div>
+                    </div>
+                </div>
+                <div class="guess-distribution">
+                    <div class="distribution-title">猜测分布</div>
+                    <div id="distributionBars"></div>
+                </div>
+                <button class="modal-btn" id="statsClose">关闭</button>
+            </div>
+        </div>
         
         <div class="modal-overlay" id="settingsModal">
             <div class="modal settings-modal">

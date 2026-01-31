@@ -16,6 +16,88 @@ let settings = {
     keyboardHighlight: true   // 是否键盘高亮
 };
 
+// 统计数据
+let stats = {
+    totalGames: 0,
+    gamesWon: 0,
+    currentStreak: 0,
+    maxStreak: 0,
+    guessDistribution: [0, 0, 0, 0, 0] // 1-5次猜对的次数
+};
+
+// 加载统计数据
+function loadStats() {
+    const saved = localStorage.getItem('idiomWordleStats');
+    if (saved) {
+        try {
+            stats = JSON.parse(saved);
+        } catch (e) {
+            console.error('加载统计失败:', e);
+        }
+    }
+}
+
+// 保存统计数据
+function saveStats() {
+    localStorage.setItem('idiomWordleStats', JSON.stringify(stats));
+}
+
+// 更新统计数据
+function updateStats(won, attempts) {
+    stats.totalGames++;
+    if (won) {
+        stats.gamesWon++;
+        stats.currentStreak++;
+        stats.maxStreak = Math.max(stats.maxStreak, stats.currentStreak);
+        stats.guessDistribution[attempts - 1]++;
+    } else {
+        stats.currentStreak = 0;
+    }
+    saveStats();
+}
+
+// 显示统计弹窗
+function showStats() {
+    // 更新数据
+    document.getElementById('totalGames').textContent = stats.totalGames;
+    const winRate = stats.totalGames > 0 
+        ? Math.round((stats.gamesWon / stats.totalGames) * 100) 
+        : 0;
+    document.getElementById('winRate').textContent = `${winRate}%`;
+    document.getElementById('currentStreak').textContent = stats.currentStreak;
+    document.getElementById('maxStreak').textContent = stats.maxStreak;
+    
+    // 生成分布图
+    const maxCount = Math.max(...stats.guessDistribution, 1);
+    const container = document.getElementById('distributionBars');
+    container.innerHTML = '';
+    
+    for (let i = 0; i < 5; i++) {
+        const count = stats.guessDistribution[i];
+        const percentage = (count / maxCount) * 100;
+        const isCurrent = gameOver && guessedIdioms.length === i + 1 && guessedIdioms[guessedIdioms.length - 1] === targetIdiom;
+        
+        const barDiv = document.createElement('div');
+        barDiv.className = 'distribution-bar';
+        barDiv.innerHTML = `
+            <div class="bar-label">${i + 1}</div>
+            <div class="bar-container">
+                <div class="bar-fill ${isCurrent ? 'current' : ''}" style="width: ${Math.max(percentage, 7)}%">
+                    <span class="bar-count">${count}</span>
+                </div>
+            </div>
+        `;
+        container.appendChild(barDiv);
+    }
+    
+    document.getElementById('statsModal').classList.add('show');
+}
+
+// 隐藏统计弹窗
+function hideStats() {
+    document.getElementById('statsModal').classList.remove('show');
+}
+
 // 加载设置
 function loadSettings() {
     const saved = localStorage.getItem('idiomWordleSettings');
@@ -152,6 +234,7 @@ function getCharStatus(guessChars, targetChars) {
 async function init() {
     await loadIdioms();
     loadSettings();
+    loadStats();
     createGameBoard();
     createKeyboard();
     attachEventListeners();
@@ -295,7 +378,7 @@ function createGameBoard() {
     const gameBoard = document.getElementById('gameBoard');
     gameBoard.innerHTML = '';
     
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 5; i++) {
         const row = document.createElement('div');
         row.classList.add('row');
         row.dataset.row = i;
@@ -410,6 +493,15 @@ function attachEventListeners() {
     document.getElementById('settingsModal').addEventListener('click', (e) => {
         if (e.target.id === 'settingsModal') {
             hideSettings();
+        }
+    });
+    
+    // 统计按钮
+    document.getElementById('statsBtn').addEventListener('click', showStats);
+    document.getElementById('statsClose').addEventListener('click', hideStats);
+    document.getElementById('statsModal').addEventListener('click', (e) => {
+        if (e.target.id === 'statsModal') {
+            hideStats();
         }
     });
 }
@@ -533,12 +625,14 @@ function submitGuess() {
     
     if (guess === targetIdiom) {
         gameOver = true;
+        updateStats(true, guessedIdioms.length);
         setTimeout(() => {
             saveGameState();
             showResult(true);
         }, animationDelay);
-    } else if (currentRow === 5) {
+    } else if (currentRow === 4) {
         gameOver = true;
+        updateStats(false, 0);
         setTimeout(() => {
             saveGameState();
             showResult(false);

@@ -79,9 +79,9 @@ header {
     position: relative;
 }
 
+.stats-btn,
 .settings-btn {
     position: absolute;
-    right: 0;
     top: 50%;
     transform: translateY(-50%);
     width: 36px;
@@ -97,6 +97,15 @@ header {
     color: var(--text-secondary);
 }
 
+.stats-btn {
+    left: 0;
+}
+
+.settings-btn {
+    right: 0;
+}
+
+.stats-btn:hover,
 .settings-btn:hover {
     background: var(--key-hover);
     transform: translateY(-50%) scale(1.05);
@@ -457,6 +466,84 @@ h1 {
 
 .settings-modal .modal-btn:hover {
     background: var(--action-key-hover);
+}
+
+/* 统计弹窗 */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.stat-item {
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.guess-distribution {
+    margin-bottom: 20px;
+}
+
+.distribution-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+}
+
+.distribution-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.bar-label {
+    font-size: 0.85rem;
+    color: var(--text-primary);
+    width: 12px;
+    text-align: right;
+}
+
+.bar-container {
+    flex: 1;
+    height: 24px;
+    background: var(--key-bg);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+.bar-fill {
+    height: 100%;
+    background: var(--absent);
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 8px;
+    transition: width 0.5s ease;
+}
+
+.bar-fill.current {
+    background: var(--correct);
+}
+
+.bar-count {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: white;
 }
 
 .settings-list {

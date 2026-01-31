@@ -220,7 +220,8 @@ async function loadIdioms() {
             
             if (word.length === 4) {
                 idiomList.push(word);
-                idiomData[word] = { explanation, pinyin };
+                const derivation = fields[0] || '';
+                idiomData[word] = { explanation, pinyin, derivation };
             }
         }
         
@@ -560,6 +561,16 @@ function showResult(won = true) {
     document.getElementById('resultWord').textContent = targetIdiom;
     document.getElementById('resultPinyin').textContent = data.pinyin;
     document.getElementById('resultExplanation').textContent = data.explanation;
+    
+    // 显示来源（如果不是"无"）
+    const derivationEl = document.getElementById('resultDerivation');
+    if (data.derivation && data.derivation !== '无' && data.derivation.trim() !== '') {
+        derivationEl.textContent = '出处：' + data.derivation;
+        derivationEl.style.display = 'block';
+    } else {
+        derivationEl.style.display = 'none';
+    }
+    
     document.getElementById('resultModal').classList.add('show');
 }
 

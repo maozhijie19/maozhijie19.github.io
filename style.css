@@ -388,7 +388,18 @@ h1 {
     padding: 12px;
     background: var(--bg-primary);
     border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+.modal-derivation {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    padding: 10px 12px;
+    background: var(--bg-primary);
+    border-radius: 8px;
     margin-bottom: 20px;
+    border-left: 3px solid var(--present);
 }
 
 .modal-close {

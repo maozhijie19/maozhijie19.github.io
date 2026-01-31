@@ -579,6 +579,7 @@ function attachEventListeners() {
     });
     
     // 设置按钮
+    document.getElementById('hintBtn').addEventListener('click', showHint);
     document.getElementById('settingsBtn').addEventListener('click', showSettings);
     document.getElementById('settingsClose').addEventListener('click', hideSettings);
     document.getElementById('settingsModal').addEventListener('click', (e) => {
@@ -834,7 +835,7 @@ function generateShareImage() {
     ctx.fillStyle = textPrimary;
     ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText('成语Wordle', width / 2, padding + 24);
+    ctx.fillText('猜三划四', width / 2, padding + 24);
     
     // 副标题
     ctx.font = '13px -apple-system, BlinkMacSystemFont, sans-serif';
@@ -931,14 +932,14 @@ async function shareResult() {
     
     // 转换为 Blob
     canvas.toBlob(async (blob) => {
-        const file = new File([blob], `成语Wordle_${todayDate}.png`, { type: 'image/png' });
+        const file = new File([blob], `猜三划四_${todayDate}.png`, { type: 'image/png' });
         
         // 尝试使用 Web Share API（移动端）
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
             try {
                 await navigator.share({
                     files: [file],
-                    title: '成语Wordle'
+                    title: '猜三划四'
                 });
                 return;
             } catch (err) {
@@ -952,7 +953,7 @@ async function shareResult() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `成语Wordle_${todayDate}.png`;
+        a.download = `猜三划四_${todayDate}.png`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -1064,18 +1065,82 @@ function shakeRow(row) {
     }, 400);
 }
 
-// 显示消息
-function showMessage(text, type = '') {
+// 提示：每日限 1 次
+function getHintUsedToday() {
+    const key = 'idiomWordleHintUsed_' + (todayDate || getTodayDateString());
+    return localStorage.getItem(key) === '1';
+}
+
+function setHintUsedToday() {
+    const key = 'idiomWordleHintUsed_' + (todayDate || getTodayDateString());
+    localStorage.setItem(key, '1');
+}
+
+// 答案是否有叠字（重复字）
+function hasRepeatedChars(s) {
+    const set = new Set(s.split(''));
+    return set.size < s.length;
+}
+
+// 今日提示内容（仅由日期决定，同一天所有人一致，不随刷新/设备变化）
+function getTodayHintText() {
+    const dateStr = todayDate || getTodayDateString();
+    const seed = dateToDays(dateStr);
+    const hasRepeat = hasRepeatedChars(targetIdiom);
+
+    const types = hasRepeat ? [1, 2, 3] : [1, 2]; // 1=揭示一字 2=不含某字 3=有叠字
+    const choice = types[Math.floor(seededRandom(seed + 100) * types.length)];
+
+    if (choice === 3) {
+        return '答案中有叠字';
+    }
+    if (choice === 1) {
+        const pos = 1 + Math.floor(seededRandom(seed + 101) * 4); // 1~4
+        const char = targetIdiom[pos - 1];
+        return '第 ' + pos + ' 个字是「' + char + '」';
+    }
+    const notInAnswer = keyboardChars.filter(c => !targetIdiom.includes(c));
+    if (notInAnswer.length === 0) {
+        const pos = 1 + Math.floor(seededRandom(seed + 101) * 4);
+        const char = targetIdiom[pos - 1];
+        return '第 ' + pos + ' 个字是「' + char + '」';
+    }
+    notInAnswer.sort(); // 保证同一天同顺序
+    const idx = Math.floor(seededRandom(seed + 102) * notInAnswer.length);
+    const z = notInAnswer[idx];
+    return '答案中不含「' + z + '」';
+}
+
+function showHint() {
+    if (!targetIdiom) {
+        showMessage('成语未加载', 'error');
+        return;
+    }
+    if (gameOver) {
+        showMessage('本局已结束', 'error');
+        return;
+    }
+    if (getHintUsedToday()) {
+        showMessage('今日提示已用完', 'error');
+        return;
+    }
+    const text = getTodayHintText();
+    setHintUsedToday();
+    showMessage(text, 'hint', 5000);
+}
+
+// 显示消息（duration 毫秒，可选）
+function showMessage(text, type = '', duration = 3000) {
     const message = document.getElementById('message');
     message.textContent = text;
     message.className = 'message show';
     if (type) {
         message.classList.add(type);
     }
-    
-    setTimeout(() => {
+    clearTimeout(message._hideTimer);
+    message._hideTimer = setTimeout(() => {
         hideMessage();
-    }, 3000);
+    }, duration);
 }
 
 // 隐藏消息

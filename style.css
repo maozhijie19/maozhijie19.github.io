@@ -80,11 +80,11 @@ header {
 }
 
 .stats-btn,
+.hint-btn,
 .settings-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    width: 36px;
     height: 36px;
     background: var(--key-bg);
     border: none;
@@ -95,10 +95,21 @@ header {
     justify-content: center;
     transition: all 0.15s ease;
     color: var(--text-secondary);
+    font-size: 0.85rem;
+}
+
+.stats-btn,
+.hint-btn,
+.settings-btn {
+    width: 36px;
 }
 
 .stats-btn {
     left: 0;
+}
+
+.hint-btn {
+    right: 44px;
 }
 
 .settings-btn {
@@ -106,6 +117,7 @@ header {
 }
 
 .stats-btn:hover,
+.hint-btn:hover,
 .settings-btn:hover {
     background: var(--key-hover);
     transform: translateY(-50%) scale(1.05);
@@ -297,6 +309,11 @@ h1 {
 
 .message.success {
     background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    color: white;
+}
+
+.message.hint {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
     color: white;
 }
 

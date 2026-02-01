@@ -516,7 +516,7 @@ header {
 }
 
 .modal-explanation {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     color: var(--text-primary);
     line-height: 1.7;
     padding: 12px;
@@ -535,6 +535,12 @@ header {
     border-radius: 8px;
     margin-bottom: 16px;
     border-left: 3px solid var(--present);
+}
+
+.modal-derivation strong {
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-weight: 700;
+    color: var(--text-primary);
 }
 
 .modal-achievement-unlock {
@@ -617,53 +623,100 @@ header {
 .help-content {
     font-size: 0.9rem;
     color: var(--text-primary);
-    line-height: 1.7;
+    line-height: 1.6;
     margin-bottom: 20px;
     text-align: left;
 }
 
-.help-content p {
+.help-subtitle {
+    font-size: 1rem;
+    margin-bottom: 16px;
+}
+
+.help-rules {
+    margin: 0 0 20px 0;
+    padding-left: 20px;
+}
+
+.help-rules li {
+    margin-bottom: 6px;
+}
+
+.help-section-title {
+    font-weight: 700;
+    font-size: 0.9rem;
     margin-bottom: 12px;
-}
-
-.help-content p:last-child {
-    margin-bottom: 0;
-}
-
-.help-author {
-    margin-top: 16px;
-    font-size: 0.85rem;
     color: var(--text-secondary);
 }
 
-.help-colors {
-    margin: 12px 0;
-    line-height: 2;
+.help-example {
+    margin-bottom: 16px;
 }
 
-.help-swatch {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-    line-height: 24px;
-    text-align: center;
-    border-radius: 4px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    color: white;
-    margin-right: 6px;
+.help-tiles {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 6px;
 }
 
-.help-swatch.correct {
+.help-tile {
+    width: 36px;
+    height: 36px;
+    border: 2px solid var(--tile-border);
+    background: var(--tile-bg);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    font-weight: 900;
+    color: var(--text-primary);
+}
+
+.help-tile.correct {
     background: var(--correct);
+    border-color: var(--correct);
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.help-swatch.present {
+.help-tile.present {
     background: var(--present);
+    border-color: var(--present);
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.help-swatch.absent {
+.help-tile.absent {
     background: var(--absent);
+    border-color: var(--absent);
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.help-explain {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.help-explain strong {
+    font-weight: 900;
+    color: var(--text-primary);
+}
+
+.help-note {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--border-color);
+}
+
+.help-author {
+    margin-top: 12px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
 }
 
 .help-modal .modal-btn {
@@ -922,6 +975,12 @@ header {
     outline: none;
     border-color: var(--present);
     box-shadow: 0 0 0 2px rgba(234, 179, 8, 0.2);
+}
+
+.setting-item-cloud input[type="text"].readonly {
+    background: var(--bg-primary);
+    color: var(--text-secondary);
+    cursor: default;
 }
 
 .setting-item-cloud textarea {

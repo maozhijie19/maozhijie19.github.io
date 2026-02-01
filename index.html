@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>猜三划四 - 猜成语游戏</title>
+    <title>每日成语 - 猜成语游戏</title>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/pocketbase/dist/pocketbase.umd.js"></script>
@@ -11,11 +11,11 @@
 <body>
     <div class="container">
         <header>
-            <div class="title-tiles" aria-label="猜三划四">
-                <span class="title-tile present">猜</span>
-                <span class="title-tile absent">三</span>
-                <span class="title-tile absent">划</span>
-                <span class="title-tile correct">四</span>
+            <div class="title-tiles" aria-label="每日成语">
+                <span class="title-tile present">每</span>
+                <span class="title-tile correct">日</span>
+                <span class="title-tile absent">成</span>
+                <span class="title-tile correct">语</span>
             </div>
             <div class="subtitle-row">
                 <p class="subtitle" id="subtitle"></p>
@@ -85,15 +85,45 @@
             <div class="modal help-modal">
                 <div class="modal-header">游玩方式</div>
                 <div class="help-content">
-                    <p>猜一个四字成语，你有 <strong>5 次</strong>机会。</p>
-                    <p>每行输入一个四字成语，点击提交。</p>
-                    <p class="help-colors">
-                        <span class="help-swatch correct">绿</span> 该字在答案中且位置正确<br>
-                        <span class="help-swatch present">黄</span> 该字在答案中但位置不对<br>
-                        <span class="help-swatch absent">灰</span> 该字不在答案中
-                    </p>
-                    <p>只能使用键盘上的字。每日一题，所有人同一天题目相同。</p>
-                    <p>灯泡按钮为提示。</p>
+                    <p class="help-subtitle">猜出成语，你有 <strong>5 次</strong>机会。</p>
+                    <ul class="help-rules">
+                        <li>每次猜测必须是有效的四字成语</li>
+                        <li>提交后，格子颜色会提示你的猜测接近程度</li>
+                    </ul>
+                    
+                    <p class="help-section-title">示例</p>
+                    
+                    <div class="help-example">
+                        <div class="help-tiles">
+                            <span class="help-tile correct">龙</span>
+                            <span class="help-tile">马</span>
+                            <span class="help-tile">精</span>
+                            <span class="help-tile">神</span>
+                        </div>
+                        <p class="help-explain"><strong>龙</strong> 在答案中且位置正确</p>
+                    </div>
+                    
+                    <div class="help-example">
+                        <div class="help-tiles">
+                            <span class="help-tile">画</span>
+                            <span class="help-tile present">龙</span>
+                            <span class="help-tile">点</span>
+                            <span class="help-tile">睛</span>
+                        </div>
+                        <p class="help-explain"><strong>龙</strong> 在答案中但位置不对</p>
+                    </div>
+                    
+                    <div class="help-example">
+                        <div class="help-tiles">
+                            <span class="help-tile">千</span>
+                            <span class="help-tile">军</span>
+                            <span class="help-tile absent">万</span>
+                            <span class="help-tile">马</span>
+                        </div>
+                        <p class="help-explain"><strong>万</strong> 不在答案中</p>
+                    </div>
+                    
+                    <p class="help-note">每日一题，所有人同一天题目相同。只能使用键盘上的字。</p>
                     <p class="help-author">作者：ØYNN</p>
                 </div>
                 <button class="modal-btn" id="helpClose">关闭</button>

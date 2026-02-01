@@ -359,10 +359,36 @@ function updateKeyButtonText() {
     btn.textContent = input && input.value.trim() ? '同步数据' : '生成密钥';
 }
 
+// 密钥同步成功后锁定 UI（隐藏按钮、输入框不可编辑）
+function lockSyncKeyUI() {
+    const input = document.getElementById('settingAuthKey');
+    const btn = document.getElementById('settingKeyBtn');
+    const btnsContainer = document.querySelector('.setting-key-btns');
+    if (input) {
+        input.readOnly = true;
+        input.classList.add('readonly');
+    }
+    if (btnsContainer) {
+        btnsContainer.style.display = 'none';
+    }
+}
+
 // 显示设置弹窗
 function showSettings() {
     const auth = getAuth();
-    document.getElementById('settingAuthKey').value = auth ? auth.key : '';
+    const input = document.getElementById('settingAuthKey');
+    const btnsContainer = document.querySelector('.setting-key-btns');
+    input.value = auth ? auth.key : '';
+    // 如果已有密钥，锁定 UI
+    if (auth && auth.key) {
+        input.readOnly = true;
+        input.classList.add('readonly');
+        if (btnsContainer) btnsContainer.style.display = 'none';
+    } else {
+        input.readOnly = false;
+        input.classList.remove('readonly');
+        if (btnsContainer) btnsContainer.style.display = '';
+    }
     updateKeyButtonText();
     document.getElementById('settingsModal').classList.add('show');
 }
@@ -534,7 +560,7 @@ function dateToDays(dateStr) {
 }
 
 // 成语数据缓存版本（CSV 更新时改为 2、3… 以失效旧缓存）
-const IDIOM_CACHE_VERSION = 5;
+const IDIOM_CACHE_VERSION = 6;
 // 简单模式固定只加载小 CSV，加快首屏
 const IDIOM_CSV_URL = 'idiom_simple.csv';
 const IDIOM_DB_NAME = 'idiomWordleDB';
@@ -579,21 +605,27 @@ function setIdiomCache(payload) {
     });
 }
 
-// 解析单行 CSV（derivation 内可有逗号，最后一列为 常用）
+// 解析单行 CSV（出处内可有逗号，格式：成语,拼音,出处,解释,常用）
 function parseIdiomLine(trimmed) {
     if (!trimmed) return null;
+    // 从后往前解析：最后一列是常用，倒数第二列是解释
     const lastComma = trimmed.lastIndexOf(',');
     if (lastComma === -1) return null;
     const mark = trimmed.slice(lastComma + 1).trim();
-    const rest = trimmed.slice(0, lastComma);
-    const idx1 = rest.indexOf(',');
+    const rest1 = trimmed.slice(0, lastComma);
+    const secondLastComma = rest1.lastIndexOf(',');
+    if (secondLastComma === -1) return null;
+    const explanation = rest1.slice(secondLastComma + 1).trim();
+    const rest2 = rest1.slice(0, secondLastComma);
+    // 前面按顺序解析：成语, 拼音, 出处
+    const idx1 = rest2.indexOf(',');
     if (idx1 === -1) return null;
-    const idx2 = rest.indexOf(',', idx1 + 1);
-    const word = rest.slice(0, idx1).trim();
+    const word = rest2.slice(0, idx1).trim();
     if (word.length !== 4) return null;
-    const pinyin = (idx2 === -1 ? rest.slice(idx1 + 1) : rest.slice(idx1 + 1, idx2)).trim();
-    const derivation = (idx2 === -1 ? '' : rest.slice(idx2 + 1)).trim();
-    return { word, pinyin, derivation, mark: mark || '0' };
+    const idx2 = rest2.indexOf(',', idx1 + 1);
+    const pinyin = (idx2 === -1 ? rest2.slice(idx1 + 1) : rest2.slice(idx1 + 1, idx2)).trim();
+    const derivation = (idx2 === -1 ? '' : rest2.slice(idx2 + 1)).trim();
+    return { word, pinyin, derivation, explanation, mark: mark || '0' };
 }
 
 // 流式解析 CSV，避免一次性把整文件读入内存
@@ -619,17 +651,17 @@ async function parseIdiomCSVStream(response) {
             }
             const row = parseIdiomLine(line.trim());
             if (!row) continue;
-            const { word, pinyin, derivation, mark } = row;
+            const { word, pinyin, derivation, explanation, mark } = row;
             list.push(word);
-            data[word] = { pinyin, derivation, common: mark === '1' || mark === '2', simple: mark === '2' };
+            data[word] = { pinyin, derivation, explanation, common: mark === '1' || mark === '2', simple: mark === '2' };
         }
     }
     if (buffer.trim()) {
         const row = parseIdiomLine(buffer.trim());
         if (row) {
-            const { word, pinyin, derivation, mark } = row;
+            const { word, pinyin, derivation, explanation, mark } = row;
             list.push(word);
-            data[word] = { pinyin, derivation, common: mark === '1' || mark === '2', simple: mark === '2' };
+            data[word] = { pinyin, derivation, explanation, common: mark === '1' || mark === '2', simple: mark === '2' };
         }
     }
     return { idiomList: list, idiomData: data };
@@ -910,6 +942,7 @@ function attachEventListeners() {
                 loadStats();
                 loadSettings();
                 startNewGame();
+                lockSyncKeyUI();
                 showMessage('已生成密钥，已自动同步', '');
             } catch (e) {
                 inputEl.value = oldKey || '';
@@ -931,6 +964,7 @@ function attachEventListeners() {
                     loadStats();
                     loadSettings();
                     startNewGame();
+                    lockSyncKeyUI();
                     showMessage('已同步云端', '');
                 } catch (e) {
                     loadStats();
@@ -1147,6 +1181,7 @@ function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
 function generateShareImage() {
     const won = guessedIdioms[guessedIdioms.length - 1] === targetIdiom;
     const data = idiomData[targetIdiom] || {};
+    const hasExplanation = data.explanation && data.explanation.trim() !== '';
     const hasDerivation = data.derivation && data.derivation !== '无' && data.derivation.trim() !== '';
     
     // 高分辨率倍数
@@ -1161,9 +1196,7 @@ function generateShareImage() {
     
     const contentWidth = cols * tileSize + (cols - 1) * gap;
     const width = padding * 2 + contentWidth;
-    const tagH = 24;
-    const tagGap = 12;
-    const headerHeight = 22 + 32 + tagH + tagGap + (settings.commonIdiomOnly ? tagH + tagGap : 0) + 18;
+    const headerHeight = 18 + 24 + 16 + 10; // 标题 + 日期行 + 间距
     
     // 先创建临时 canvas 测量实际文字高度
     const tempCanvas = document.createElement('canvas');
@@ -1173,9 +1206,14 @@ function generateShareImage() {
     let explanationHeight = 0;
     let derivationHeight = 0;
     
-    // 不再显示解释
-    explanationHeight = 0;
+    // 计算解释高度
+    if (hasExplanation) {
+        tempCtx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
+        const explLines = Math.ceil(tempCtx.measureText(data.explanation).width / contentWidth);
+        explanationHeight = explLines * lineHeight + 8;
+    }
     
+    // 计算出处高度
     if (hasDerivation) {
         tempCtx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
         const derivText = data.derivation;
@@ -1205,48 +1243,24 @@ function generateShareImage() {
     ctx.fillStyle = bgPrimary;
     ctx.fillRect(0, 0, width, height);
     
-    const tagPad = 14;
-    let headerY = padding + 22;
+    let headerY = padding + 18;
     
     // 标题
     ctx.fillStyle = textPrimary;
     ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('猜三划四', width / 2, headerY);
-    headerY += 32;
+    ctx.fillText('每日成语', width / 2, headerY);
+    headerY += 24;
     
-    // 日期 tag（与页面一致：圆角矩形 + 边框 + 浅底）
+    // 日期和难度（纯文本，用中间圆点分隔）
     const dateStr = getDateDisplayString(todayDate);
+    const subLine = settings.commonIdiomOnly ? dateStr + ' · 简单' : dateStr;
     ctx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
-    const dateTagW = ctx.measureText(dateStr).width + tagPad * 2;
-    const dateTagX = (width - dateTagW) / 2;
-    ctx.fillStyle = isDark ? 'rgba(148, 163, 184, 0.2)' : 'rgba(100, 116, 139, 0.15)';
-    ctx.strokeStyle = textSecondary;
-    ctx.lineWidth = 1;
-    ctx.beginPath();
-    ctx.roundRect(dateTagX, headerY, dateTagW, tagH, 12);
-    ctx.fill();
-    ctx.stroke();
     ctx.fillStyle = textSecondary;
-    ctx.fillText(dateStr, width / 2, headerY + tagH / 2);
-    headerY += tagH + tagGap;
+    ctx.fillText(subLine, width / 2, headerY);
+    headerY += 16;
     
-    // 简单模式时绘制「简单」tag
-    if (settings.commonIdiomOnly) {
-        const tagText = '简单';
-        const simpleTagW = ctx.measureText(tagText).width + tagPad * 2;
-        const simpleTagX = (width - simpleTagW) / 2;
-        ctx.fillStyle = 'rgba(234, 179, 8, 0.15)';
-        ctx.strokeStyle = '#eab308';
-        ctx.beginPath();
-        ctx.roundRect(simpleTagX, headerY, simpleTagW, tagH, 12);
-        ctx.fill();
-        ctx.stroke();
-        ctx.fillStyle = '#eab308';
-        ctx.fillText(tagText, width / 2, headerY + tagH / 2);
-        headerY += tagH + tagGap;
-    }
     ctx.textAlign = 'left';
     ctx.textBaseline = 'alphabetic';
     
@@ -1306,18 +1320,57 @@ function generateShareImage() {
         ctx.fillStyle = textSecondary;
         ctx.font = '14px -apple-system, BlinkMacSystemFont, sans-serif';
         ctx.fillText(data.pinyin, width / 2, currentY);
-        currentY += 28;
+        currentY += 24;
     }
     
-    // 来源文字
-    if (hasDerivation) {
-        currentY += 16;
-        
-        ctx.fillStyle = textSecondary;
-        ctx.font = '12px Georgia, "Songti SC", "SimSun", serif';
+    // 解释
+    if (hasExplanation) {
+        currentY += 8;
+        ctx.fillStyle = textPrimary;
+        ctx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
         ctx.textAlign = 'left';
-        const lineHeight = 20;
-        currentY = wrapText(ctx, data.derivation, padding, currentY, contentWidth, lineHeight);
+        currentY = wrapText(ctx, data.explanation, padding, currentY, contentWidth, lineHeight);
+        ctx.textAlign = 'center';
+    }
+    
+    // 出处
+    if (hasDerivation) {
+        currentY += 8;
+        ctx.textAlign = 'left';
+        // 出处：加粗
+        ctx.fillStyle = textSecondary;
+        ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, sans-serif';
+        ctx.fillText('出处：', padding, currentY);
+        const prefixWidth = ctx.measureText('出处：').width;
+        // 出处内容正常字体
+        ctx.font = '12px Georgia, "Songti SC", "SimSun", serif';
+        // 使用 wrapText 处理出处内容，起始 X 为 padding + prefixWidth
+        const firstLineWidth = contentWidth - prefixWidth;
+        const derivText = data.derivation;
+        const chars = derivText.split('');
+        let line = '';
+        let x = padding + prefixWidth;
+        let isFirstLine = true;
+        
+        for (let i = 0; i < chars.length; i++) {
+            const testLine = line + chars[i];
+            const metrics = ctx.measureText(testLine);
+            const maxWidth = isFirstLine ? firstLineWidth : contentWidth;
+            
+            if (metrics.width > maxWidth && line.length > 0) {
+                ctx.fillText(line, x, currentY);
+                line = chars[i];
+                currentY += lineHeight;
+                x = padding;
+                isFirstLine = false;
+            } else {
+                line = testLine;
+            }
+        }
+        if (line) {
+            ctx.fillText(line, x, currentY);
+            currentY += lineHeight;
+        }
     }
     
     return canvas;
@@ -1329,14 +1382,14 @@ async function shareResult() {
     
     // 转换为 Blob
     canvas.toBlob(async (blob) => {
-        const file = new File([blob], `猜三划四_${todayDate}.png`, { type: 'image/png' });
+        const file = new File([blob], `每日成语_${todayDate}.png`, { type: 'image/png' });
         
         // 尝试使用 Web Share API（移动端）
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
             try {
                 await navigator.share({
                     files: [file],
-                    title: '猜三划四'
+                    title: '每日成语'
                 });
                 return;
             } catch (err) {
@@ -1350,7 +1403,7 @@ async function shareResult() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `猜三划四_${todayDate}.png`;
+        a.download = `每日成语_${todayDate}.png`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
@@ -1371,12 +1424,20 @@ function showResult(won = true) {
     
     document.getElementById('resultWord').textContent = targetIdiom;
     document.getElementById('resultPinyin').textContent = data.pinyin;
-    document.getElementById('resultExplanation').style.display = 'none';
     
-    // 显示来源（如果不是"无"）
+    // 显示解释
+    const explanationEl = document.getElementById('resultExplanation');
+    if (data.explanation && data.explanation.trim() !== '') {
+        explanationEl.textContent = data.explanation;
+        explanationEl.style.display = 'block';
+    } else {
+        explanationEl.style.display = 'none';
+    }
+    
+    // 显示出处（如果不是"无"）
     const derivationEl = document.getElementById('resultDerivation');
     if (data.derivation && data.derivation !== '无' && data.derivation.trim() !== '') {
-        derivationEl.textContent = data.derivation;
+        derivationEl.innerHTML = '<strong>出处：</strong>' + data.derivation;
         derivationEl.style.display = 'block';
     } else {
         derivationEl.style.display = 'none';

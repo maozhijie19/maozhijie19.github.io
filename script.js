@@ -498,10 +498,15 @@ function getCharStatus(guessChars, targetChars) {
 
 // 初始化游戏
 async function init() {
+    // 从 JS 内嵌数据填充成语列表（idiom.js 提供 IDIOM_LIST、IDIOM_DATA）
+    idiomList.length = 0;
+    idiomList.push(...IDIOM_LIST);
+    for (const k of Object.keys(idiomData)) delete idiomData[k];
+    Object.assign(idiomData, IDIOM_DATA);
+
     // 先显示日期，避免副标题区域闪烁旧文案
     const subtitleEl = document.getElementById('subtitle');
     if (subtitleEl) subtitleEl.textContent = getDateDisplayString(getTodayDateString());
-    await loadIdioms();
 
     // 用固定种子打乱成语列表（保证所有人打乱结果一致）
     const fixedSeed = 20260101; // 固定种子
@@ -570,146 +575,6 @@ function dateToDays(dateStr) {
     const diffTime = date - startDate;
     const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
-}
-
-// 成语数据缓存版本（CSV 更新时改为 2、3… 以失效旧缓存）
-const IDIOM_CACHE_VERSION = 6;
-// 简单模式固定只加载小 CSV，加快首屏
-const IDIOM_CSV_URL = 'idiom_simple.csv';
-const IDIOM_DB_NAME = 'idiomWordleDB';
-const IDIOM_STORE_NAME = 'cache';
-const IDIOM_CACHE_KEY = 'idiomData';
-
-function openIdiomDB() {
-    return new Promise((resolve, reject) => {
-        const req = indexedDB.open(IDIOM_DB_NAME, 1);
-        req.onerror = () => reject(req.error);
-        req.onsuccess = () => resolve(req.result);
-        req.onupgradeneeded = (e) => {
-            e.target.result.createObjectStore(IDIOM_STORE_NAME, { keyPath: 'key' });
-        };
-    });
-}
-
-function getIdiomCache() {
-    return openIdiomDB().then(db => {
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(IDIOM_STORE_NAME, 'readonly');
-            const req = tx.objectStore(IDIOM_STORE_NAME).get(IDIOM_CACHE_KEY);
-            req.onsuccess = () => resolve(req.result);
-            req.onerror = () => reject(req.error);
-        });
-    });
-}
-
-function setIdiomCache(payload) {
-    return openIdiomDB().then(db => {
-        return new Promise((resolve, reject) => {
-            const tx = db.transaction(IDIOM_STORE_NAME, 'readwrite');
-            const req = tx.objectStore(IDIOM_STORE_NAME).put({
-                key: IDIOM_CACHE_KEY,
-                version: IDIOM_CACHE_VERSION,
-                idiomList: payload.idiomList,
-                idiomData: payload.idiomData
-            });
-            req.onsuccess = () => resolve();
-            req.onerror = () => reject(req.error);
-        });
-    });
-}
-
-// 解析单行 CSV（出处内可有逗号，格式：成语,拼音,出处,解释,常用）
-function parseIdiomLine(trimmed) {
-    if (!trimmed) return null;
-    // 从后往前解析：最后一列是常用，倒数第二列是解释
-    const lastComma = trimmed.lastIndexOf(',');
-    if (lastComma === -1) return null;
-    const mark = trimmed.slice(lastComma + 1).trim();
-    const rest1 = trimmed.slice(0, lastComma);
-    const secondLastComma = rest1.lastIndexOf(',');
-    if (secondLastComma === -1) return null;
-    const explanation = rest1.slice(secondLastComma + 1).trim();
-    const rest2 = rest1.slice(0, secondLastComma);
-    // 前面按顺序解析：成语, 拼音, 出处
-    const idx1 = rest2.indexOf(',');
-    if (idx1 === -1) return null;
-    const word = rest2.slice(0, idx1).trim();
-    if (word.length !== 4) return null;
-    const idx2 = rest2.indexOf(',', idx1 + 1);
-    const pinyin = (idx2 === -1 ? rest2.slice(idx1 + 1) : rest2.slice(idx1 + 1, idx2)).trim();
-    const derivation = (idx2 === -1 ? '' : rest2.slice(idx2 + 1)).trim();
-    return { word, pinyin, derivation, explanation, mark: mark || '0' };
-}
-
-// 流式解析 CSV，避免一次性把整文件读入内存
-async function parseIdiomCSVStream(response) {
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = '';
-    const list = [];
-    const data = {};
-    let isHeader = true;
-
-    while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
-
-        for (const line of lines) {
-            if (isHeader) {
-                isHeader = false;
-                continue;
-            }
-            const row = parseIdiomLine(line.trim());
-            if (!row) continue;
-            const { word, pinyin, derivation, explanation, mark } = row;
-            list.push(word);
-            data[word] = { pinyin, derivation, explanation, common: mark === '1' || mark === '2', simple: mark === '2' };
-        }
-    }
-    if (buffer.trim()) {
-        const row = parseIdiomLine(buffer.trim());
-        if (row) {
-            const { word, pinyin, derivation, explanation, mark } = row;
-            list.push(word);
-            data[word] = { pinyin, derivation, explanation, common: mark === '1' || mark === '2', simple: mark === '2' };
-        }
-    }
-    return { idiomList: list, idiomData: data };
-}
-
-// 加载成语列表（优先读缓存，未命中再拉 CSV 并流式解析）
-async function loadIdioms() {
-    try {
-        let cached = null;
-        try {
-            cached = await getIdiomCache();
-        } catch (_) { /* 无 IndexedDB 或读取失败则走网络 */ }
-
-        if (cached && cached.version === IDIOM_CACHE_VERSION && cached.idiomList && cached.idiomData) {
-            idiomList.length = 0;
-            idiomList.push(...cached.idiomList);
-            Object.assign(idiomData, cached.idiomData);
-            return;
-        }
-
-        const response = await fetch(IDIOM_CSV_URL);
-        if (!response.ok) throw new Error(response.statusText);
-        const { idiomList: list, idiomData: data } = await parseIdiomCSVStream(response);
-        idiomList.length = 0;
-        idiomList.push(...list);
-        for (const k of Object.keys(idiomData)) delete idiomData[k];
-        Object.assign(idiomData, data);
-
-        try {
-            await setIdiomCache({ idiomList: list, idiomData: data });
-        } catch (_) { /* 缓存写入失败不影响使用 */ }
-    } catch (error) {
-        console.error('加载成语列表失败:', error);
-        showMessage('加载成语列表失败，请刷新页面重试', 'error');
-    }
 }
 
 // 生成今日键盘字符（智能算法）

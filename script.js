@@ -524,6 +524,19 @@ async function init() {
     createKeyboard();
     attachEventListeners();
     startNewGame();
+
+    // 每天 00:00 自动切换到今日题目（页面停留时生效）
+    scheduleMidnightRefresh();
+}
+
+function scheduleMidnightRefresh() {
+    const now = new Date();
+    const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
+    const ms = next - now;
+    setTimeout(() => {
+        startNewGame();
+        scheduleMidnightRefresh(); // 再排下一次 00:00
+    }, ms);
 }
 
 // 获取今日日期字符串（YYYY-MM-DD，用于内部逻辑）

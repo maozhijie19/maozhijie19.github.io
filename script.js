@@ -1128,7 +1128,7 @@ function generateShareImage() {
     ctx.font = 'bold 20px -apple-system, BlinkMacSystemFont, sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText('有一说一', width / 2, headerY);
+    ctx.fillText('四字成语', width / 2, headerY);
     headerY += 24;
     
     // 日期和难度（纯文本，用中间圆点分隔）
@@ -1229,14 +1229,14 @@ async function shareResult() {
     
     // 转换为 Blob
     canvas.toBlob(async (blob) => {
-        const file = new File([blob], `有一说一_${todayDate}.png`, { type: 'image/png' });
+        const file = new File([blob], `四字成语_${todayDate}.png`, { type: 'image/png' });
         
         // 尝试使用 Web Share API（移动端）
         if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
             try {
                 await navigator.share({
                     files: [file],
-                    title: '有一说一'
+                    title: '四字成语'
                 });
                 return;
             } catch (err) {
@@ -1250,7 +1250,7 @@ async function shareResult() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `有一说一_${todayDate}.png`;
+        a.download = `四字成语_${todayDate}.png`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

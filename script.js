@@ -1336,41 +1336,10 @@ function generateShareImage() {
     // 出处
     if (hasDerivation) {
         currentY += 8;
-        ctx.textAlign = 'left';
-        // 出处：加粗
         ctx.fillStyle = textSecondary;
-        ctx.font = 'bold 12px -apple-system, BlinkMacSystemFont, sans-serif';
-        ctx.fillText('出处：', padding, currentY);
-        const prefixWidth = ctx.measureText('出处：').width;
-        // 出处内容正常字体
         ctx.font = '12px Georgia, "Songti SC", "SimSun", serif';
-        // 使用 wrapText 处理出处内容，起始 X 为 padding + prefixWidth
-        const firstLineWidth = contentWidth - prefixWidth;
-        const derivText = data.derivation;
-        const chars = derivText.split('');
-        let line = '';
-        let x = padding + prefixWidth;
-        let isFirstLine = true;
-        
-        for (let i = 0; i < chars.length; i++) {
-            const testLine = line + chars[i];
-            const metrics = ctx.measureText(testLine);
-            const maxWidth = isFirstLine ? firstLineWidth : contentWidth;
-            
-            if (metrics.width > maxWidth && line.length > 0) {
-                ctx.fillText(line, x, currentY);
-                line = chars[i];
-                currentY += lineHeight;
-                x = padding;
-                isFirstLine = false;
-            } else {
-                line = testLine;
-            }
-        }
-        if (line) {
-            ctx.fillText(line, x, currentY);
-            currentY += lineHeight;
-        }
+        ctx.textAlign = 'left';
+        currentY = wrapText(ctx, '出处：' + data.derivation, padding, currentY, contentWidth, lineHeight);
     }
     
     return canvas;
@@ -1437,7 +1406,7 @@ function showResult(won = true) {
     // 显示出处（如果不是"无"）
     const derivationEl = document.getElementById('resultDerivation');
     if (data.derivation && data.derivation !== '无' && data.derivation.trim() !== '') {
-        derivationEl.innerHTML = '<strong>出处：</strong>' + data.derivation;
+        derivationEl.textContent = '出处：' + data.derivation;
         derivationEl.style.display = 'block';
     } else {
         derivationEl.style.display = 'none';

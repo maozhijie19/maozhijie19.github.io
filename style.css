@@ -537,12 +537,6 @@ header {
     border-left: 3px solid var(--present);
 }
 
-.modal-derivation strong {
-    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
-    font-weight: 700;
-    color: var(--text-primary);
-}
-
 .modal-achievement-unlock {
     font-size: 0.9rem;
     font-weight: 600;

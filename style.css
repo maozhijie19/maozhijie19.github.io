@@ -5,6 +5,11 @@
     box-sizing: border-box;
 }
 
+/* 禁止移动端双击放大 */
+html {
+    touch-action: manipulation;
+}
+
 :root {
     --bg-primary: #f8fafc;
     --bg-secondary: #ffffff;

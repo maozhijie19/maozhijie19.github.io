@@ -998,6 +998,22 @@ header {
     flex: none;
 }
 
+.setting-item-cloud .setting-key-reset {
+    display: flex;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.setting-item-cloud .setting-key-reset .modal-btn-reset {
+    flex: none;
+    background: #dc2626;
+    color: white;
+}
+
+.setting-item-cloud .setting-key-reset .modal-btn-reset:hover {
+    background: #b91c1c;
+}
+
 /* 响应式设计：移动端头部改为「标题在上、按钮在下」避免遮挡 */
 @media (max-width: 480px) {
     header {

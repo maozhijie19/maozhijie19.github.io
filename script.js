@@ -359,18 +359,33 @@ function updateKeyButtonText() {
     btn.textContent = input && input.value.trim() ? '同步数据' : '生成密钥';
 }
 
-// 密钥同步成功后锁定 UI（隐藏按钮、输入框不可编辑）
+// 密钥同步成功后锁定 UI（隐藏生成/同步按钮、显示重置按钮、输入框不可编辑）
 function lockSyncKeyUI() {
     const input = document.getElementById('settingAuthKey');
-    const btn = document.getElementById('settingKeyBtn');
     const btnsContainer = document.querySelector('.setting-key-btns');
+    const resetContainer = document.getElementById('settingKeyResetContainer');
     if (input) {
         input.readOnly = true;
         input.classList.add('readonly');
     }
-    if (btnsContainer) {
-        btnsContainer.style.display = 'none';
+    if (btnsContainer) btnsContainer.style.display = 'none';
+    if (resetContainer) resetContainer.style.display = 'flex';
+}
+
+// 清空密钥并恢复无密钥时的 UI（仅在有密钥时由「重置密钥」调用）
+function unlockSyncKeyUI() {
+    const input = document.getElementById('settingAuthKey');
+    const btnsContainer = document.querySelector('.setting-key-btns');
+    const resetContainer = document.getElementById('settingKeyResetContainer');
+    saveAuth('');
+    if (input) {
+        input.value = '';
+        input.readOnly = false;
+        input.classList.remove('readonly');
     }
+    if (btnsContainer) btnsContainer.style.display = '';
+    if (resetContainer) resetContainer.style.display = 'none';
+    updateKeyButtonText();
 }
 
 // 显示设置弹窗
@@ -378,16 +393,19 @@ function showSettings() {
     const auth = getAuth();
     const input = document.getElementById('settingAuthKey');
     const btnsContainer = document.querySelector('.setting-key-btns');
+    const resetContainer = document.getElementById('settingKeyResetContainer');
     input.value = auth ? auth.key : '';
-    // 如果已有密钥，锁定 UI
+    // 如果已有密钥，锁定 UI 并显示重置按钮
     if (auth && auth.key) {
         input.readOnly = true;
         input.classList.add('readonly');
         if (btnsContainer) btnsContainer.style.display = 'none';
+        if (resetContainer) resetContainer.style.display = 'flex';
     } else {
         input.readOnly = false;
         input.classList.remove('readonly');
         if (btnsContainer) btnsContainer.style.display = '';
+        if (resetContainer) resetContainer.style.display = 'none';
     }
     updateKeyButtonText();
     document.getElementById('settingsModal').classList.add('show');
@@ -860,6 +878,10 @@ function attachEventListeners() {
                 showMessage('已保存到本地（未配置 PB_URL 不同步云端）', '');
             }
         }
+    });
+    document.getElementById('settingKeyResetBtn').addEventListener('click', () => {
+        unlockSyncKeyUI();
+        showMessage('已重置密钥', '');
     });
     document.getElementById('settingsModal').addEventListener('click', (e) => {
         if (e.target.id === 'settingsModal') {

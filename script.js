@@ -363,20 +363,34 @@ function getCharStatus(guessChars, targetChars) {
     return charStatus;
 }
 
-// 初始化游戏
-function init() {
-    // 从 JS 内嵌数据填充成语列表（idiom.js 提供 IDIOM_LIST、IDIOM_DATA）
+// 加载成语数据（JSON 独立维护，便于编辑与扩展）
+async function loadIdiomData() {
+    const res = await fetch('idiom.json');
+    if (!res.ok) throw new Error('成语数据加载失败');
+    const data = await res.json();
     idiomList.length = 0;
-    idiomList.push(...IDIOM_LIST);
+    idiomList.push(...Object.keys(data));
     for (const k of Object.keys(idiomData)) delete idiomData[k];
-    Object.assign(idiomData, IDIOM_DATA);
+    Object.assign(idiomData, data);
+}
 
-    // 先显示日期，避免副标题区域闪烁旧文案
+// 初始化游戏
+async function init() {
     const subtitleEl = document.getElementById('subtitle');
+    if (subtitleEl) subtitleEl.textContent = '加载中…';
+
+    try {
+        await loadIdiomData();
+    } catch (e) {
+        if (subtitleEl) subtitleEl.textContent = '数据加载失败，请刷新';
+        showMessage('成语数据加载失败，请检查网络后刷新页面', 'error', 8000);
+        return;
+    }
+
     if (subtitleEl) subtitleEl.textContent = getDateDisplayString(getTodayDateString());
 
     // 用固定种子打乱成语列表（保证所有人打乱结果一致）
-    const fixedSeed = 20260101; // 固定种子
+    const fixedSeed = 20260101;
     shuffledIdiomList = shuffleArray(idiomList, fixedSeed);
     const commonList = idiomList.filter(w => idiomData[w] && idiomData[w].simple === true);
     shuffledCommonList = shuffleArray(commonList, fixedSeed);
@@ -388,7 +402,6 @@ function init() {
     attachEventListeners();
     startNewGame();
 
-    // 每天 00:00 自动切换到今日题目（页面停留时生效）
     scheduleMidnightRefresh();
 }
 

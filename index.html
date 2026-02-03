@@ -15,7 +15,6 @@
     <link rel="icon" type="image/png" href="favicon.png">
     <link rel="apple-touch-icon" href="favicon.png">
     <link rel="stylesheet" href="style.css?v=1">
-    <script src="https://cdn.jsdelivr.net/npm/pocketbase/dist/pocketbase.umd.js"></script>
     <script src="idiom.js?v=1"></script>
 </head>
 <body>
@@ -144,17 +143,6 @@
             <div class="modal settings-modal">
                 <div class="modal-header">设置</div>
                 <div class="settings-list">
-                    <div class="setting-item setting-item-cloud">
-                        <span class="setting-label">云端同步</span>
-                        <span class="setting-desc">密钥为空时点击「生成密钥」创建并保存；已有密钥时点击「同步数据」与云端同步。</span>
-                        <input type="text" id="settingAuthKey" placeholder="输入密钥或点击生成" autocomplete="off">
-                        <div class="setting-key-btns">
-                            <button type="button" class="modal-btn modal-btn-key" id="settingKeyBtn">生成密钥</button>
-                        </div>
-                        <div class="setting-key-reset" id="settingKeyResetContainer" style="display: none;">
-                            <button type="button" class="modal-btn modal-btn-reset" id="settingKeyResetBtn">重置密钥</button>
-                        </div>
-                    </div>
                     <label class="setting-item">
                         <span class="setting-label">提示非成语</span>
                         <span class="setting-desc">关闭后，不是成语也可以提交</span>

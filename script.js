@@ -1,6 +1,3 @@
-// PocketBase 配置：填写你的实例地址，留空则不同步云端
-const PB_URL = 'https://db.tr1ck.cn/';
-
 // 游戏状态
 let targetIdiom = '';
 let currentRow = 0;
@@ -37,9 +34,6 @@ const ACHIEVEMENTS = [
     { id: 'closeCall', name: '功亏一篑', desc: '第五次猜测出现 3 个绿格' }
 ];
 
-// ---------- 云端同步（PocketBase wordle_data 表：id, setting, stats, state, updated，无 auth）----------
-// 密钥 = 记录 id，创建记录后由服务端返回
-const PB_WORDLE_COLLECTION = 'wordle_data';
 const LOCAL_DATA_KEY = 'idiomWordleData';
 
 function getLocalData() {
@@ -58,94 +52,7 @@ function setLocalData(data) {
     localStorage.setItem(LOCAL_DATA_KEY, JSON.stringify(data));
 }
 
-function getAuth() {
-    const saved = localStorage.getItem('idiomWordleAuth');
-    if (!saved) return null;
-    try {
-        const o = JSON.parse(saved);
-        if (o && typeof o.key === 'string' && o.key.trim()) return { key: o.key.trim() };
-    } catch (e) { /* 非法 JSON */ }
-    localStorage.removeItem('idiomWordleAuth');
-    return null;
-}
-
-function saveAuth(key) {
-    const k = (key || '').trim();
-    if (!k) {
-        localStorage.removeItem('idiomWordleAuth');
-        return;
-    }
-    localStorage.setItem('idiomWordleAuth', JSON.stringify({ key: k }));
-}
-
-function getAuthString() {
-    const a = getAuth();
-    return a ? a.key : '';
-}
-
-// 先查远程；数据为空或远程 updated 早于本地则用本地覆盖远程，否则远程覆盖本地。用记录 id 作为密钥，无 auth 字段。
-async function syncWithPB() {
-    if (!PB_URL || typeof PocketBase === 'undefined') return;
-    const recordId = getAuthString();
-    if (!recordId) return;
-    const local = getLocalData();
-    const localUpdated = typeof local.updated === 'number' ? local.updated : 0;
-    const stateFull = normalizeState(local.state);
-    stateFull[getStateBranchKey()] = {
-        date: todayDate,
-        guessedIdioms: guessedIdioms.slice(),
-        currentRow: currentRow,
-        gameOver: gameOver,
-        keyboardState: Object.assign({}, keyboardState)
-    };
-    const body = { id: recordId, setting: settings, stats: stats, state: stateFull, updated: Date.now() };
-    try {
-        const pb = new PocketBase(PB_URL);
-        const record = await pb.collection(PB_WORDLE_COLLECTION).getOne(recordId);
-        const remoteUpdated = record && record.updated ? new Date(record.updated).getTime() : 0;
-        const useLocal = !remoteUpdated || localUpdated > remoteUpdated;
-
-        if (useLocal) {
-            await pb.collection(PB_WORDLE_COLLECTION).update(recordId, body);
-            setLocalData({ setting: settings, stats: stats, state: stateFull, updated: body.updated });
-        } else {
-            const r = record;
-            const data = {
-                setting: r.setting != null ? r.setting : local.setting,
-                stats: r.stats != null ? r.stats : local.stats,
-                state: r.state != null ? normalizeState(r.state) : local.state,
-                updated: remoteUpdated
-            };
-            setLocalData(data);
-            loadStats();
-            loadSettings();
-            const branch = data.state && data.state[getStateBranchKey()];
-            if (branch && branch.date === todayDate) restoreGameState(branch);
-        }
-    } catch (e) {
-        console.warn('云端同步失败:', e);
-        throw e;
-    }
-}
-
-// 创建一条记录并返回（用于「生成密钥」）。body 无 auth，返回的 record.id 即密钥。
-async function createRecordOnPB() {
-    if (!PB_URL || typeof PocketBase === 'undefined') throw new Error('未配置 PB_URL');
-    const local = getLocalData();
-    const stateFull = normalizeState(local.state);
-    stateFull[getStateBranchKey()] = {
-        date: todayDate,
-        guessedIdioms: guessedIdioms.slice(),
-        currentRow: currentRow,
-        gameOver: gameOver,
-        keyboardState: Object.assign({}, keyboardState)
-    };
-    const body = { setting: settings, stats: stats, state: stateFull };
-    const pb = new PocketBase(PB_URL);
-    return await pb.collection(PB_WORDLE_COLLECTION).create(body);
-}
-
-// 保证 stats 结构完整（云端或缓存可能缺字段）；stats 必须是对象
+// 保证 stats 结构完整（本地缓存可能缺字段）；stats 必须是对象
 function normalizeStats() {
     if (!stats || typeof stats !== 'object') {
         stats = {
@@ -186,7 +93,6 @@ function saveStats() {
     data.state[getStateBranchKey()] = { date: todayDate, guessedIdioms: guessedIdioms.slice(), currentRow, gameOver, keyboardState: Object.assign({}, keyboardState) };
     data.updated = Date.now();
     setLocalData(data);
-    if (getAuth() && PB_URL) syncWithPB();
 }
 
 // 更新统计数据
@@ -338,7 +244,6 @@ function saveSettings() {
     data.state = normalizeState(data.state);
     data.updated = Date.now();
     setLocalData(data);
-    if (getAuth() && PB_URL) syncWithPB();
 
     // 如果关闭键盘高亮，清除当前高亮
     if (!settings.keyboardHighlight) {
@@ -351,67 +256,12 @@ function saveSettings() {
     }
 }
 
-// 根据密钥输入框是否为空更新按钮文案
-function updateKeyButtonText() {
-    const input = document.getElementById('settingAuthKey');
-    const btn = document.getElementById('settingKeyBtn');
-    if (!btn) return;
-    btn.textContent = input && input.value.trim() ? '同步数据' : '生成密钥';
-}
-
-// 密钥同步成功后锁定 UI（隐藏生成/同步按钮、显示重置按钮、输入框不可编辑）
-function lockSyncKeyUI() {
-    const input = document.getElementById('settingAuthKey');
-    const btnsContainer = document.querySelector('.setting-key-btns');
-    const resetContainer = document.getElementById('settingKeyResetContainer');
-    if (input) {
-        input.readOnly = true;
-        input.classList.add('readonly');
-    }
-    if (btnsContainer) btnsContainer.style.display = 'none';
-    if (resetContainer) resetContainer.style.display = 'flex';
-}
-
-// 清空密钥并恢复无密钥时的 UI（仅在有密钥时由「重置密钥」调用）
-function unlockSyncKeyUI() {
-    const input = document.getElementById('settingAuthKey');
-    const btnsContainer = document.querySelector('.setting-key-btns');
-    const resetContainer = document.getElementById('settingKeyResetContainer');
-    saveAuth('');
-    if (input) {
-        input.value = '';
-        input.readOnly = false;
-        input.classList.remove('readonly');
-    }
-    if (btnsContainer) btnsContainer.style.display = '';
-    if (resetContainer) resetContainer.style.display = 'none';
-    updateKeyButtonText();
-}
-
 // 显示设置弹窗
 function showSettings() {
-    const auth = getAuth();
-    const input = document.getElementById('settingAuthKey');
-    const btnsContainer = document.querySelector('.setting-key-btns');
-    const resetContainer = document.getElementById('settingKeyResetContainer');
-    input.value = auth ? auth.key : '';
-    // 如果已有密钥，锁定 UI 并显示重置按钮
-    if (auth && auth.key) {
-        input.readOnly = true;
-        input.classList.add('readonly');
-        if (btnsContainer) btnsContainer.style.display = 'none';
-        if (resetContainer) resetContainer.style.display = 'flex';
-    } else {
-        input.readOnly = false;
-        input.classList.remove('readonly');
-        if (btnsContainer) btnsContainer.style.display = '';
-        if (resetContainer) resetContainer.style.display = 'none';
-    }
-    updateKeyButtonText();
     document.getElementById('settingsModal').classList.add('show');
 }
 
-// 隐藏设置弹窗（不触发保存或同步）
+// 隐藏设置弹窗
 function hideSettings() {
     document.getElementById('settingsModal').classList.remove('show');
 }
@@ -432,7 +282,6 @@ function saveGameState() {
     data.state[getStateBranchKey()] = branch;
     data.updated = Date.now();
     setLocalData(data);
-    if (getAuth() && PB_URL) syncWithPB();
 }
 
 // 将 state 规范为双分支：{ common: branch|null, all: branch|null }
@@ -515,7 +364,7 @@ function getCharStatus(guessChars, targetChars) {
 }
 
 // 初始化游戏
-async function init() {
+function init() {
     // 从 JS 内嵌数据填充成语列表（idiom.js 提供 IDIOM_LIST、IDIOM_DATA）
     idiomList.length = 0;
     idiomList.push(...IDIOM_LIST);
@@ -534,15 +383,6 @@ async function init() {
 
     loadSettings();
     loadStats();
-    if (getAuth() && PB_URL) {
-        try {
-            await syncWithPB();
-        } catch (e) {
-            console.warn('云端同步失败:', e);
-        }
-    }
-    loadStats();
-    loadSettings();
     createGameBoard();
     createKeyboard();
     attachEventListeners();
@@ -813,76 +653,6 @@ function attachEventListeners() {
     document.getElementById('settingValidateIdiom').addEventListener('change', saveSettings);
     document.getElementById('settingKeyboardHighlight').addEventListener('change', saveSettings);
     document.getElementById('settingCommonIdiomOnly').addEventListener('change', saveSettings);
-    document.getElementById('settingAuthKey').addEventListener('input', updateKeyButtonText);
-    document.getElementById('settingKeyBtn').addEventListener('click', async () => {
-        const inputEl = document.getElementById('settingAuthKey');
-        const key = inputEl.value.trim();
-        if (!key) {
-            const oldKey = getAuthString();
-            if (!PB_URL) {
-                showMessage('请配置 PB_URL 后使用生成密钥', 'error');
-                return;
-            }
-            try {
-                const record = await createRecordOnPB();
-                saveAuth(record.id);
-                inputEl.value = record.id;
-                updateKeyButtonText();
-                const remoteUpdated = record.updated ? new Date(record.updated).getTime() : Date.now();
-                setLocalData({
-                    setting: record.setting != null ? record.setting : settings,
-                    stats: record.stats != null ? record.stats : stats,
-                    state: record.state != null ? record.state : null,
-                    updated: remoteUpdated
-                });
-                loadStats();
-                loadSettings();
-                startNewGame();
-                lockSyncKeyUI();
-                showMessage('已生成密钥，已自动同步', '');
-            } catch (e) {
-                inputEl.value = oldKey || '';
-                updateKeyButtonText();
-                loadStats();
-                loadSettings();
-                startNewGame();
-                const status = e?.status ?? e?.response?.status;
-                if (status === 429) showMessage('今日注册已达上限', 'error');
-                else showMessage('同步失败', 'error');
-            }
-        } else {
-            if (PB_URL) {
-                try {
-                    const pb = new PocketBase(PB_URL);
-                    await pb.collection(PB_WORDLE_COLLECTION).getOne(key);
-                    saveAuth(key);
-                    await syncWithPB();
-                    loadStats();
-                    loadSettings();
-                    startNewGame();
-                    lockSyncKeyUI();
-                    showMessage('已同步云端', '');
-                } catch (e) {
-                    loadStats();
-                    loadSettings();
-                    startNewGame();
-                    if (e?.status === 404 || e?.response?.status === 404) {
-                        showMessage('记录不存在，请生成密钥', 'error');
-                    } else {
-                        const status = e?.status ?? e?.response?.status;
-                        if (status !== 429) showMessage('同步失败', 'error');
-                    }
-                }
-            } else {
-                saveAuth(key);
-                showMessage('已保存到本地（未配置 PB_URL 不同步云端）', '');
-            }
-        }
-    });
-    document.getElementById('settingKeyResetBtn').addEventListener('click', () => {
-        unlockSyncKeyUI();
-        showMessage('已重置密钥', '');
-    });
     document.getElementById('settingsModal').addEventListener('click', (e) => {
         if (e.target.id === 'settingsModal') {
             hideSettings();

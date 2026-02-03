@@ -27,8 +27,10 @@
             </div>
             <div class="subtitle-row">
                 <p class="subtitle" id="subtitle"></p>
-                <span class="mode-tag" id="modeTag">简单</span>
             </div>
+            <p class="countdown-row">
+                <span class="countdown" id="countdown" title="今日 0 点（北京时间）刷新" aria-label="今日倒计时"></span>
+            </p>
             <button class="stats-btn" id="statsBtn" type="button" title="统计">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <line x1="18" y1="20" x2="18" y2="10"></line>
@@ -152,12 +154,6 @@
                         <span class="setting-label">键盘高亮</span>
                         <span class="setting-desc">关闭后，不显示已猜字状态</span>
                         <input type="checkbox" id="settingKeyboardHighlight" checked>
-                        <span class="toggle"></span>
-                    </label>
-                    <label class="setting-item setting-item-disabled">
-                        <span class="setting-label">简单模式</span>
-                        <span class="setting-desc">当日答案只从常用成语中选取</span>
-                        <input type="checkbox" id="settingCommonIdiomOnly" checked disabled>
                         <span class="toggle"></span>
                     </label>
                 </div>

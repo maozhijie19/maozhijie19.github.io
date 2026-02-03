@@ -8,13 +8,12 @@ let guessedIdioms = [];
 let keyboardState = {};
 let keyboardChars = []; // 今日键盘字符（24 个：7+7+5+5，每行左侧多一列）
 let todayDate = ''; // 今日日期
-let idiomData = {}; // 成语数据 {word: {pinyin, derivation, common}}
+let idiomData = {}; // 成语数据 {word: {pinyin, derivation, explanation, ...}}
 
 // 设置
 let settings = {
     validateIdiom: true,      // 是否验证成语（默认开启，提示非成语）
-    keyboardHighlight: true,  // 是否键盘高亮
-    commonIdiomOnly: true     // 固定为简单模式（仅从常用成语中选词），开关已禁用
+    keyboardHighlight: true    // 是否键盘高亮
 };
 
 // 统计数据
@@ -89,8 +88,7 @@ function saveStats() {
     const data = getLocalData();
     data.setting = data.setting || settings;
     data.stats = stats;
-    data.state = normalizeState(data.state);
-    data.state[getStateBranchKey()] = { date: todayDate, guessedIdioms: guessedIdioms.slice(), currentRow, gameOver, keyboardState: Object.assign({}, keyboardState) };
+    data.state = { date: todayDate, guessedIdioms: guessedIdioms.slice(), currentRow, gameOver, keyboardState: Object.assign({}, keyboardState) };
     data.updated = Date.now();
     setLocalData(data);
 }
@@ -221,27 +219,22 @@ function loadSettings() {
         if (typeof data.setting.validateIdiom === 'boolean') settings.validateIdiom = data.setting.validateIdiom;
         if (typeof data.setting.keyboardHighlight === 'boolean') settings.keyboardHighlight = data.setting.keyboardHighlight;
     }
-    settings.commonIdiomOnly = true; // 固定简单模式，不再读取存储
     const elV = document.getElementById('settingValidateIdiom');
     const elK = document.getElementById('settingKeyboardHighlight');
-    const elC = document.getElementById('settingCommonIdiomOnly');
     if (elV) elV.checked = settings.validateIdiom;
     if (elK) elK.checked = settings.keyboardHighlight;
-    if (elC) { elC.checked = true; elC.disabled = true; }
 }
 
 // 保存设置（写入 idiomWordleData.setting）
 function saveSettings() {
     settings.validateIdiom = document.getElementById('settingValidateIdiom').checked;
     settings.keyboardHighlight = document.getElementById('settingKeyboardHighlight').checked;
-    settings.commonIdiomOnly = true; // 固定简单模式，开关已禁用
     const data = getLocalData();
     data.setting = data.setting || {};
     data.setting.validateIdiom = settings.validateIdiom;
     data.setting.keyboardHighlight = settings.keyboardHighlight;
-    data.setting.commonIdiomOnly = true;
     data.stats = data.stats || stats;
-    data.state = normalizeState(data.state);
+    data.state = data.state || null;
     data.updated = Date.now();
     setLocalData(data);
 
@@ -266,7 +259,7 @@ function hideSettings() {
     document.getElementById('settingsModal').classList.remove('show');
 }
 
-// 保存游戏状态（写入 idiomWordleData.state 的当前分支，保留另一分支）
+// 保存游戏状态（写入 idiomWordleData.state）
 function saveGameState() {
     const branch = {
         date: todayDate,
@@ -278,28 +271,17 @@ function saveGameState() {
     const data = getLocalData();
     data.setting = data.setting || settings;
     data.stats = data.stats || stats;
-    data.state = normalizeState(data.state);
-    data.state[getStateBranchKey()] = branch;
+    data.state = branch;
     data.updated = Date.now();
     setLocalData(data);
 }
 
-// 将 state 规范为双分支：{ common: branch|null, all: branch|null }
-function normalizeState(state) {
-    if (!state || typeof state !== 'object') return { common: null, all: null };
-    return { common: state.common || null, all: state.all || null };
-}
-
-function getStateBranchKey() {
-    return settings.commonIdiomOnly ? 'common' : 'all';
-}
-
-// 加载游戏状态（从 idiomWordleData.state，按当前「常用成语」开关取对应分支）
+// 加载游戏状态（从 idiomWordleData.state）；兼容旧版双分支格式
 function loadGameState() {
     const data = getLocalData();
-    const state = normalizeState(data.state);
-    const branch = state[getStateBranchKey()];
-    if (!branch || branch.date !== todayDate) return null;
+    const s = data.state;
+    if (!s || typeof s !== 'object' || Array.isArray(s)) return null;
+    const branch = s.date === todayDate ? s : (s.common && s.common.date === todayDate ? s.common : (s.all && s.all.date === todayDate ? s.all : null));
     return branch;
 }
 
@@ -395,35 +377,56 @@ async function init() {
     // 用固定种子打乱成语列表（保证所有人打乱结果一致）
     const fixedSeed = 20260101;
     shuffledIdiomList = shuffleArray(idiomList, fixedSeed);
-    const commonList = idiomList.filter(w => idiomData[w] && idiomData[w].simple === true);
-    shuffledCommonList = shuffleArray(commonList, fixedSeed);
 
     loadSettings();
     loadStats();
+    // 预加载键盘：先选定今日成语并生成今日键盘字符，再创建键盘，避免首次显示空白
+    todayDate = getTodayDateString();
+    const index = dateToDays(todayDate) % shuffledIdiomList.length;
+    targetIdiom = shuffledIdiomList[index];
+    generateTodayKeyboard(dateToDays(todayDate));
     createKeyboard();
     attachEventListeners();
     startNewGame();
 
     scheduleMidnightRefresh();
+    startCountdownTimer();
+}
+
+const UTC_PLUS_8_MS = 8 * 60 * 60 * 1000;
+
+// 返回当前 UTC+8 的“今日”日期对象 { year, month, date }（month 0-based，与 Date 一致）
+function getUtc8Today() {
+    const utc8 = new Date(Date.now() + UTC_PLUS_8_MS);
+    return {
+        year: utc8.getUTCFullYear(),
+        month: utc8.getUTCMonth(),
+        date: utc8.getUTCDate()
+    };
+}
+
+// 下一个 UTC+8 0:00 的时间戳（毫秒）
+function getNextUtc8MidnightMs() {
+    const { year, month, date } = getUtc8Today();
+    return Date.UTC(year, month, date + 1, 0, 0, 0, 0) - UTC_PLUS_8_MS;
 }
 
 function scheduleMidnightRefresh() {
-    const now = new Date();
-    const next = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
-    const ms = next - now;
+    const nextMs = getNextUtc8MidnightMs();
+    const ms = nextMs - Date.now();
     setTimeout(() => {
         startNewGame();
-        scheduleMidnightRefresh(); // 再排下一次 00:00
-    }, ms);
+        scheduleMidnightRefresh();
+        startCountdownTimer();
+    }, Math.max(0, ms));
 }
 
-// 获取今日日期字符串（YYYY-MM-DD，用于内部逻辑）
+// 获取今日日期字符串（YYYY-MM-DD），按 UTC+8
 function getTodayDateString() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
+    const { year, month, date } = getUtc8Today();
+    const m = String(month + 1).padStart(2, '0');
+    const d = String(date).padStart(2, '0');
+    return `${year}-${m}-${d}`;
 }
 
 // 将 YYYY-MM-DD 转为展示用「xx年x月x日」
@@ -431,6 +434,43 @@ function getDateDisplayString(dateStr) {
     if (!dateStr) return '';
     const [y, m, d] = dateStr.split('-').map(Number);
     return `${y}年${m}月${d}日`;
+}
+
+// 今日倒计时（UTC+8 次日 0:00 剩余），返回 { h, m, s } 或 null（已过 0 点）
+function getCountdownToNextUtc8Midnight() {
+    const nextMs = getNextUtc8MidnightMs();
+    const left = nextMs - Date.now();
+    if (left <= 0) return null;
+    const h = Math.floor(left / 3600000);
+    const m = Math.floor((left % 3600000) / 60000);
+    const s = Math.floor((left % 60000) / 1000);
+    return { h, m, s };
+}
+
+let countdownTimerId = null;
+function startCountdownTimer() {
+    const el = document.getElementById('countdown');
+    if (!el) return;
+    function tick() {
+        const cd = getCountdownToNextUtc8Midnight();
+        if (cd === null) {
+            if (countdownTimerId) {
+                clearInterval(countdownTimerId);
+                countdownTimerId = null;
+            }
+            startNewGame();
+            scheduleMidnightRefresh();
+            startCountdownTimer();
+            return;
+        }
+        const h = String(cd.h).padStart(2, '0');
+        const m = String(cd.m).padStart(2, '0');
+        const s = String(cd.s).padStart(2, '0');
+        el.textContent = `${h}:${m}:${s}`;
+    }
+    if (countdownTimerId) clearInterval(countdownTimerId);
+    tick();
+    countdownTimerId = setInterval(tick, 1000);
 }
 
 // 基于日期的伪随机数生成器（保证同一天同一结果）
@@ -474,8 +514,7 @@ function generateTodayKeyboard(seed) {
         zero: []    // 全不相同
     };
     
-    const pool = currentPool.length > 0 ? currentPool : shuffledIdiomList;
-    for (const idiom of pool) {
+    for (const idiom of shuffledIdiomList) {
         if (usedIdioms.has(idiom)) continue;
 
         const sameCount = countSameChars(targetIdiom, idiom);
@@ -529,10 +568,6 @@ function shuffleArray(array, seed) {
 
 // 打乱后的成语列表（全局缓存）
 let shuffledIdiomList = [];
-// 打乱后的常用成语列表（常用=1）；选题与键盘池按设置二选一
-let shuffledCommonList = [];
-// 当前用于选题和键盘提示的池（= shuffledIdiomList 或 shuffledCommonList）
-let currentPool = [];
 
 // 创建游戏板
 function createGameBoard() {
@@ -593,6 +628,32 @@ function createKeyboard() {
     keyboard.appendChild(row4);
 }
 
+// 按下效果：任一下键时先清除所有键的 .pressed，再给当前键加短暂 .pressed 并用定时器移除；点击后 blur 避免焦点残留
+const PRESS_EFFECT_MS = 150;
+function clearAllKeyPressed() {
+    document.querySelectorAll('#keyboard .key').forEach(k => k.classList.remove('pressed'));
+}
+function bindKeyPressEffect(button) {
+    let pressTimer = null;
+    const removePressed = () => {
+        button.classList.remove('pressed');
+        if (pressTimer != null) {
+            clearTimeout(pressTimer);
+            pressTimer = null;
+        }
+    };
+    button.addEventListener('pointerdown', (e) => {
+        if (e.pointerType === 'mouse' && e.button !== 0) return;
+        clearAllKeyPressed();
+        if (pressTimer) clearTimeout(pressTimer);
+        button.classList.add('pressed');
+        pressTimer = setTimeout(removePressed, PRESS_EFFECT_MS);
+    });
+    button.addEventListener('pointerup', removePressed);
+    button.addEventListener('pointerleave', removePressed);
+    button.addEventListener('pointercancel', removePressed);
+}
+
 // 创建单个按键
 function createKeyButton(char) {
     const keyButton = document.createElement('button');
@@ -605,6 +666,7 @@ function createKeyButton(char) {
         keyButton.classList.add(keyboardState[char]);
     }
     
+    bindKeyPressEffect(keyButton);
     keyButton.addEventListener('click', () => handleKeyPress(char));
     return keyButton;
 }
@@ -618,6 +680,7 @@ function createActionButton(text, type) {
     }
     button.textContent = text;
     button.dataset.key = text;
+    bindKeyPressEffect(button);
     button.addEventListener('click', () => handleKeyPress(text));
     return button;
 }
@@ -658,7 +721,6 @@ function attachEventListeners() {
     document.getElementById('settingsClose').addEventListener('click', hideSettings);
     document.getElementById('settingValidateIdiom').addEventListener('change', saveSettings);
     document.getElementById('settingKeyboardHighlight').addEventListener('change', saveSettings);
-    document.getElementById('settingCommonIdiomOnly').addEventListener('change', saveSettings);
     document.getElementById('settingsModal').addEventListener('click', (e) => {
         if (e.target.id === 'settingsModal') {
             hideSettings();
@@ -695,16 +757,11 @@ function startNewGame() {
     
     // 基于日期选择今日成语（所有人同一天看到的答案相同）
     const days = dateToDays(todayDate);
-    const pool = settings.commonIdiomOnly && shuffledCommonList.length > 0 ? shuffledCommonList : shuffledIdiomList;
-    currentPool = pool;
-    const index = days % pool.length;
-    targetIdiom = pool[index];
+    const index = days % shuffledIdiomList.length;
+    targetIdiom = shuffledIdiomList[index];
     
     // 更新副标题显示今日日期（xx年x月x日）
     document.getElementById('subtitle').textContent = getDateDisplayString(todayDate);
-    // 简单模式时显示「简单」标签
-    const modeTag = document.getElementById('modeTag');
-    if (modeTag) modeTag.classList.toggle('show', settings.commonIdiomOnly);
     
     // 生成今日键盘
     generateTodayKeyboard(dateToDays(todayDate));
@@ -731,7 +788,11 @@ function startNewGame() {
 // 处理按键
 function handleKeyPress(key) {
     if (gameOver) return;
-    
+    // 让当前焦点离开按键，避免移动端焦点粘在按钮上导致“一直按下”的视觉效果
+    const active = document.activeElement;
+    if (active && active.classList && active.classList.contains('key')) {
+        active.blur();
+    }
     if (key === '删除') {
         deleteLetter();
     } else if (key === '提交') {
@@ -929,12 +990,11 @@ function generateShareImage() {
     ctx.fillText('四字成语', width / 2, headerY);
     headerY += 24;
     
-    // 日期和难度（纯文本，用中间圆点分隔）
+    // 日期（纯文本）
     const dateStr = getDateDisplayString(todayDate);
-    const subLine = settings.commonIdiomOnly ? dateStr + ' · 简单' : dateStr;
     ctx.font = '12px -apple-system, BlinkMacSystemFont, sans-serif';
     ctx.fillStyle = textSecondary;
-    ctx.fillText(subLine, width / 2, headerY);
+    ctx.fillText(dateStr, width / 2, headerY);
     headerY += 16;
     
     ctx.textAlign = 'left';

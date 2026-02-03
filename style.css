@@ -186,9 +186,7 @@ header {
     margin-top: 14px;
 }
 
-/* 日期 tag 与简单 tag 同款样式，仅颜色不同 */
-.subtitle-row .subtitle,
-.mode-tag {
+.subtitle-row .subtitle {
     margin: 0;
     padding: 3px 10px;
     font-size: 0.7rem;
@@ -201,23 +199,21 @@ header {
     border-radius: 999px;
     flex-shrink: 0;
     border: 1px solid;
-}
-
-.subtitle-row .subtitle {
     color: var(--text-secondary);
     border-color: var(--text-secondary);
     background: color-mix(in srgb, var(--text-secondary) 15%, transparent);
 }
 
-.mode-tag {
-    display: none;
-    color: var(--present);
-    border-color: var(--present);
-    background: rgba(234, 179, 8, 0.15);
+.countdown-row {
+    margin: 4px 0 0;
+    text-align: center;
 }
 
-.mode-tag.show {
-    display: inline-block;
+.countdown-row .countdown {
+    font-variant-numeric: tabular-nums;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--text-secondary);
 }
 
 /* 游戏板 */
@@ -325,12 +321,25 @@ header {
     -webkit-tap-highlight-color: transparent;
 }
 
-.key:hover {
-    background: var(--key-hover);
-    transform: scale(1.05);
+/* 仅在有悬停能力的设备（如鼠标）上应用 hover，避免触屏上“粘住”的放大效果 */
+@media (hover: hover) {
+    .key:hover {
+        background: var(--key-hover);
+        transform: scale(1.05);
+    }
 }
 
-.key:active {
+/* 禁止浏览器自带的按下/焦点残留效果，只靠 .pressed 控制 */
+.key:active,
+.key:focus {
+    transform: none;
+    outline: none;
+}
+.key:focus-visible {
+    outline: none;
+}
+
+.key.pressed {
     transform: scale(0.95);
 }
 

@@ -389,7 +389,6 @@ async function init() {
     attachEventListeners();
     startNewGame();
 
-    scheduleMidnightRefresh();
     startCountdownTimer();
 }
 
@@ -409,16 +408,6 @@ function getUtc8Today() {
 function getNextUtc8MidnightMs() {
     const { year, month, date } = getUtc8Today();
     return Date.UTC(year, month, date + 1, 0, 0, 0, 0) - UTC_PLUS_8_MS;
-}
-
-function scheduleMidnightRefresh() {
-    const nextMs = getNextUtc8MidnightMs();
-    const ms = nextMs - Date.now();
-    setTimeout(() => {
-        startNewGame();
-        scheduleMidnightRefresh();
-        startCountdownTimer();
-    }, Math.max(0, ms));
 }
 
 // 获取今日日期字符串（YYYY-MM-DD），按 UTC+8
@@ -458,9 +447,7 @@ function startCountdownTimer() {
                 clearInterval(countdownTimerId);
                 countdownTimerId = null;
             }
-            startNewGame();
-            scheduleMidnightRefresh();
-            startCountdownTimer();
+            location.reload();
             return;
         }
         const h = String(cd.h).padStart(2, '0');

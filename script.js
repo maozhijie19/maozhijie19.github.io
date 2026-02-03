@@ -379,6 +379,9 @@ async function init() {
     const subtitleEl = document.getElementById('subtitle');
     if (subtitleEl) subtitleEl.textContent = '加载中…';
 
+    // 先画出空格子，避免加载期间出现空白区域
+    createGameBoard();
+
     try {
         await loadIdiomData();
     } catch (e) {
@@ -397,7 +400,6 @@ async function init() {
 
     loadSettings();
     loadStats();
-    createGameBoard();
     createKeyboard();
     attachEventListeners();
     startNewGame();

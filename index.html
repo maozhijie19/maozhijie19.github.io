@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
+<meta property="og:title" content="ØYNN (@sha2kyou) — Indie Developer">
+<meta property="og:description" content="Building native macOS and Android apps—Sidefy, SavePoint, and MatrixClock.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://sha2kyou.github.io">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="ØYNN (@sha2kyou) — Indie Developer">
+<meta name="twitter:description" content="Building native macOS and Android apps—Sidefy, SavePoint, and MatrixClock.">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='4' fill='%2305050c'/%3E%3Ctext x='4' y='25' font-family='monospace' font-weight='bold' font-size='22' fill='%2300f0ff'%3EO%3C/text%3E%3C/svg%3E">
 <title>ØYNN (@sha2kyou) — Indie Developer · Sidefy / SavePoint / MatrixClock</title>
 <meta name="description" content="ØYNN (GitHub @sha2kyou): indie developer building native macOS and Android apps—Sidefy, SavePoint, and MatrixClock.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,9 +41,26 @@
     position: relative;
   }
 
+  html { scroll-behavior: smooth; }
+
   ::selection {
     background: rgba(255, 43, 214, 0.35);
     color: #f0fbff;
+  }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0, 240, 255, 0.015) 2px,
+      rgba(0, 240, 255, 0.015) 4px
+    );
   }
 
   .page {
@@ -79,7 +104,7 @@
 
   .hero-label {
     font-family: 'Press Start 2P', monospace;
-    font-size: 7px;
+    font-size: 8px;
     color: var(--cp-magenta);
     letter-spacing: 0.14em;
     text-transform: uppercase;
@@ -286,6 +311,7 @@
     cursor: default;
     position: relative;
     overflow: hidden;
+    will-change: transform;
   }
 
   .project-card::before {
@@ -586,6 +612,8 @@
 
 <div class="page">
 
+  <main>
+
   <header class="hero">
     <div class="hero-label">// indie developer</div>
     <h1 class="hero-name" data-text="ØYNN"><span class="hero-name-inner">ØYNN</span></h1>
@@ -687,18 +715,49 @@
     <a class="ext-link" href="https://sidefyapp.com" target="_blank" rel="noopener noreferrer">sidefyapp.com</a>
   </nav>
 
+  </main>
+
+  <footer style="margin-top:64px;padding:24px 0 0;border-top:1px dashed rgba(0,240,255,0.12);font-size:18px;color:var(--cp-dim);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
+    <span>© 2025 ØYNN</span>
+    <span style="letter-spacing:0.08em;"># ship it</span>
+  </footer>
+
 </div>
 
 <script>
 (function () {
+  var CACHE_KEY = 'mainpage_stars';
+  var CACHE_TTL = 3600000; // 1 hour
+  var cache;
+
+  try {
+    cache = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
+  } catch (_) { cache = {}; }
+  if (cache.ttl && Date.now() > cache.ttl) cache = {};
+
   document.querySelectorAll('.stars[data-repo]').forEach(function (el) {
     var repo = el.getAttribute('data-repo');
     var fb = el.getAttribute('data-fallback') || '—';
+
+    if (cache[repo]) {
+      el.textContent = '* ' + cache[repo];
+      return;
+    }
+
     fetch('https://api.github.com/repos/' + repo)
       .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
       .then(function (j) {
         var n = j && j.stargazers_count;
-        el.textContent = '* ' + (typeof n === 'number' ? n : fb);
+        if (typeof n === 'number') {
+          cache[repo] = n;
+          try {
+            cache.ttl = Date.now() + CACHE_TTL;
+            localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
+          } catch (_) {}
+          el.textContent = '* ' + n;
+        } else {
+          el.textContent = '* ' + fb;
+        }
       })
       .catch(function () { el.textContent = '* ' + fb; });
   });

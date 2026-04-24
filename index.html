@@ -736,13 +736,6 @@
     letter-spacing: 0.04em;
   }
 
-  .feed-line .fl-icon-push { color: var(--cp-cyan); }
-  .feed-line .fl-icon-star { color: var(--cp-amber); }
-  .feed-line .fl-icon-fork { color: #bd93f9; }
-  .feed-line .fl-icon-release { color: var(--cp-green); }
-  .feed-line .fl-icon-issue { color: #ff6b6b; }
-  .feed-line .fl-icon-create { color: #5ecbff; }
-
   .feed-line .fl-repo {
     color: #eef6ff;
     margin: 0 4px;
@@ -1079,19 +1072,6 @@
     return (d.getMonth()+1) + '/' + d.getDate();
   }
 
-  function icon(type) {
-    switch (type) {
-      case 'PushEvent':          return '<span class="fl-icon-push">⬆</span>';
-      case 'WatchEvent':         return '<span class="fl-icon-star">⭐</span>';
-      case 'ForkEvent':          return '<span class="fl-icon-fork">⑂</span>';
-      case 'ReleaseEvent':       return '<span class="fl-icon-release">◆</span>';
-      case 'IssuesEvent':        return '<span class="fl-icon-issue">●</span>';
-      case 'CreateEvent':        return '<span class="fl-icon-create">+</span>';
-      case 'DeleteEvent':        return '<span class="fl-icon-issue">✕</span>';
-      default:                   return '<span style="color:var(--cp-dim)">◈</span>';
-    }
-  }
-
   function tag(type) {
     switch (type) {
       case 'PushEvent':          return 'PUSH';
@@ -1136,7 +1116,6 @@
     body.innerHTML = filtered.slice(0, 10).map(function (e) {
       return '<div class="feed-line">' +
         '<span class="fl-tag">[' + tag(e.type) + ']</span> ' +
-        icon(e.type) + ' ' +
         '<span class="fl-repo">' + e.repo.name.replace(GITHUB_USER + '/', '') + '</span> ' +
         '<span class="fl-desc">' + desc(e) + '</span>' +
         '<span class="fl-time">' + fmtTime(e.created_at) + '</span>' +

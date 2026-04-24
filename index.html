@@ -942,7 +942,9 @@
       body.innerHTML = '<div class="feed-empty">⏳ NO RECENT ACTIVITY</div>';
       return;
     }
-    body.innerHTML = events.slice(0, 10).map(function (e) {
+    body.innerHTML = events.slice(0, 10).filter(function (e) {
+      return e.repo.name !== 'maozhijie19/maozhijie19.github.io';
+    }).map(function (e) {
       return '<div class="feed-line">' +
         '<span class="fl-tag">[' + tag(e.type) + ']</span> ' +
         icon(e.type) + ' ' +

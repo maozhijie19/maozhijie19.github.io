@@ -28,12 +28,7 @@
   }
 
   body {
-    background:
-      linear-gradient(180deg, transparent 55%, rgba(157, 77, 255, 0.07) 100%),
-      radial-gradient(ellipse 120% 55% at 50% -20%, rgba(0, 240, 255, 0.14), transparent 50%),
-      radial-gradient(ellipse 55% 40% at 100% 15%, rgba(255, 43, 214, 0.1), transparent 45%),
-      radial-gradient(ellipse 50% 45% at -5% 80%, rgba(157, 77, 255, 0.09), transparent 42%),
-      var(--cp-bg);
+    background: var(--cp-bg);
     color: var(--cp-text);
     font-family: 'VT323', ui-monospace, 'Cascadia Code', monospace;
     font-size: 22px;
@@ -41,38 +36,6 @@
     overflow-x: hidden;
     min-height: 100vh;
     position: relative;
-  }
-
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1;
-    opacity: 0.22;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 2px,
-      rgba(0, 0, 0, 0.35) 2px,
-      rgba(0, 0, 0, 0.35) 3px
-    );
-    mix-blend-mode: overlay;
-  }
-
-  body::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 1;
-    opacity: 1;
-    background-image:
-      linear-gradient(90deg, rgba(0, 240, 255, 0.04) 1px, transparent 1px),
-      linear-gradient(0deg, rgba(255, 43, 214, 0.035) 1px, transparent 1px),
-      linear-gradient(to right, rgba(255,255,255,0.06) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255,255,255,0.06) 1px, transparent 1px);
-    background-size: 48px 48px, 48px 48px, 4px 4px, 4px 4px;
   }
 
   ::selection {

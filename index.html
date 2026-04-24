@@ -613,7 +613,187 @@
 
   /* ══ footer ══ */
 
-  /* ══ live feed ── terminal log ══ */\n\n  .feed-section {\n    margin-bottom: 48px;\n  }\n\n  .feed-window {\n    border: 1px solid var(--cp-line);\n    background: var(--cp-card-bg);\n    position: relative;\n    overflow: hidden;\n    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 2px 2px 0 rgba(0, 0, 0, 0.4);\n    min-height: 140px;\n  }\n\n  .feed-header {\n    display: flex;\n    align-items: center;\n    gap: 10px;\n    padding: 8px 16px;\n    background: rgba(0, 240, 255, 0.04);\n    border-bottom: 1px solid var(--cp-line);\n    font-size: 14px;\n    letter-spacing: 0.06em;\n    color: var(--cp-dim);\n    user-select: none;\n  }\n\n  .feed-header .feed-dots {\n    display: flex;\n    gap: 6px;\n  }\n\n  .feed-header .feed-dot {\n    width: 8px; height: 8px;\n    border-radius: 50%;\n    background: var(--cp-dim);\n    opacity: 0.4;\n  }\n\n  .feed-header .feed-dot:nth-child(1) { background: #ff5f56; }\n  .feed-header .feed-dot:nth-child(2) { background: #ffbd2e; }\n  .feed-header .feed-dot:nth-child(3) { background: #27c93f; }\n\n  .feed-header .feed-title {\n    color: var(--cp-cyan);\n    opacity: 0.6;\n    margin-left: 4px;\n    flex: 1;\n  }\n\n  .feed-header .feed-blink {\n    color: var(--cp-green);\n    animation: blink 1.2s step-end infinite;\n    font-size: 12px;\n  }\n\n  .feed-body {\n    padding: 12px 16px;\n    font-size: 18px;\n    line-height: 1.6;\n    max-height: 340px;\n    overflow-y: auto;\n    scrollbar-width: thin;\n    scrollbar-color: rgba(0, 240, 255, 0.15) transparent;\n  }\n\n  .feed-body::-webkit-scrollbar {\n    width: 4px;\n  }\n\n  .feed-body::-webkit-scrollbar-track {\n    background: transparent;\n  }\n\n  .feed-body::-webkit-scrollbar-thumb {\n    background: rgba(0, 240, 255, 0.2);\n  }\n\n  .feed-line {\n    opacity: 0;\n    animation: feed-in 0.35s ease forwards;\n    white-space: nowrap;\n    overflow: hidden;\n    text-overflow: ellipsis;\n  }\n\n  .feed-line:nth-child(1) { animation-delay: 0.0s; }\n  .feed-line:nth-child(2) { animation-delay: 0.08s; }\n  .feed-line:nth-child(3) { animation-delay: 0.16s; }\n  .feed-line:nth-child(4) { animation-delay: 0.24s; }\n  .feed-line:nth-child(5) { animation-delay: 0.32s; }\n  .feed-line:nth-child(6) { animation-delay: 0.40s; }\n  .feed-line:nth-child(7) { animation-delay: 0.48s; }\n  .feed-line:nth-child(8) { animation-delay: 0.56s; }\n  .feed-line:nth-child(9) { animation-delay: 0.64s; }\n  .feed-line:nth-child(10) { animation-delay: 0.72s; }\n\n  @keyframes feed-in {\n    from { opacity: 0; transform: translateX(-4px); }\n    to   { opacity: 1; transform: translateX(0); }\n  }\n\n  .feed-line .fl-tag {\n    display: inline-block;\n    min-width: 7em;\n    color: var(--cp-magenta);\n    opacity: 0.7;\n    font-size: 15px;\n    letter-spacing: 0.04em;\n  }\n\n  .feed-line .fl-icon-push { color: var(--cp-cyan); }\n  .feed-line .fl-icon-star { color: var(--cp-amber); }\n  .feed-line .fl-icon-fork { color: #bd93f9; }\n  .feed-line .fl-icon-release { color: var(--cp-green); }\n  .feed-line .fl-icon-issue { color: #ff6b6b; }\n  .feed-line .fl-icon-create { color: #5ecbff; }\n\n  .feed-line .fl-repo {\n    color: #eef6ff;\n    margin: 0 4px;\n  }\n\n  .feed-line .fl-desc {\n    color: #6a7a88;\n    font-size: 16px;\n  }\n\n  .feed-line .fl-time {\n    color: var(--cp-dim);\n    font-size: 14px;\n    float: right;\n    margin-left: 8px;\n  }\n\n  .feed-empty {\n    color: var(--cp-dim);\n    font-size: 20px;\n    padding: 8px 0;\n  }\n\n  .feed-empty .spinner {\n    display: inline-block;\n    animation: spin 1s linear infinite;\n    margin-right: 6px;\n  }\n\n  @keyframes spin {\n    to { transform: rotate(360deg); }\n  }\n\n  .feed-error {\n    color: #ff5f56;\n    font-size: 18px;\n    padding: 8px 0;\n  }\n\n  .site-footer {\n    margin-top: 56px;\n    padding: 20px 0 0;\n    border-top: 1px solid var(--cp-line);\n    display: flex;\n    justify-content: space-between;\n    align-items: center;\n    flex-wrap: wrap;\n    gap: 8px;\n    font-size: 18px;\n    color: var(--cp-dim);\n  }
+  /* ══ live feed ── card-style log ══ */
+
+  .feed-card {
+    border: 1px solid var(--cp-line);
+    background: var(--cp-card-bg);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 2px 2px 0 rgba(0, 0, 0, 0.4);
+    min-height: 120px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    margin-bottom: 48px;
+  }
+
+  .feed-card:hover {
+    border-color: rgba(0, 240, 255, 0.35);
+    box-shadow:
+      0 0 0 1px rgba(0, 240, 255, 0.10),
+      2px 2px 0 rgba(0, 0, 0, 0.4),
+      0 0 24px rgba(0, 240, 255, 0.06);
+  }
+
+  .feed-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--cp-magenta), var(--cp-cyan));
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .feed-card:hover::before { opacity: 1; }
+
+  .feed-card-inner {
+    padding: 18px 22px 20px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .feed-header-line {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 14px;
+    font-size: 22px;
+  }
+
+  .feed-header-line .prompt {
+    color: var(--cp-green);
+    font-size: 20px;
+    opacity: 0.5;
+    flex-shrink: 0;
+  }
+
+  .feed-header-line .status-dot {
+    display: inline-block;
+    width: 5px; height: 5px;
+    border-radius: 50%;
+    background: var(--cp-green);
+    box-shadow: 0 0 6px rgba(0, 255, 157, 0.4);
+    flex-shrink: 0;
+    animation: blink 1.2s step-end infinite;
+  }
+
+  .feed-header-line .feed-title {
+    color: #eef6ff;
+    font-size: 22px;
+  }
+
+  .feed-header-line .feed-count {
+    color: var(--cp-dim);
+    font-size: 18px;
+    margin-left: auto;
+  }
+
+  .feed-body {
+    font-size: 20px;
+    line-height: 1.55;
+    max-height: 300px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 240, 255, 0.15) transparent;
+  }
+
+  .feed-body::-webkit-scrollbar { width: 4px; }
+  .feed-body::-webkit-scrollbar-track { background: transparent; }
+  .feed-body::-webkit-scrollbar-thumb { background: rgba(0, 240, 255, 0.2); }
+
+  .feed-line {
+    opacity: 0;
+    animation: feed-in 0.35s ease forwards;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .feed-line:nth-child(1) { animation-delay: 0.0s; }
+  .feed-line:nth-child(2) { animation-delay: 0.08s; }
+  .feed-line:nth-child(3) { animation-delay: 0.16s; }
+  .feed-line:nth-child(4) { animation-delay: 0.24s; }
+  .feed-line:nth-child(5) { animation-delay: 0.32s; }
+  .feed-line:nth-child(6) { animation-delay: 0.40s; }
+  .feed-line:nth-child(7) { animation-delay: 0.48s; }
+  .feed-line:nth-child(8) { animation-delay: 0.56s; }
+  .feed-line:nth-child(9) { animation-delay: 0.64s; }
+  .feed-line:nth-child(10) { animation-delay: 0.72s; }
+
+  @keyframes feed-in {
+    from { opacity: 0; transform: translateX(-4px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .feed-line .fl-tag {
+    display: inline-block;
+    min-width: 7em;
+    color: var(--cp-magenta);
+    opacity: 0.7;
+    font-size: 15px;
+    letter-spacing: 0.04em;
+  }
+
+  .feed-line .fl-icon-push { color: var(--cp-cyan); }
+  .feed-line .fl-icon-star { color: var(--cp-amber); }
+  .feed-line .fl-icon-fork { color: #bd93f9; }
+  .feed-line .fl-icon-release { color: var(--cp-green); }
+  .feed-line .fl-icon-issue { color: #ff6b6b; }
+  .feed-line .fl-icon-create { color: #5ecbff; }
+
+  .feed-line .fl-repo {
+    color: #eef6ff;
+    margin: 0 4px;
+  }
+
+  .feed-line .fl-desc {
+    color: #6a7a88;
+    font-size: 16px;
+  }
+
+  .feed-line .fl-time {
+    color: var(--cp-dim);
+    font-size: 14px;
+    float: right;
+    margin-left: 8px;
+  }
+
+  .feed-empty {
+    color: var(--cp-dim);
+    font-size: 20px;
+    padding: 8px 0;
+  }
+
+  .feed-empty .spinner {
+    display: inline-block;
+    animation: spin 1s linear infinite;
+    margin-right: 6px;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .feed-error {
+    color: #ff5f56;
+    font-size: 18px;
+    padding: 8px 0;
+  }
+
+  .site-footer {
+    margin-top: 56px;
+    padding: 20px 0 0;
+    border-top: 1px solid var(--cp-line);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 18px;
+    color: var(--cp-dim);
+  }
 
   .site-footer .tagline {
     color: rgba(0, 240, 255, 0.2);
@@ -803,20 +983,25 @@
   </div>
 
 
-  <div class="section-label feed-section" id="feed-heading">// live feed  <span style="font-size:12px;color:var(--cp-green);opacity:0.5;letter-spacing:0.1em;font-family:'Noto Sans SC',sans-serif;">ストリーム</span></div>
+  <div class="section-label" id="feed-heading">// live feed  <span style="font-size:12px;color:var(--cp-green);opacity:0.5;letter-spacing:0.1em;font-family:'Noto Sans SC',sans-serif;">ストリーム</span></div>
 
-  <div class="feed-window" role="log" aria-labelledby="feed-heading" aria-live="polite">
-    <div class="feed-header">
-      <span class="feed-dots" aria-hidden="true">
-        <span class="feed-dot"></span>
-        <span class="feed-dot"></span>
-        <span class="feed-dot"></span>
-      </span>
-      <span class="feed-title">── events.log ──</span>
-      <span class="feed-blink" aria-hidden="true">●</span>
-    </div>
-    <div class="feed-body" id="feed-body">
-      <div class="feed-empty"><span class="spinner" aria-hidden="true">⟳</span> FETCHING...</div>
+  <div class="feed-card" role="log" aria-labelledby="feed-heading" aria-live="polite">
+    <div class="feed-card-inner">
+      <div class="card-frame" aria-hidden="true">
+        <span class="corner corner-tl"></span>
+        <span class="corner corner-tr"></span>
+        <span class="corner corner-bl"></span>
+        <span class="corner corner-br"></span>
+      </div>
+      <div class="feed-header-line">
+        <span class="prompt" aria-hidden="true">></span>
+        <span class="status-dot" aria-hidden="true"></span>
+        <span class="feed-title">live feed</span>
+        <span class="feed-count" id="feed-count"></span>
+      </div>
+      <div class="feed-body" id="feed-body">
+        <div class="feed-empty"><span class="spinner" aria-hidden="true">⟳</span> FETCHING...</div>
+      </div>
     </div>
   </div>
 
@@ -925,7 +1110,8 @@
     switch (event.type) {
       case 'PushEvent':
         var commits = p.commits || [];
-        var msg = commits.length ? commits[0].message.split('\\n')[0].trim() : '';
+        var msg = commits.length ? commits[0].message.split('\
+')[0].trim() : '';
         return (commits.length > 1 ? msg + ' (+' + (commits.length-1) + ' more)' : msg);
       case 'WatchEvent':       return p.action === 'started' ? '★ starred' : '';
       case 'ForkEvent':        return 'forked';
@@ -940,11 +1126,14 @@
   function render(events) {
     if (!events || !events.length) {
       body.innerHTML = '<div class="feed-empty">⏳ NO RECENT ACTIVITY</div>';
+      document.getElementById('feed-count').textContent = '';
       return;
     }
-    body.innerHTML = events.slice(0, 10).filter(function (e) {
+    var filtered = events.filter(function (e) {
       return e.repo.name !== 'maozhijie19/maozhijie19.github.io';
-    }).map(function (e) {
+    });
+    document.getElementById('feed-count').textContent = '* ' + filtered.length;
+    body.innerHTML = filtered.slice(0, 10).map(function (e) {
       return '<div class="feed-line">' +
         '<span class="fl-tag">[' + tag(e.type) + ']</span> ' +
         icon(e.type) + ' ' +

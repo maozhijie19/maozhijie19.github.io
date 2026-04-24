@@ -7,7 +7,7 @@
 <meta property="og:title" content="ØYNN (@sha2kyou) — Indie Developer">
 <meta property="og:description" content="Building native macOS and Android apps—Sidefy, SavePoint, MatrixClock, ClaudePilot.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://sha2kyou.github.io">
+<meta property="og:url" content="https://tr1ck.cn">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ØYNN (@sha2kyou) — Indie Developer">
 <meta name="twitter:description" content="Building native macOS and Android apps—Sidefy, SavePoint, MatrixClock, ClaudePilot.">
@@ -374,18 +374,6 @@
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.5), 2px 2px 0 rgba(0, 0, 0, 0.4);
   }
 
-  .project-card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: linear-gradient(180deg, var(--accent), var(--cp-magenta));
-    opacity: 0.5;
-    transition: opacity 0.2s;
-    z-index: 3;
-    pointer-events: none;
-  }
-
   .project-card:hover {
     border-color: rgba(0, 240, 255, 0.35);
     box-shadow:
@@ -394,9 +382,8 @@
       0 0 24px rgba(0, 240, 255, 0.06);
   }
 
-  .project-card:hover::before { opacity: 1; }
-
-  .project-card:focus-within {
+  .project-card:focus-within,
+  .feed-card:focus-within {
     border-color: var(--cp-cyan);
     outline: none;
     box-shadow: 0 0 0 2px rgba(0, 240, 255, 0.18);
@@ -425,7 +412,8 @@
     transition: border-color 0.2s ease;
   }
 
-  .project-card:hover .corner {
+  .project-card:hover .corner,
+  .feed-card:hover .corner {
     border-color: rgba(0, 240, 255, 0.35);
   }
 
@@ -611,8 +599,6 @@
     outline-offset: 4px;
   }
 
-  /* ══ footer ══ */
-
   /* ══ live feed ── card-style log ══ */
 
   .feed-card {
@@ -633,20 +619,6 @@
       2px 2px 0 rgba(0, 0, 0, 0.4),
       0 0 24px rgba(0, 240, 255, 0.06);
   }
-
-  .feed-card::before {
-    content: '';
-    position: absolute;
-    left: 0; top: 0; bottom: 0;
-    width: 3px;
-    background: linear-gradient(180deg, var(--cp-magenta), var(--cp-cyan));
-    opacity: 0.5;
-    transition: opacity 0.2s;
-    z-index: 3;
-    pointer-events: none;
-  }
-
-  .feed-card:hover::before { opacity: 1; }
 
   .feed-card-inner {
     padding: 18px 22px 20px;
@@ -1090,8 +1062,7 @@
     switch (event.type) {
       case 'PushEvent':
         var commits = p.commits || [];
-        var msg = commits.length ? commits[0].message.split('\
-')[0].trim() : '';
+        var msg = commits.length ? commits[0].message.split('\n')[0].trim() : '';
         return (commits.length > 1 ? msg + ' (+' + (commits.length-1) + ' more)' : msg);
       case 'WatchEvent':       return p.action === 'started' ? '★ starred' : '';
       case 'ForkEvent':        return 'forked';
@@ -1127,38 +1098,32 @@
     }).join('');
   }
 
+  function fetchFeed() {
+    fetch('https://api.github.com/users/' + GITHUB_USER + '/events?per_page=10')
+      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
+      .then(function (j) {
+        render(j);
+        try {
+          var s = {};
+          s.events = j;
+          s.ttl = Date.now() + FEED_CACHE_TTL;
+          localStorage.setItem(FEED_CACHE_KEY, JSON.stringify(s));
+        } catch (_) {}
+      })
+      .catch(function () {
+        body.innerHTML = '<div class="feed-error">⚠ FAILED TO FETCH</div>';
+      });
+  }
+
   // try cache
   var cached;
   try { cached = JSON.parse(localStorage.getItem(FEED_CACHE_KEY) || '{}'); } catch (_) { cached = {}; }
   if (cached.ttl && Date.now() > cached.ttl) cached = {};
   if (cached.events) {
     render(cached.events);
-    // refresh in background
-    fetch('https://api.github.com/users/' + GITHUB_USER + '/events?per_page=10')
-      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-      .then(function (j) {
-        render(j);
-        try {
-          cached.events = j;
-          cached.ttl = Date.now() + FEED_CACHE_TTL;
-          localStorage.setItem(FEED_CACHE_KEY, JSON.stringify(cached));
-        } catch (_) {}
-      })
-      .catch(function () {});
+    fetchFeed(); // refresh in background
   } else {
-    fetch('https://api.github.com/users/' + GITHUB_USER + '/events?per_page=10')
-      .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-      .then(function (j) {
-        render(j);
-        try {
-          cached.events = j;
-          cached.ttl = Date.now() + FEED_CACHE_TTL;
-          localStorage.setItem(FEED_CACHE_KEY, JSON.stringify(cached));
-        } catch (_) {}
-      })
-      .catch(function () {
-        body.innerHTML = '<div class="feed-error">⚠ FAILED TO FETCH — ' + new Date().toLocaleTimeString() + '</div>';
-      });
+    fetchFeed();
   }
 })();
 </script>

@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>sha2kyou — 独立开发者 · Sidefy / SavePoint / MatrixClock</title>
+<meta name="description" content="sha2kyou：独立开发者，macOS 与 Android 原生应用。作品包括 Sidefy、SavePoint、MatrixClock。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="sha2kyou — indie developer">
+<meta property="og:description" content="Sidefy、SavePoint、MatrixClock 作者。专注于 macOS 与 Android 原生体验。">
+<meta name="twitter:card" content="summary">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0a0a0f;
+    color: #e0e0e0;
+    font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
+
+  canvas#matrix {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    opacity: 0.07;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body.matrix-off canvas#matrix {
+    display: none;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 60px 32px 80px;
+  }
+
+  .terminal-bar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 48px;
+    opacity: 0.5;
+  }
+  .dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-r { background: #ff5f56; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #27c93f; }
+  .term-title { font-size: 11px; color: #555; margin-left: 8px; letter-spacing: 0.05em; }
+
+  .hero {
+    margin-bottom: 64px;
+  }
+
+  .hero-label {
+    font-size: 11px;
+    color: #00ff88;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+    opacity: 0.8;
+  }
+
+  .hero-name {
+    font-size: 52px;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 8px;
+    font-family: 'SF Pro Display', -apple-system, sans-serif;
+    background: linear-gradient(135deg, #ffffff 0%, #a0a0b0 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  @media (max-width: 520px) {
+    .hero-name { font-size: 36px; }
+  }
+
+  .hero-handle {
+    font-size: 14px;
+    color: #00ff88;
+    margin-bottom: 24px;
+    opacity: 0.7;
+  }
+
+  .hero-bio {
+    font-size: 15px;
+    color: #888;
+    line-height: 1.7;
+    max-width: 520px;
+    font-family: -apple-system, sans-serif;
+  }
+
+  .hero-bio em {
+    color: #ccc;
+    font-style: normal;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: #00ff88;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    opacity: 0.6;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, #00ff8830, transparent);
+  }
+
+  .projects {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    margin-bottom: 56px;
+  }
+
+  .project-card {
+    border: 1px solid #1a1a2e;
+    border-radius: 4px;
+    padding: 24px 28px;
+    background: rgba(255,255,255,0.02);
+    transition: background 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 2px;
+    background: var(--accent);
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  .project-card:hover {
+    background: rgba(255,255,255,0.045);
+    border-color: #2a2a4e;
+  }
+
+  .project-card:hover::before {
+    opacity: 1;
+  }
+
+  .project-card:focus-within {
+    border-color: #00ff8860;
+  }
+
+  .stretched-link {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+  }
+
+  .stretched-link:focus {
+    outline: 2px solid #00ff88;
+    outline-offset: 2px;
+  }
+
+  .project-card-inner {
+    position: relative;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  .project-card-inner a,
+  .project-card-inner .project-link {
+    pointer-events: auto;
+  }
+
+  .project-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 16px;
+  }
+
+  .project-name {
+    font-size: 18px;
+    font-weight: 600;
+    font-family: -apple-system, sans-serif;
+    color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  .project-icon {
+    font-size: 16px;
+    opacity: 0.9;
+  }
+
+  .project-links {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
+    align-items: center;
+  }
+
+  .project-link {
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: #444;
+    text-decoration: none;
+    padding: 4px 10px;
+    border: 1px solid #222;
+    border-radius: 2px;
+    transition: color 0.15s, border-color 0.15s, background 0.15s;
+    font-family: monospace;
+    position: relative;
+    z-index: 2;
+  }
+
+  .project-link:hover {
+    color: #00ff88;
+    border-color: #00ff8840;
+    background: rgba(0,255,136,0.05);
+  }
+
+  .project-desc {
+    font-size: 13px;
+    color: #666;
+    line-height: 1.6;
+    font-family: -apple-system, sans-serif;
+    margin-bottom: 14px;
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag {
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    padding: 3px 8px;
+    border-radius: 2px;
+    font-family: monospace;
+    border: 1px solid;
+  }
+
+  .tag-platform { color: #5b8fff; border-color: #5b8fff30; background: rgba(91,143,255,0.06); }
+  .tag-lang { color: #ff79c6; border-color: #ff79c630; background: rgba(255,121,198,0.06); }
+  .tag-type { color: #f1fa8c; border-color: #f1fa8c30; background: rgba(241,250,140,0.06); }
+  .tag-green { color: #50fa7b; border-color: #50fa7b30; background: rgba(80,250,123,0.06); }
+
+  .stars {
+    font-size: 11px;
+    color: #f1c40f;
+    opacity: 0.7;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .stat-bar {
+    display: flex;
+    gap: 32px;
+    padding: 20px 0;
+    border-top: 1px solid #111;
+    border-bottom: 1px solid #111;
+    margin-bottom: 56px;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .stat-val {
+    font-size: 22px;
+    font-weight: 700;
+    font-family: -apple-system, sans-serif;
+    color: #00ff88;
+  }
+
+  .stat-key {
+    font-size: 10px;
+    color: #444;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+
+  .links-row {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .ext-link {
+    font-size: 12px;
+    color: #555;
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    transition: color 0.15s;
+    font-family: monospace;
+  }
+
+  .ext-link:hover { color: #00ff88; }
+
+  .ext-link::before {
+    content: '→';
+    font-size: 10px;
+    color: #00ff8870;
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 2px;
+    height: 1em;
+    background: #00ff88;
+    margin-left: 4px;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cursor { animation: none; opacity: 1; }
+  }
+
+  .featured-badge {
+    font-size: 9px;
+    padding: 2px 7px;
+    border-radius: 2px;
+    color: #f1fa8c;
+    background: rgba(241,250,140,0.08);
+    border: 1px solid rgba(241,250,140,0.2);
+    letter-spacing: 0.1em;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<canvas id="matrix" aria-hidden="true"></canvas>
+
+<div class="page">
+
+  <div class="terminal-bar">
+    <div class="dot dot-r"></div>
+    <div class="dot dot-y"></div>
+    <div class="dot dot-g"></div>
+    <span class="term-title">sha2kyou — portfolio.sh</span>
+  </div>
+
+  <header class="hero">
+    <div class="hero-label">// indie developer</div>
+    <h1 class="hero-name">sha2kyou</h1>
+    <div class="hero-handle">@sha2kyou<span class="cursor" aria-hidden="true"></span></div>
+    <p class="hero-bio">
+      独立开发者，专注于 <em>macOS & Android</em> 原生体验。<br>
+      喜欢把一个想法做到足够精致，然后发布它。
+    </p>
+  </header>
+
+  <div class="section-label" id="projects-heading">// projects</div>
+
+  <div class="projects" role="list" aria-labelledby="projects-heading">
+
+    <article class="project-card" style="--accent: #5b8fff" role="listitem">
+      <a class="stretched-link" href="https://sidefyapp.com" target="_blank" rel="noopener noreferrer" aria-label="打开 Sidefy 官网"></a>
+      <div class="project-card-inner">
+        <div class="project-header">
+          <div class="project-name">
+            <span class="project-icon" aria-hidden="true">◈</span>
+            Sidefy
+            <span class="featured-badge">App Store #1</span>
+          </div>
+          <div class="project-links">
+            <a class="project-link" href="https://sidefyapp.com" target="_blank" rel="noopener noreferrer">website ↗</a>
+          </div>
+        </div>
+        <p class="project-desc">macOS 屏幕边缘信息聚合工具。把日历、RSS、GitHub、自定义插件统一成一条时间线，永远在屏幕边缘待命，不打断工作流。付费榜 #1，全品类 Top 3。</p>
+        <div class="project-tags">
+          <span class="tag tag-platform">macOS 14+</span>
+          <span class="tag tag-lang">Swift</span>
+          <span class="tag tag-type">Productivity</span>
+          <span class="tag tag-green">JavaScript Plugins</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="project-card" style="--accent: #bd93f9" role="listitem">
+      <a class="stretched-link" href="https://github.com/sha2kyou/Savepoint" target="_blank" rel="noopener noreferrer" aria-label="在 GitHub 打开 SavePoint"></a>
+      <div class="project-card-inner">
+        <div class="project-header">
+          <div class="project-name">
+            <span class="project-icon" aria-hidden="true">⌛</span>
+            SavePoint
+          </div>
+          <div class="project-links">
+            <span class="stars" aria-label="GitHub stars">★ 6</span>
+            <a class="project-link" href="https://github.com/sha2kyou/Savepoint" target="_blank" rel="noopener noreferrer">github ↗</a>
+          </div>
+        </div>
+        <p class="project-desc">macOS 文件快照工具，住在菜单栏里。监控你授权的文件，每次变更自动打一个时间点存档，支持 diff 查看和一键还原。</p>
+        <div class="project-tags">
+          <span class="tag tag-platform">macOS 14+</span>
+          <span class="tag tag-lang">Swift</span>
+          <span class="tag tag-type">Utilities</span>
+          <span class="tag tag-green">Sandboxed</span>
+        </div>
+      </div>
+    </article>
+
+    <article class="project-card" style="--accent: #50fa7b" role="listitem">
+      <a class="stretched-link" href="https://github.com/sha2kyou/MatrixClock" target="_blank" rel="noopener noreferrer" aria-label="在 GitHub 打开 MatrixClock"></a>
+      <div class="project-card-inner">
+        <div class="project-header">
+          <div class="project-name">
+            <span class="project-icon" aria-hidden="true">▓</span>
+            MatrixClock
+          </div>
+          <div class="project-links">
+            <span class="stars" aria-label="GitHub stars">★ 6</span>
+            <a class="project-link" href="https://github.com/sha2kyou/MatrixClock" target="_blank" rel="noopener noreferrer">github ↗</a>
+          </div>
+        </div>
+        <p class="project-desc">Android 矩阵风格时钟 + 状态展示。OLED 友好，带番茄钟、倒计时、局域网管理面板，支持硬件按键映射。Vibe coding 产物，但做完了。</p>
+        <div class="project-tags">
+          <span class="tag tag-platform">Android 8+</span>
+          <span class="tag tag-lang">Kotlin</span>
+          <span class="tag tag-type">Clock / Widget</span>
+          <span class="tag tag-green">LAN Admin</span>
+        </div>
+      </div>
+    </article>
+
+  </div>
+
+  <div class="stat-bar">
+    <div class="stat">
+      <span class="stat-val">3</span>
+      <span class="stat-key">projects shipped</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val">#1</span>
+      <span class="stat-key">App Store peak</span>
+    </div>
+    <div class="stat">
+      <span class="stat-val">macOS · Android</span>
+      <span class="stat-key">platforms</span>
+    </div>
+  </div>
+
+  <div class="section-label" id="find-heading">// find me</div>
+
+  <nav class="links-row" aria-labelledby="find-heading">
+    <a class="ext-link" href="https://github.com/sha2kyou" target="_blank" rel="noopener noreferrer">github.com/sha2kyou</a>
+    <a class="ext-link" href="https://sidefyapp.com" target="_blank" rel="noopener noreferrer">sidefyapp.com</a>
+  </nav>
+
+</div>
+
+<script>
+(function () {
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+  const fontSize = 13;
+  const chars = '01アイウエオカキクケコサシスセソ';
+
+  let cols = 0;
+  let drops = [];
+  let rafId = 0;
+  let motionOk = true;
+
+  function prefersReducedMotion() {
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  function initDrops() {
+    cols = Math.max(1, Math.floor(canvas.width / fontSize));
+    drops = Array.from({ length: cols }, () => Math.random() * -50);
+  }
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    initDrops();
+  }
+
+  function drawFrame() {
+    if (!motionOk || document.hidden) {
+      rafId = requestAnimationFrame(drawFrame);
+      return;
+    }
+
+    ctx.fillStyle = 'rgba(10, 10, 15, 0.05)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = '#00ff88';
+    ctx.font = fontSize + 'px monospace';
+
+    for (let i = 0; i < drops.length; i++) {
+      const char = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(char, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i] += 0.35;
+    }
+
+    rafId = requestAnimationFrame(drawFrame);
+  }
+
+  function startMatrix() {
+    motionOk = !prefersReducedMotion();
+    document.body.classList.toggle('matrix-off', !motionOk);
+
+    if (!motionOk) {
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = 0;
+      return;
+    }
+
+    resize();
+    if (!rafId) rafId = requestAnimationFrame(drawFrame);
+  }
+
+  window.addEventListener('resize', function () {
+    if (!motionOk) return;
+    resize();
+  });
+
+  document.addEventListener('visibilitychange', function () { /* rAF loop skips draw when hidden */ });
+
+  const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (mqReduce.addEventListener) {
+    mqReduce.addEventListener('change', startMatrix);
+  } else {
+    mqReduce.addListener(startMatrix);
+  }
+
+  startMatrix();
+})();
+</script>
+
+</body>
+</html>

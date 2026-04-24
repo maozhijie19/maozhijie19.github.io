@@ -287,7 +287,6 @@
     border-radius: 50%;
     background: var(--cp-green);
     box-shadow: 0 0 8px rgba(0, 255, 157, 0.5);
-    animation: blink 1.6s step-end infinite;
   }
 
   .hero-status-line .dot-inactive {
@@ -774,19 +773,16 @@
     background: var(--cp-magenta);
     margin-left: 2px;
     vertical-align: -0.12em;
-    animation: blink 1s step-end infinite;
     opacity: 0.6;
   }
 
   /* ══ reduced motion ══ */
 
   @media (prefers-reduced-motion: reduce) {
-    .cursor { animation: none; opacity: 0.5; }
     .hero-name-inner { animation: none !important; }
     .hero-name::before,
     .hero-name::after { display: none !important; }
     .page > * { animation: none !important; }
-    .hero-status-line .dot-online { animation: none; }
   }
 </style>
 </head>

@@ -1109,8 +1109,10 @@
       document.getElementById('feed-count').textContent = '';
       return;
     }
+    var sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
     var filtered = events.filter(function (e) {
-      return e.repo.name !== 'maozhijie19/maozhijie19.github.io';
+      return e.repo.name !== 'maozhijie19/maozhijie19.github.io'
+        && new Date(e.created_at).getTime() >= sevenDaysAgo;
     });
     document.getElementById('feed-count').textContent = '* ' + filtered.length;
     body.innerHTML = filtered.slice(0, 10).map(function (e) {

@@ -839,15 +839,6 @@
     color: var(--cp-magenta);
   }
 
-  .modal-stars {
-    font-size: 18px;
-    color: var(--cp-amber);
-    opacity: 0.85;
-    margin-top: 16px;
-    text-align: center;
-    font-variant-numeric: tabular-nums;
-  }
-
   .modal-corner-frame {
     position: absolute;
     inset: 0;
@@ -1126,7 +1117,6 @@
       <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
       <div class="modal-title" id="modal-title"></div>
       <div class="modal-link-list" id="modal-links"></div>
-      <div class="modal-stars" id="modal-stars"></div>
     </div>
   </div>
 </div>
@@ -1211,7 +1201,6 @@
   var modal = document.getElementById('project-modal');
   var modalTitle = document.getElementById('modal-title');
   var modalLinks = document.getElementById('modal-links');
-  var modalStars = document.getElementById('modal-stars');
   var modalClose = document.getElementById('modal-close');
   var lastCard;
 
@@ -1229,8 +1218,6 @@
     });
     modalLinks.innerHTML = html;
 
-    var s = typeof p.stars === 'number' ? p.stars : (cache[p.repo] || p.fb);
-    modalStars.textContent = '* ' + s;
     modal.classList.add('active');
     modalClose.focus();
   }

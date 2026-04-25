@@ -366,7 +366,7 @@
     background: var(--cp-card-bg);
     padding: 0;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    cursor: default;
+    cursor: pointer;
     position: relative;
     overflow: hidden;
     will-change: transform;
@@ -465,38 +465,6 @@
     min-width: 0;
   }
 
-  .project-links {
-    display: flex;
-    gap: 6px;
-    flex-shrink: 0;
-    align-items: center;
-    flex-wrap: nowrap;
-  }
-
-  .project-link {
-    font-size: 15px;
-    letter-spacing: 0.06em;
-    color: #6a7a88;
-    text-decoration: none;
-    padding: 2px 10px;
-    border: 1px solid rgba(0, 240, 255, 0.2);
-    transition: color 0.12s, border-color 0.12s, background 0.12s;
-    position: relative;
-    z-index: 2;
-    background: rgba(0, 0, 0, 0.3);
-  }
-
-  .project-link:hover {
-    color: var(--cp-cyan);
-    border-color: rgba(255, 43, 214, 0.4);
-    background: rgba(255, 43, 214, 0.06);
-  }
-
-  .project-link:focus-visible {
-    outline: 2px solid var(--cp-magenta);
-    outline-offset: 2px;
-  }
-
   .project-desc {
     font-size: 22px;
     color: #6a7a88;
@@ -533,25 +501,9 @@
     opacity: 0.8;
   }
 
-  .stars {
-    font-size: 18px;
-    color: var(--cp-amber);
-    opacity: 0.85;
-    display: inline-flex;
-    align-items: center;
-    justify-content: flex-end;
-    font-variant-numeric: tabular-nums;
-    min-width: 3.5em;
-    flex-shrink: 0;
-  }
-
   @media (max-width: 560px) {
     .project-header {
       flex-wrap: wrap;
-    }
-    .project-links {
-      width: 100%;
-      justify-content: flex-end;
     }
   }
 
@@ -778,11 +730,141 @@
 
   /* ══ reduced motion ══ */
 
+  /* ══ modal ══ */
+
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 999;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.active {
+    display: flex;
+  }
+
+  .modal-box {
+    background: #0c0e18;
+    border: 1px solid rgba(0, 240, 255, 0.25);
+    box-shadow: 0 0 40px rgba(0, 240, 255, 0.08), 2px 2px 0 rgba(0, 0, 0, 0.5);
+    max-width: 400px;
+    width: 90%;
+    position: relative;
+    animation: rise-in 0.25s cubic-bezier(0.22, 1, 0.36, 1) backwards;
+  }
+
+  .modal-box-inner {
+    padding: 28px 32px 24px;
+    position: relative;
+    z-index: 2;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    background: none;
+    border: none;
+    color: var(--cp-dim);
+    font-family: 'VT323', monospace;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 3;
+    padding: 4px;
+    line-height: 1;
+  }
+
+  .modal-close:hover {
+    color: var(--cp-magenta);
+  }
+
+  .modal-title {
+    font-size: 26px;
+    color: #eef6ff;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--cp-line);
+  }
+
+  .modal-link-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    border: 1px solid rgba(0, 240, 255, 0.15);
+    color: #b0c4d0;
+    text-decoration: none;
+    font-size: 20px;
+    transition: background 0.12s, border-color 0.12s, color 0.12s;
+    background: rgba(0, 0, 0, 0.25);
+  }
+
+  .modal-link:hover {
+    background: rgba(0, 240, 255, 0.06);
+    border-color: rgba(255, 43, 214, 0.35);
+    color: var(--cp-cyan);
+  }
+
+  .modal-link .link-label {
+    font-size: 20px;
+  }
+
+  .modal-link .link-arrow {
+    color: var(--cp-dim);
+    font-size: 18px;
+    transition: color 0.12s;
+  }
+
+  .modal-link:hover .link-arrow {
+    color: var(--cp-magenta);
+  }
+
+  .modal-stars {
+    font-size: 18px;
+    color: var(--cp-amber);
+    opacity: 0.85;
+    margin-top: 16px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .modal-corner-frame {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .modal-corner-frame .corner {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border-color: rgba(0, 240, 255, 0.3);
+    border-style: solid;
+  }
+
+  .modal-corner-frame .corner-tl { top: 0; left: 0; border-width: 1px 0 0 1px; }
+  .modal-corner-frame .corner-tr { top: 0; right: 0; border-width: 1px 1px 0 0; }
+  .modal-corner-frame .corner-bl { bottom: 0; left: 0; border-width: 0 0 1px 1px; }
+  .modal-corner-frame .corner-br { bottom: 0; right: 0; border-width: 0 1px 1px 0; }
+
   @media (prefers-reduced-motion: reduce) {
     .hero-name-inner { animation: none !important; }
     .hero-name::before,
     .hero-name::after { display: none !important; }
     .page > * { animation: none !important; }
+    .modal-box { animation: none !important; }
   }
 </style>
 </head>
@@ -817,7 +899,7 @@
 
   <div class="projects" role="list" aria-labelledby="projects-heading">
 
-    <article class="project-card" style="--accent: #5b8fff" role="listitem">
+    <article class="project-card" style="--accent: #5b8fff" role="listitem" data-project="Sidefy">
       <div class="project-card-inner">
         <span class="jp-deco" aria-hidden="true">側</span>
         <div class="card-frame" aria-hidden="true">
@@ -832,12 +914,7 @@
             <span class="status-dot" aria-hidden="true"></span>
             <span class="project-title-core">Sidefy</span>
           </div>
-          <div class="project-links">
-            <span class="stars" data-repo="sidefy-team/sidefy" data-fallback="16" aria-label="GitHub stars">* 16</span>
-            <a class="project-link" href="https://sidefyapp.com" target="_blank" rel="noopener noreferrer">site</a>
-            <a class="project-link" href="https://apps.apple.com/app/id6751482006" target="_blank" rel="noopener noreferrer">app store</a>
-            <a class="project-link" href="https://github.com/sidefy-team/sidefy" target="_blank" rel="noopener noreferrer">github</a>
-          </div>
+  
         </div>
         <p class="project-desc">macOS menu bar app: a screen-edge stream for Calendar, Reminders, RSS, GitHub, and custom plugins—out of your workflow.</p>
         <div class="project-tags">
@@ -849,7 +926,7 @@
       </div>
     </article>
 
-    <article class="project-card" style="--accent: #bd93f9" role="listitem">
+    <article class="project-card" style="--accent: #bd93f9" role="listitem" data-project="SavePoint">
       <div class="project-card-inner">
         <span class="jp-deco" aria-hidden="true">点</span>
         <div class="card-frame" aria-hidden="true">
@@ -864,10 +941,7 @@
             <span class="status-dot" aria-hidden="true"></span>
             <span class="project-title-core">SavePoint</span>
           </div>
-          <div class="project-links">
-            <span class="stars" data-repo="sha2kyou/Savepoint" data-fallback="6" aria-label="GitHub stars">* 6</span>
-            <a class="project-link" href="https://github.com/sha2kyou/Savepoint" target="_blank" rel="noopener noreferrer">github</a>
-          </div>
+  
         </div>
         <p class="project-desc">macOS menu-bar file snapshots: watch authorized files, auto-save a checkpoint on every change, diff and one-click restore.</p>
         <div class="project-tags">
@@ -880,7 +954,7 @@
       </div>
     </article>
 
-    <article class="project-card" style="--accent: #50fa7b" role="listitem">
+    <article class="project-card" style="--accent: #50fa7b" role="listitem" data-project="MatrixClock">
       <div class="project-card-inner">
         <span class="jp-deco" aria-hidden="true">時</span>
         <div class="card-frame" aria-hidden="true">
@@ -895,10 +969,7 @@
             <span class="status-dot" aria-hidden="true"></span>
             <span class="project-title-core">MatrixClock</span>
           </div>
-          <div class="project-links">
-            <span class="stars" data-repo="sha2kyou/MatrixClock" data-fallback="6" aria-label="GitHub stars">* 6</span>
-            <a class="project-link" href="https://github.com/sha2kyou/MatrixClock" target="_blank" rel="noopener noreferrer">github</a>
-          </div>
+  
         </div>
         <p class="project-desc">Android matrix-style clock and status: Clock, Countdown, Status, Pomodoro; LAN web admin; remappable volume keys. Vibe-coded—shipped.</p>
         <div class="project-tags">
@@ -911,7 +982,7 @@
       </div>
     </article>
 
-    <article class="project-card" style="--accent: #ff6b6b" role="listitem">
+    <article class="project-card" style="--accent: #ff6b6b" role="listitem" data-project="ClaudePilot">
       <div class="project-card-inner">
         <span class="jp-deco" aria-hidden="true">機</span>
         <div class="card-frame" aria-hidden="true">
@@ -926,10 +997,7 @@
             <span class="status-dot" aria-hidden="true"></span>
             <span class="project-title-core">ClaudePilot</span>
           </div>
-          <div class="project-links">
-            <span class="stars" data-repo="sha2kyou/ClaudePilot" data-fallback="1" aria-label="GitHub stars">* 1</span>
-            <a class="project-link" href="https://github.com/sha2kyou/ClaudePilot" target="_blank" rel="noopener noreferrer">github</a>
-          </div>
+  
         </div>
         <p class="project-desc">macOS menu bar app: manage multiple Claude API profiles, switch endpoints and models on the fly, and apply to local Claude CLI settings.</p>
         <div class="project-tags">
@@ -941,7 +1009,7 @@
       </div>
     </article>
 
-    <article class="project-card" style="--accent: #f5c518" role="listitem">
+    <article class="project-card" style="--accent: #f5c518" role="listitem" data-project="pokemon-zsh">
       <div class="project-card-inner">
         <span class="jp-deco" aria-hidden="true">遊</span>
         <div class="card-frame" aria-hidden="true">
@@ -956,10 +1024,7 @@
             <span class="status-dot" aria-hidden="true"></span>
             <span class="project-title-core">pokemon-zsh</span>
           </div>
-          <div class="project-links">
-            <span class="stars" data-repo="sha2kyou/pokemon-zsh" data-fallback="2" aria-label="GitHub stars">* 2</span>
-            <a class="project-link" href="https://github.com/sha2kyou/pokemon-zsh" target="_blank" rel="noopener noreferrer">github</a>
-          </div>
+  
         </div>
         <p class="project-desc">An Oh My Zsh plugin that shows random Pokémon when running ls and cd.</p>
         <div class="project-tags">
@@ -971,7 +1036,7 @@
       </div>
     </article>
 
-    <article class="project-card" style="--accent: #2dd4bf" role="listitem">
+    <article class="project-card" style="--accent: #2dd4bf" role="listitem" data-project="Sidefy Plugins">
       <div class="project-card-inner">
         <span class="jp-deco" aria-hidden="true">挿</span>
         <div class="card-frame" aria-hidden="true">
@@ -986,10 +1051,7 @@
             <span class="status-dot" aria-hidden="true"></span>
             <span class="project-title-core">Sidefy Plugins</span>
           </div>
-          <div class="project-links">
-            <span class="stars" data-repo="sha2kyou/sidefy-plugins" data-fallback="7" aria-label="GitHub stars">* 7</span>
-            <a class="project-link" href="https://github.com/sha2kyou/sidefy-plugins" target="_blank" rel="noopener noreferrer">github</a>
-          </div>
+  
         </div>
         <p class="project-desc">Online plugin repository for the Sidefy / SideCalendar app. Submit high-quality plugin scripts.</p>
         <div class="project-tags">
@@ -1042,6 +1104,24 @@
 
 </div>
 
+<!-- ── modal ── -->
+<div class="modal-overlay" id="project-modal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <div class="modal-box-inner">
+      <div class="modal-corner-frame" aria-hidden="true">
+        <span class="corner corner-tl"></span>
+        <span class="corner corner-tr"></span>
+        <span class="corner corner-bl"></span>
+        <span class="corner corner-br"></span>
+      </div>
+      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      <div class="modal-title" id="modal-title"></div>
+      <div class="modal-link-list" id="modal-links"></div>
+      <div class="modal-stars" id="modal-stars"></div>
+    </div>
+  </div>
+</div>
+
 <script>
 (function () {
   var CACHE_KEY = 'mainpage_stars';
@@ -1053,31 +1133,102 @@
   } catch (_) { cache = {}; }
   if (cache.ttl && Date.now() > cache.ttl) cache = {};
 
-  document.querySelectorAll('.stars[data-repo]').forEach(function (el) {
-    var repo = el.getAttribute('data-repo');
-    var fb = el.getAttribute('data-fallback') || '—';
-
-    if (cache[repo]) {
-      el.textContent = '* ' + cache[repo];
-      return;
+  var PROJECTS = {
+    Sidefy: {
+      links: [
+        {t:'site', u:'https://sidefyapp.com'},
+        {t:'App Store', u:'https://apps.apple.com/app/id6751482006'},
+        {t:'github', u:'https://github.com/sidefy-team/sidefy'}
+      ],
+      repo: 'sidefy-team/sidefy', fb: 16
+    },
+    SavePoint: {
+      links: [{t:'github', u:'https://github.com/sha2kyou/Savepoint'}],
+      repo: 'sha2kyou/Savepoint', fb: 6
+    },
+    MatrixClock: {
+      links: [{t:'github', u:'https://github.com/sha2kyou/MatrixClock'}],
+      repo: 'sha2kyou/MatrixClock', fb: 6
+    },
+    ClaudePilot: {
+      links: [{t:'github', u:'https://github.com/sha2kyou/ClaudePilot'}],
+      repo: 'sha2kyou/ClaudePilot', fb: 1
+    },
+    'pokemon-zsh': {
+      links: [{t:'github', u:'https://github.com/sha2kyou/pokemon-zsh'}],
+      repo: 'sha2kyou/pokemon-zsh', fb: 2
+    },
+    'Sidefy Plugins': {
+      links: [{t:'github', u:'https://github.com/sha2kyou/sidefy-plugins'}],
+      repo: 'sha2kyou/sidefy-plugins', fb: 7
     }
+  };
 
-    fetch('https://api.github.com/repos/' + repo)
+  // fetch stars for all repos
+  Object.keys(PROJECTS).forEach(function (name) {
+    var p = PROJECTS[name];
+    if (!p.repo) return;
+    if (cache[p.repo]) { p.stars = cache[p.repo]; return; }
+    fetch('https://api.github.com/repos/' + p.repo)
       .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
       .then(function (j) {
         var n = j && j.stargazers_count;
         if (typeof n === 'number') {
-          cache[repo] = n;
-          try {
-            cache.ttl = Date.now() + CACHE_TTL;
-            localStorage.setItem(CACHE_KEY, JSON.stringify(cache));
-          } catch (_) {}
-          el.textContent = '* ' + n;
-        } else {
-          el.textContent = '* ' + fb;
-        }
+          cache[p.repo] = n;
+          try { cache.ttl = Date.now() + CACHE_TTL; localStorage.setItem(CACHE_KEY, JSON.stringify(cache)); } catch (_) {}
+          p.stars = n;
+        } else { p.stars = p.fb; }
       })
-      .catch(function () { el.textContent = '* ' + fb; });
+      .catch(function () { p.stars = p.fb; });
+  });
+
+  // modal logic
+  var modal = document.getElementById('project-modal');
+  var modalTitle = document.getElementById('modal-title');
+  var modalLinks = document.getElementById('modal-links');
+  var modalStars = document.getElementById('modal-stars');
+  var modalClose = document.getElementById('modal-close');
+  var lastCard;
+
+  function openModal(name) {
+    var p = PROJECTS[name];
+    if (!p) return;
+    modalTitle.textContent = '❯ ' + name;
+
+    var html = '';
+    p.links.forEach(function (l) {
+      html += '<a class="modal-link" href="' + l.u + '" target="_blank" rel="noopener noreferrer">' +
+        '<span class="link-label">' + l.t + '</span>' +
+        '<span class="link-arrow">↗</span>' +
+        '</a>';
+    });
+    modalLinks.innerHTML = html;
+
+    var s = typeof p.stars === 'number' ? p.stars : (cache[p.repo] || p.fb);
+    modalStars.textContent = '* ' + s;
+    modal.classList.add('active');
+    modalClose.focus();
+  }
+
+  function closeModal() {
+    modal.classList.remove('active');
+    if (lastCard) { lastCard.focus({preventScroll:true}); lastCard = null; }
+  }
+
+  document.querySelectorAll('.project-card[data-project]').forEach(function (card) {
+    card.addEventListener('click', function (e) {
+      if (e.target.closest('a')) return;
+      lastCard = card;
+      openModal(card.getAttribute('data-project'));
+    });
+  });
+
+  modalClose.addEventListener('click', closeModal);
+  modal.addEventListener('click', function (e) {
+    if (e.target === modal) closeModal();
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeModal();
   });
 })();
 
@@ -1145,7 +1296,7 @@
       return '<div class="feed-line">' +
         '<span class="fl-tag">[' + tag(e.type) + ']</span> ' +
         '<span class="fl-repo">' + e.repo.name.replace(GITHUB_USER + '/', '') + '</span> ' +
-        '<span class="fl-desc">' + desc(e) + '</span>' +
+        (desc(e) ? '<span class="fl-desc">' + desc(e) + '</span>' : '') +
         '<span class="fl-time">' + fmtTime(e.created_at) + '</span>' +
         '</div>';
     }).join('');

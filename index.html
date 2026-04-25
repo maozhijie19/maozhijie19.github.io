@@ -465,6 +465,15 @@
     min-width: 0;
   }
 
+  .card-stars {
+    font-size: 19px;
+    color: var(--cp-amber);
+    opacity: 0.85;
+    flex-shrink: 0;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
   .project-desc {
     font-size: 22px;
     color: #6a7a88;
@@ -914,7 +923,7 @@
             <span class="status-dot" aria-hidden="true"></span>
             <span class="project-title-core">Sidefy</span>
           </div>
-  
+          <span class="card-stars">* --</span>
         </div>
         <p class="project-desc">macOS menu bar app: a screen-edge stream for Calendar, Reminders, RSS, GitHub, and custom plugins—out of your workflow.</p>
         <div class="project-tags">
@@ -941,7 +950,7 @@
             <span class="status-dot" aria-hidden="true"></span>
             <span class="project-title-core">SavePoint</span>
           </div>
-  
+          <span class="card-stars">* --</span>
         </div>
         <p class="project-desc">macOS menu-bar file snapshots: watch authorized files, auto-save a checkpoint on every change, diff and one-click restore.</p>
         <div class="project-tags">
@@ -969,7 +978,7 @@
             <span class="status-dot" aria-hidden="true"></span>
             <span class="project-title-core">MatrixClock</span>
           </div>
-  
+          <span class="card-stars">* --</span>
         </div>
         <p class="project-desc">Android matrix-style clock and status: Clock, Countdown, Status, Pomodoro; LAN web admin; remappable volume keys. Vibe-coded—shipped.</p>
         <div class="project-tags">
@@ -997,7 +1006,7 @@
             <span class="status-dot" aria-hidden="true"></span>
             <span class="project-title-core">ClaudePilot</span>
           </div>
-  
+          <span class="card-stars">* --</span>
         </div>
         <p class="project-desc">macOS menu bar app: manage multiple Claude API profiles, switch endpoints and models on the fly, and apply to local Claude CLI settings.</p>
         <div class="project-tags">
@@ -1024,7 +1033,7 @@
             <span class="status-dot" aria-hidden="true"></span>
             <span class="project-title-core">pokemon-zsh</span>
           </div>
-  
+          <span class="card-stars">* --</span>
         </div>
         <p class="project-desc">An Oh My Zsh plugin that shows random Pokémon when running ls and cd.</p>
         <div class="project-tags">
@@ -1051,7 +1060,7 @@
             <span class="status-dot" aria-hidden="true"></span>
             <span class="project-title-core">Sidefy Plugins</span>
           </div>
-  
+          <span class="card-stars">* --</span>
         </div>
         <p class="project-desc">Online plugin repository for the Sidefy / SideCalendar app. Submit high-quality plugin scripts.</p>
         <div class="project-tags">
@@ -1164,11 +1173,20 @@
     }
   };
 
+  function updateStars(name, n) {
+    var el = document.querySelector('.project-card[data-project="' + name + '"] .card-stars');
+    if (el) el.textContent = '* ' + n;
+  }
+
   // fetch stars for all repos
   Object.keys(PROJECTS).forEach(function (name) {
     var p = PROJECTS[name];
     if (!p.repo) return;
-    if (cache[p.repo]) { p.stars = cache[p.repo]; return; }
+    if (cache[p.repo]) {
+      p.stars = cache[p.repo];
+      updateStars(name, cache[p.repo]);
+      return;
+    }
     fetch('https://api.github.com/repos/' + p.repo)
       .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
       .then(function (j) {
@@ -1177,9 +1195,16 @@
           cache[p.repo] = n;
           try { cache.ttl = Date.now() + CACHE_TTL; localStorage.setItem(CACHE_KEY, JSON.stringify(cache)); } catch (_) {}
           p.stars = n;
-        } else { p.stars = p.fb; }
+          updateStars(name, n);
+        } else {
+          p.stars = p.fb;
+          updateStars(name, p.fb);
+        }
       })
-      .catch(function () { p.stars = p.fb; });
+      .catch(function () {
+        p.stars = p.fb;
+        updateStars(name, p.fb);
+      });
   });
 
   // modal logic

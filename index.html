@@ -1109,6 +1109,7 @@
     var now = Date.now();
     var filtered = events.filter(function (e) {
       return e.repo.name !== 'maozhijie19/maozhijie19.github.io'
+          && e.repo.name !== 'sha2kyou/sidefy-plugins'
           && (now - new Date(e.created_at).getTime()) < SEVEN_DAYS;
     });
     document.getElementById('feed-count').textContent = '* ' + filtered.length;

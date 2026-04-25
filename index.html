@@ -1088,15 +1088,8 @@
     switch (event.type) {
       case 'PushEvent':
         var commits = p.commits || [];
-        if (commits.length && commits[0].message) {
-          var msg = commits[0].message.split('\n')[0].trim();
-          return commits.length > 1 ? msg + ' (+' + (commits.length-1) + ' more)' : msg;
-        }
-        if (p.ref) {
-          var branch = p.ref.replace('refs/heads/', '');
-          return (p.size || '?') + ' commits to ' + branch;
-        }
-        return (p.size || '?') + ' commits';
+        var msg = commits.length ? commits[0].message.split('\n')[0].trim() : '';
+        return (commits.length > 1 ? msg + ' (+' + (commits.length-1) + ' more)' : msg);
       case 'WatchEvent':       return p.action === 'started' ? '★ starred' : '';
       case 'ForkEvent':        return 'forked';
       case 'ReleaseEvent':     return p.release ? p.release.tag_name + ' released' : '';

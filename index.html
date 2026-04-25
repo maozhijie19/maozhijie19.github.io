@@ -1087,9 +1087,7 @@
     var p = event.payload;
     switch (event.type) {
       case 'PushEvent':
-        var commits = p.commits || [];
-        var msg = commits.length ? commits[0].message.split('\n')[0].trim() : '';
-        return (commits.length > 1 ? msg + ' (+' + (commits.length-1) + ' more)' : msg);
+        return '';
       case 'WatchEvent':       return p.action === 'started' ? '★ starred' : '';
       case 'ForkEvent':        return 'forked';
       case 'ReleaseEvent':     return p.release ? p.release.tag_name + ' released' : '';

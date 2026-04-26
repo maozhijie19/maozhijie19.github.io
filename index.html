@@ -1288,7 +1288,6 @@
       case 'CreateEvent':      return 'created ' + p.ref_type + (p.ref ? ' ' + p.ref : '');
       case 'DeleteEvent':      return 'deleted ' + p.ref_type + (p.ref ? ' ' + p.ref : '');
       case 'PullRequestEvent': return p.pull_request ? p.action + ': ' + p.pull_request.title.slice(0, 60) : '';
-      case 'PublicEvent':      return 'made public ★';
       default:                 return '';
     }
   }

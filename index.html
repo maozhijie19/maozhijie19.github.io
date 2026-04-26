@@ -1323,7 +1323,7 @@
         } catch (_) {}
       })
       .catch(function () {
-        body.innerHTML = '<div class="feed-error">⚠ FAILED TO FETCH</div>';
+        // keep existing content on failure
       });
   }
 

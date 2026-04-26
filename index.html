@@ -1280,18 +1280,18 @@
     var p = event.payload;
     switch (event.type) {
       case 'PushEvent':
-        return '';
+        return p.ref ? '→ ' + p.ref.replace('refs/heads/', '') : '';
       case 'WatchEvent':       return p.action === 'started' ? '★ starred' : '';
       case 'ForkEvent':        return 'forked';
       case 'ReleaseEvent':     return p.release ? p.release.tag_name + ' released' : '';
       case 'IssuesEvent':      return p.issue ? '#' + p.issue.number + ' ' + p.action + ': ' + p.issue.title.slice(0, 60) : '';
       case 'CreateEvent':      return 'created ' + p.ref_type + (p.ref ? ' ' + p.ref : '');
       case 'DeleteEvent':      return 'deleted ' + p.ref_type + (p.ref ? ' ' + p.ref : '');
+      case 'PullRequestEvent': return p.pull_request ? p.action + ': ' + p.pull_request.title.slice(0, 60) : '';
+      case 'PublicEvent':      return 'made public ★';
       default:                 return '';
     }
   }
-
-  var SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
 
   function render(events) {
     if (!events || !events.length) {
@@ -1299,10 +1299,8 @@
       document.getElementById('feed-count').textContent = '';
       return;
     }
-    var now = Date.now();
     var filtered = events.filter(function (e) {
-      return e.repo.name !== 'maozhijie19/maozhijie19.github.io'
-          && (now - new Date(e.created_at).getTime()) < SEVEN_DAYS;
+      return e.repo.name !== 'maozhijie19/maozhijie19.github.io';
     });
     document.getElementById('feed-count').textContent = '* ' + filtered.length;
     body.innerHTML = filtered.slice(0, 10).map(function (e) {
@@ -1316,7 +1314,7 @@
   }
 
   function fetchFeed() {
-    fetch('https://api.github.com/users/' + GITHUB_USER + '/events?per_page=10')
+    fetch('https://api.github.com/users/' + GITHUB_USER + '/events?per_page=20')
       .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
       .then(function (j) {
         render(j);

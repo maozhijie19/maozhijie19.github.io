@@ -1080,7 +1080,6 @@
         <span class="prompt" aria-hidden="true">></span>
         <span class="status-dot" aria-hidden="true"></span>
         <span class="feed-title">live feed</span>
-        <span class="feed-count" id="feed-count"></span>
       </div>
       <div class="feed-body" id="feed-body">
         <div class="feed-empty"><span class="spinner" aria-hidden="true">⟳</span> FETCHING...</div>
@@ -1301,7 +1300,6 @@
     var filtered = events.filter(function (e) {
       return e.repo.name !== 'maozhijie19/maozhijie19.github.io';
     });
-    document.getElementById('feed-count').textContent = '* ' + filtered.length;
     body.innerHTML = filtered.slice(0, 10).map(function (e) {
       return '<div class="feed-line">' +
         '<span class="fl-tag">[' + tag(e.type) + ']</span> ' +

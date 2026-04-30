@@ -26,9 +26,6 @@ var PROJECTS = {
   ClaudePilot: {
     links: [{t:'github', u:'https://github.com/sha2kyou/ClaudePilot'}]
   },
-  'pokemon-zsh': {
-    links: [{t:'github', u:'https://github.com/sha2kyou/pokemon-zsh'}]
-  },
   'Sidefy Plugins': {
     links: [{t:'github', u:'https://github.com/sha2kyou/sidefy-plugins'}]
   }
@@ -46,14 +43,26 @@ function openModal(name) {
   if (!p) return;
   modalTitle.textContent = '❯ ' + name;
 
-  var html = '';
+  modalLinks.innerHTML = '';
   p.links.forEach(function (l) {
-    html += '<a class="modal-link" href="' + l.u + '" target="_blank" rel="noopener noreferrer">' +
-      '<span class="link-label">' + l.t + '</span>' +
-      '<span class="link-arrow">↗</span>' +
-      '</a>';
+    var a = document.createElement('a');
+    a.className = 'modal-link';
+    a.href = l.u;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+
+    var label = document.createElement('span');
+    label.className = 'link-label';
+    label.textContent = l.t;
+
+    var arrow = document.createElement('span');
+    arrow.className = 'link-arrow';
+    arrow.textContent = '↗';
+
+    a.appendChild(label);
+    a.appendChild(arrow);
+    modalLinks.appendChild(a);
   });
-  modalLinks.innerHTML = html;
 
   modal.classList.add('active');
   modalClose.focus();
@@ -80,4 +89,3 @@ document.addEventListener('keydown', function (e) {
   if (e.key === 'Escape') closeModal();
 });
 })();
-

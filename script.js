@@ -9,79 +9,30 @@
   }
 })();
 
-var CACHE_KEY = 'mainpage_stars';
-var CACHE_TTL = 3600000;
-var cache;
-
-try {
-  cache = JSON.parse(localStorage.getItem(CACHE_KEY) || '{}');
-} catch (_) { cache = {}; }
-if (cache.ttl && Date.now() > cache.ttl) cache = {};
-
 var PROJECTS = {
   Sidefy: {
     links: [
       {t:'site', u:'https://sidefyapp.com'},
       {t:'App Store', u:'https://apps.apple.com/app/id6751482006'},
       {t:'github', u:'https://github.com/sidefy-team/sidefy'}
-    ],
-    repo: 'sidefy-team/sidefy', fb: 16
+    ]
   },
   SavePoint: {
-    links: [{t:'github', u:'https://github.com/sha2kyou/Savepoint'}],
-    repo: 'sha2kyou/Savepoint', fb: 6
+    links: [{t:'github', u:'https://github.com/sha2kyou/Savepoint'}]
   },
   MatrixClock: {
-    links: [{t:'github', u:'https://github.com/sha2kyou/MatrixClock'}],
-    repo: 'sha2kyou/MatrixClock', fb: 6
+    links: [{t:'github', u:'https://github.com/sha2kyou/MatrixClock'}]
   },
   ClaudePilot: {
-    links: [{t:'github', u:'https://github.com/sha2kyou/ClaudePilot'}],
-    repo: 'sha2kyou/ClaudePilot', fb: 1
+    links: [{t:'github', u:'https://github.com/sha2kyou/ClaudePilot'}]
   },
   'pokemon-zsh': {
-    links: [{t:'github', u:'https://github.com/sha2kyou/pokemon-zsh'}],
-    repo: 'sha2kyou/pokemon-zsh', fb: 2
+    links: [{t:'github', u:'https://github.com/sha2kyou/pokemon-zsh'}]
   },
   'Sidefy Plugins': {
-    links: [{t:'github', u:'https://github.com/sha2kyou/sidefy-plugins'}],
-    repo: 'sha2kyou/sidefy-plugins', fb: 7
+    links: [{t:'github', u:'https://github.com/sha2kyou/sidefy-plugins'}]
   }
 };
-
-function updateStars(name, n) {
-  var el = document.querySelector('.project-card[data-project="' + name + '"] .card-stars');
-  if (el) el.textContent = '★ ' + n;
-}
-
-// fetch stars for all repos
-Object.keys(PROJECTS).forEach(function (name) {
-  var p = PROJECTS[name];
-  if (!p.repo) return;
-  if (cache[p.repo]) {
-    p.stars = cache[p.repo];
-    updateStars(name, cache[p.repo]);
-    return;
-  }
-  fetch('https://api.github.com/repos/' + p.repo)
-    .then(function (r) { return r.ok ? r.json() : Promise.reject(); })
-    .then(function (j) {
-      var n = j && j.stargazers_count;
-      if (typeof n === 'number') {
-        cache[p.repo] = n;
-        try { cache.ttl = Date.now() + CACHE_TTL; localStorage.setItem(CACHE_KEY, JSON.stringify(cache)); } catch (_) {}
-        p.stars = n;
-        updateStars(name, n);
-      } else {
-        p.stars = p.fb;
-        updateStars(name, p.fb);
-      }
-    })
-    .catch(function () {
-      p.stars = p.fb;
-      updateStars(name, p.fb);
-    });
-});
 
 // modal logic
 var modal = document.getElementById('project-modal');

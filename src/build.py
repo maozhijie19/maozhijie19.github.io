@@ -208,14 +208,15 @@ def main():
     cfg = load_config()
 
     html = build_html(cfg)
-    with open(os.path.join(DIR, "index.html"), "w", encoding="utf-8") as f:
+    root = os.path.dirname(DIR)
+    with open(os.path.join(root, "index.html"), "w", encoding="utf-8") as f:
         f.write(html)
-    print("  index.html (%d chars)" % len(html))
+    print("  -> index.html (%d chars)" % len(html))
 
     data_js = build_data_js(cfg)
-    with open(os.path.join(DIR, "data.js"), "w", encoding="utf-8") as f:
+    with open(os.path.join(root, "data.js"), "w", encoding="utf-8") as f:
         f.write(data_js)
-    print("  data.js (%d chars)" % len(data_js))
+    print("  -> data.js (%d chars)" % len(data_js))
 
     print("Done!")
 

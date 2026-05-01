@@ -5,199 +5,158 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="color-scheme" content="dark">
 <meta property="og:title" content="ØYNN (@sha2kyou) — Indie Developer">
-<meta property="og:description" content="Building native macOS and Android apps—Sidefy, SavePoint, MatrixClock, ClaudePilot.">
+<meta property="og:description" content="Is your Mac menu bar long enough?">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://tr1ck.cn">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="ØYNN (@sha2kyou) — Indie Developer">
-<meta name="twitter:description" content="Building native macOS and Android apps—Sidefy, SavePoint, MatrixClock, ClaudePilot.">
+<meta name="twitter:description" content="Is your Mac menu bar long enough?">
 <link rel="icon" type="image/png" href="./favicon.png">
-<title>ØYNN (@sha2kyou) — Indie Developer · Sidefy / SavePoint / MatrixClock / ClaudePilot</title>
-<meta name="description" content="ØYNN (GitHub @sha2kyou): indie developer building native macOS and Android apps—Sidefy, SavePoint, MatrixClock, ClaudePilot.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;700&family=VT323&display=swap" rel="stylesheet">
+<title>ØYNN (@sha2kyou) — Indie Developer</title>
+<meta name="description" content="Is your Mac menu bar long enough?">
 <link rel="stylesheet" href="style.css">
 
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-BQQVDH3FBC"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-
   gtag('config', 'G-BQQVDH3FBC');
 </script>
 </head>
 <body>
 
-<div class="vignette" aria-hidden="true"></div>
+<div class="backdrop-base" aria-hidden="true"></div>
+<div class="backdrop-filler" aria-hidden="true"></div>
+<div class="backdrop-glow" aria-hidden="true"></div>
+<div class="backdrop-noise" aria-hidden="true"></div>
 
-<div class="page">
+<div class="shell">
 
-  <main>
-
-  <header class="hero">
-    <div class="hero-label">system user profile <span class="jp">起動</span></div>
-    <h1 class="hero-name" data-text="ØYNN"><span class="hero-name-inner">ØYNN</span></h1>
-    <div class="hero-id-line">
-      <span class="prompt">></span>
-      <span class="id-label">id</span>
-      <span class="id-val">@sha2kyou</span>
-      <span class="cursor" aria-hidden="true"></span>
+  <header class="header">
+    <div class="header-brand"><strong>ØYNN</strong> · <span style="font-family:var(--font-mondwest);font-weight:400;text-transform:none;letter-spacing:0">macOS Menu Bar Tools</span></div>
+    <div class="header-right">
+      <div class="theme-switcher" id="theme-switcher">
+        <button class="theme-btn" id="theme-btn" aria-label="Switch theme">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/></svg>
+        </button>
+        <div class="theme-dropdown" id="theme-dropdown">
+          <button class="theme-option active" data-theme="default">
+            <span class="theme-swatch" style="background:#041c1c"></span>
+            <span class="theme-swatch" style="background:#ffe6cb"></span>
+            <span>Hermes Teal</span>
+          </button>
+          <button class="theme-option" data-theme="midnight">
+            <span class="theme-swatch" style="background:#0a0a1f"></span>
+            <span class="theme-swatch" style="background:#d4c8ff"></span>
+            <span>Midnight</span>
+          </button>
+          <button class="theme-option" data-theme="ember">
+            <span class="theme-swatch" style="background:#1a0a06"></span>
+            <span class="theme-swatch" style="background:#ffd8b0"></span>
+            <span>Ember</span>
+          </button>
+          <button class="theme-option" data-theme="mono">
+            <span class="theme-swatch" style="background:#0e0e0e"></span>
+            <span class="theme-swatch" style="background:#eaeaea"></span>
+            <span>Mono</span>
+          </button>
+          <button class="theme-option" data-theme="cyberpunk">
+            <span class="theme-swatch" style="background:#040608"></span>
+            <span class="theme-swatch" style="background:#9bffcf"></span>
+            <span>Cyberpunk</span>
+          </button>
+          <button class="theme-option" data-theme="rose">
+            <span class="theme-swatch" style="background:#1a0f15"></span>
+            <span class="theme-swatch" style="background:#ffd4e1"></span>
+            <span>Rosé</span>
+          </button>
+        </div>
+      </div>
     </div>
-    <p class="hero-bio">
-      <em>ØYNN</em> — indie developer building native macOS, Android, and open-source tools.
-    </p>
-    <div class="hero-status-line">
-      <span class="stat-item"><span class="dot-online" aria-hidden="true"></span> active</span>
-      <span class="stat-item"><span class="dot-inactive" aria-hidden="true"></span> independent</span>
-    </div>
-    <div class="jp-deco" aria-hidden="true">接続</div>
   </header>
 
-  <div class="section-label" id="projects-heading">// projects</div>
+  <main class="page">
 
-  <div class="projects" role="list" aria-labelledby="projects-heading">
+    <!-- Profile -->
+    <section class="profile">
+      <div class="profile-head">
+        <div class="profile-avatar">Ø</div>
+        <div class="profile-info">
+          <h1 class="profile-name">Hi, I'm ØYNN <a class="profile-username" href="https://github.com/sha2kyou" target="_blank" rel="noopener noreferrer">(@sha2kyou)</a></h1>
+        <p class="profile-bio">I build small tools that fit in your menu bar and try to stay out of your way.</p>
+        </div>
+      </div>
 
-    <article class="project-card" style="--accent: #5b8fff" role="listitem" data-project="Sidefy">
-      <div class="project-card-inner">
-        <span class="jp-deco" aria-hidden="true">側</span>
-        <div class="project-header">
-          <div class="project-name">
-            <span class="prompt" aria-hidden="true">></span>
-            <span class="status-dot" aria-hidden="true"></span>
-            <span class="project-title-core">Sidefy</span>
-          </div>
+    </section>
+
+        <!-- Projects -->
+    <div class="section-label">Projects</div>
+
+    <div class="projects">
+      <article class="card" data-project="Sidefy" tabindex="0" role="button">
+        <div class="card-header">
+          <div class="card-title">Sidefy</div>
           <span class="card-stars">★ 16</span>
         </div>
-        <p class="project-desc">macOS menu bar app: a screen-edge stream for Calendar, Reminders, RSS, GitHub, and custom plugins—out of your workflow.</p>
-        <div class="project-tags">
-          <span class="tag tag-platform">macOS 14+</span>
-          <span class="tag tag-lang">Swift</span>
-          <span class="tag tag-type">Productivity</span>
-          <span class="tag tag-green">Plugins</span>
-          <span class="tag tag-type">Proprietary</span>
-        </div>
-      </div>
-    </article>
-
-    <article class="project-card" style="--accent: #bd93f9" role="listitem" data-project="SavePoint">
-      <div class="project-card-inner">
-        <span class="jp-deco" aria-hidden="true">点</span>
-        <div class="project-header">
-          <div class="project-name">
-            <span class="prompt" aria-hidden="true">></span>
-            <span class="status-dot" aria-hidden="true"></span>
-            <span class="project-title-core">SavePoint</span>
+        <div class="card-body">
+          <p class="card-desc">Unified info stream on your screen edge — Calendar, Reminders, RSS, GitHub, and custom plugins via JavaScript.</p>
+          <div class="tags">
+            <span class="tag tag-platform">macOS 14+</span>
+            <span class="tag">SwiftUI</span>
+            <span class="tag">Productivity</span>
+            <span class="tag tag-green">Plugins</span>
+            <span class="tag tag-license">Proprietary</span>
           </div>
+        </div>
+      </article>
+
+      <article class="card" data-project="SavePoint" tabindex="0" role="button">
+        <div class="card-header">
+          <div class="card-title">SavePoint</div>
           <span class="card-stars">★ 6</span>
         </div>
-        <p class="project-desc">macOS menu-bar file snapshots: watch authorized files, auto-save a checkpoint on every change, diff and one-click restore.</p>
-        <div class="project-tags">
-          <span class="tag tag-platform">macOS 14+</span>
-          <span class="tag tag-lang">Swift</span>
-          <span class="tag tag-type">Utilities</span>
-          <span class="tag tag-green">Sandboxed</span>
-          <span class="tag tag-type">Apache-2.0</span>
-        </div>
-      </div>
-    </article>
-
-    <article class="project-card" style="--accent: #50fa7b" role="listitem" data-project="MatrixClock">
-      <div class="project-card-inner">
-        <span class="jp-deco" aria-hidden="true">時</span>
-        <div class="project-header">
-          <div class="project-name">
-            <span class="prompt" aria-hidden="true">></span>
-            <span class="status-dot" aria-hidden="true"></span>
-            <span class="project-title-core">MatrixClock</span>
+        <div class="card-body">
+          <p class="card-desc">Automatic file version snapshots — monitors changes, creates checkpoints, visual diff and one-click restore.</p>
+          <div class="tags">
+            <span class="tag tag-platform">macOS 14+</span>
+            <span class="tag">SwiftUI</span>
+            <span class="tag">Utilities</span>
+            <span class="tag tag-license">Apache-2.0</span>
           </div>
-          <span class="card-stars">★ 6</span>
+          <p class="card-warning">HELP NEEDED: File bookmark permission loss unresolved</p>
         </div>
-        <p class="project-desc">Android matrix-style clock and status: Clock, Countdown, Status, Pomodoro; LAN web admin; remappable volume keys. Vibe-coded—shipped.</p>
-        <div class="project-tags">
-          <span class="tag tag-platform">Android 8+</span>
-          <span class="tag tag-lang">Kotlin</span>
-          <span class="tag tag-type">Clock · Status</span>
-          <span class="tag tag-green">LAN web admin</span>
-          <span class="tag tag-type">MIT</span>
-        </div>
-      </div>
-    </article>
+      </article>
 
-    <article class="project-card" style="--accent: #ff6b6b" role="listitem" data-project="ClaudePilot">
-      <div class="project-card-inner">
-        <span class="jp-deco" aria-hidden="true">機</span>
-        <div class="project-header">
-          <div class="project-name">
-            <span class="prompt" aria-hidden="true">></span>
-            <span class="status-dot" aria-hidden="true"></span>
-            <span class="project-title-core">ClaudePilot</span>
-          </div>
+      
+
+      <article class="card" data-project="ClaudePilot" tabindex="0" role="button">
+        <div class="card-header">
+          <div class="card-title">ClaudePilot</div>
           <span class="card-stars">★ 3</span>
         </div>
-        <p class="project-desc">macOS menu bar app: manage multiple Claude API profiles, switch endpoints and models on the fly, and apply to local Claude CLI settings.</p>
-        <div class="project-tags">
-          <span class="tag tag-platform">macOS 14+</span>
-          <span class="tag tag-lang">Swift</span>
-          <span class="tag tag-type">Developer Tools</span>
-          <span class="tag tag-type">Apache-2.0</span>
-        </div>
-      </div>
-    </article>
-
-    <article class="project-card" style="--accent: #2dd4bf" role="listitem" data-project="Sidefy Plugins">
-      <div class="project-card-inner">
-        <span class="jp-deco" aria-hidden="true">挿</span>
-        <div class="project-header">
-          <div class="project-name">
-            <span class="prompt" aria-hidden="true">></span>
-            <span class="status-dot" aria-hidden="true"></span>
-            <span class="project-title-core">Sidefy Plugins</span>
+        <div class="card-body">
+          <p class="card-desc">Manage multiple Claude API profiles from the menu bar. Switch endpoints, models, and apply to local CLI settings.</p>
+          <div class="tags">
+            <span class="tag tag-platform">macOS 14+</span>
+            <span class="tag">SwiftUI</span>
+            <span class="tag">Developer Tools</span>
+            <span class="tag tag-license">Apache-2.0</span>
           </div>
-          <span class="card-stars">★ 7</span>
         </div>
-        <p class="project-desc">Online plugin repository for the Sidefy / SideCalendar app. Submit high-quality plugin scripts.</p>
-        <div class="project-tags">
-          <span class="tag tag-lang">JavaScript</span>
-          <span class="tag tag-green">Plugin</span>
-          <span class="tag tag-type">Apache-2.0</span>
-        </div>
-      </div>
-    </article>
+      </article>
 
-  </div>
-
-
-  <div class="section-label" id="find-heading">// connect</div>
-
-  <nav class="links-row" aria-labelledby="find-heading">
-    <a class="ext-link" href="https://github.com/sha2kyou" target="_blank" rel="noopener noreferrer">
-      <span class="cmd-prompt">></span> connect <span class="cmd-flag">--target</span> github.com/sha2kyou
-    </a>
-  </nav>
+      
+    </div>
 
   </main>
 
-  <footer class="site-footer">
+  <footer class="footer">
     <span>© 2026 ØYNN</span>
-    <span class="tagline"># ship it</span>
   </footer>
 
 </div>
 
-<!-- ── corner frame template ── -->
-<template id="corner-tpl">
-  <div class="card-frame" aria-hidden="true">
-    <span class="corner corner-tl"></span>
-    <span class="corner corner-tr"></span>
-    <span class="corner corner-bl"></span>
-    <span class="corner corner-br"></span>
-  </div>
-</template>
-
-<!-- ── modal ── -->
 <div class="modal-overlay" id="project-modal" role="dialog" aria-modal="true">
   <div class="modal-box">
     <div class="modal-box-inner">
@@ -209,6 +168,5 @@
 </div>
 
 <script src="script.js"></script>
-
 </body>
 </html>

@@ -322,7 +322,7 @@ body {
 .card-title {
   font-family: var(--font-expanded);
   font-size: 0.7rem; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase;
+  letter-spacing: 0.08em;
   color: var(--color-foreground);
   display: flex; align-items: center; gap: 8px;
 }

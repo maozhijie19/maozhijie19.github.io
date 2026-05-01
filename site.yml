@@ -1,0 +1,85 @@
+# ═══════════════════════════════════════
+#   tr1ck.cn — Site Configuration
+# ═══════════════════════════════════════
+
+# ── Meta ──
+meta:
+  title: "ØYNN (@sha2kyou) — Indie Developer"
+  description: "Is your Mac menu bar long enough?"
+  og:
+    type: website
+    url: "https://tr1ck.cn"
+  twitter:
+    card: summary
+  favicon: ./favicon.png
+  analytics: G-BQQVDH3FBC
+
+# ── Header ──
+header:
+  brand: ØYNN
+  subtitle: macOS Menu Bar Tools
+
+# ── Profile ──
+profile:
+  avatar: Ø
+  name: "Hi, I'm ØYNN"
+  username: "(@sha2kyou)"
+  username_link: "https://github.com/sha2kyou"
+  bio: I build small tools that fit in your menu bar and try to stay out of your way.
+
+# ── Projects ──
+projects_label: Projects
+
+projects:
+  - name: Sidefy
+    stars: 16
+    description: "Unified info stream on your screen edge — Calendar, Reminders, RSS, GitHub, and custom plugins via JavaScript."
+    tags:
+      - text: macOS 14+
+        style: platform
+      - text: SwiftUI
+      - text: Productivity
+      - text: Plugins
+        style: green
+      - text: Proprietary
+        style: license
+    links:
+      - text: Website
+        url: "https://sidefyapp.com"
+      - text: App Store
+        url: "https://apps.apple.com/app/id6751482006"
+      - text: GitHub
+        url: "https://github.com/sidefy-team/sidefy"
+
+  - name: SavePoint
+    stars: 6
+    description: "Automatic file version snapshots — monitors changes, creates checkpoints, visual diff and one-click restore."
+    tags:
+      - text: macOS 14+
+        style: platform
+      - text: SwiftUI
+      - text: Utilities
+      - text: Apache-2.0
+        style: license
+    warning: "HELP NEEDED: File bookmark permission loss unresolved"
+    links:
+      - text: GitHub
+        url: "https://github.com/sha2kyou/Savepoint"
+
+  - name: ClaudePilot
+    stars: 3
+    description: "Manage multiple Claude API profiles from the menu bar. Switch endpoints, models, and apply to local CLI settings."
+    tags:
+      - text: macOS 14+
+        style: platform
+      - text: SwiftUI
+      - text: Developer Tools
+      - text: Apache-2.0
+        style: license
+    links:
+      - text: GitHub
+        url: "https://github.com/sha2kyou/ClaudePilot"
+
+# ── Footer ──
+footer:
+  copyright: "© 2026 ØYNN"

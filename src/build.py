@@ -134,6 +134,7 @@ def build_html(cfg):
         "<title>" + m["title"] + "</title>",
         '<meta name="description" content="' + m["description"] + '">',
         '<link rel="stylesheet" href="style.css">',
+        '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">',
         "",
         '<script async src="https://www.googletagmanager.com/gtag/js?id=' + m["analytics"] + '"></script>',
         "<script>",

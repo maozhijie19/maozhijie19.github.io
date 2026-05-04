@@ -49,6 +49,14 @@ var modalLinks = document.getElementById('modal-links');
 var modalClose = document.getElementById('modal-close');
 var lastCard;
 
+// ── Icon mapping (Font Awesome 6) ──
+var ICON_MAP = {
+  "Website": "fa-solid fa-globe",
+  "App Store": "fa-brands fa-app-store",
+  "GitHub": "fa-brands fa-github",
+  "Download": "fa-solid fa-download"
+};
+
 function openModal(name) {
   var p = PROJECTS[name];
   if (!p) return;
@@ -60,11 +68,18 @@ function openModal(name) {
     a.href = l.u;
     a.target = '_blank';
     a.rel = 'noopener noreferrer';
+    var iconWrap = document.createElement('span');
+    iconWrap.className = 'link-icon';
+    var iconClass = ICON_MAP[l.t];
+    if (iconClass) {
+      iconWrap.innerHTML = '<i class="' + iconClass + '"></i>';
+    }
     var label = document.createElement('span');
     label.textContent = l.t;
     var arrow = document.createElement('span');
     arrow.className = 'link-arrow';
     arrow.textContent = '\u2197';
+    a.appendChild(iconWrap);
     a.appendChild(label);
     a.appendChild(arrow);
     modalLinks.appendChild(a);

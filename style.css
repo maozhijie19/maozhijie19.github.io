@@ -526,6 +526,12 @@ body {
   color: var(--color-foreground);
 }
 
+.modal-link .link-icon {
+  display: flex; align-items: center; flex-shrink: 0;
+  width: 16px; height: 16px; margin-right: 8px;
+  opacity: 0.6; transition: opacity 0.15s;
+}
+.modal-link:hover .link-icon { opacity: 1; }
 .modal-link .link-arrow { opacity: 0.5; transition: opacity 0.15s; }
 .modal-link:hover .link-arrow { opacity: 1; }
 

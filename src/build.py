@@ -200,7 +200,7 @@ def build_data_js(cfg):
     projects = {}
     for p in cfg["projects"]:
         projects[p["name"]] = {
-            "links": [{"t": l["text"], "u": l["url"]} for l in p.get("links", [])]
+            "links": [{"t": l["text"], "u": l["url"], "i": l.get("icon", "")} for l in p.get("links", [])]
         }
     return "var PROJECTS = " + json.dumps(projects, indent=2, ensure_ascii=False) + ";\n"
 

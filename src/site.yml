@@ -46,10 +46,13 @@ projects:
     links:
       - text: Website
         url: "https://sidefyapp.com"
+        icon: "fa-solid fa-globe"
       - text: App Store
         url: "https://apps.apple.com/app/id6751482006"
+        icon: "fa-brands fa-app-store"
       - text: GitHub
         url: "https://github.com/sidefy-team/sidefy"
+        icon: "fa-brands fa-github"
 
   - name: SavePoint
     stars: 6
@@ -65,6 +68,7 @@ projects:
     links:
       - text: GitHub
         url: "https://github.com/sha2kyou/Savepoint"
+        icon: "fa-brands fa-github"
 
   - name: ClaudePilot
     stars: 3
@@ -79,6 +83,7 @@ projects:
     links:
       - text: GitHub
         url: "https://github.com/sha2kyou/ClaudePilot"
+        icon: "fa-brands fa-github"
 
 # ── Footer ──
 footer:

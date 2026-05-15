@@ -36,9 +36,12 @@ def render_projects(projects):
         warning = ""
         if p.get("warning"):
             warning = "\n          <p class=\"card-warning\">" + p["warning"] + "</p>"
+        card_cls = "card"
+        if p.get("recommended"):
+            card_cls += " card-recommended"
         tags_html = "\n".join(render_tag(t) for t in p["tags"])
         card = (
-            "      <article class=\"card\" data-project=\"" + p["name"] + "\" tabindex=\"0\" role=\"button\">\n"
+            "      <article class=\"" + card_cls + "\" data-project=\"" + p["name"] + "\" tabindex=\"0\" role=\"button\">\n"
             + "        <div class=\"card-header\">\n"
             + "          <div class=\"card-title\">" + p["name"] + "</div>\n"
             + "          <span class=\"card-stars\">" + STAR + " " + str(p["stars"]) + "</span>\n"
@@ -200,7 +203,8 @@ def build_data_js(cfg):
     projects = {}
     for p in cfg["projects"]:
         projects[p["name"]] = {
-            "links": [{"t": l["text"], "u": l["url"], "i": l.get("icon", "")} for l in p.get("links", [])]
+            "links": [{"t": l["text"], "u": l["url"], "i": l.get("icon", "")} for l in p.get("links", [])],
+            "recommended": bool(p.get("recommended")),
         }
     return "var PROJECTS = " + json.dumps(projects, indent=2, ensure_ascii=False) + ";\n"
 

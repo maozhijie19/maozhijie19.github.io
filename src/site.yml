@@ -32,6 +32,7 @@ projects_label: Projects
 
 projects:
   - name: Sidefy
+    recommended: true
     stars: 16
     description: "Unified info stream on your screen edge — Calendar, Reminders, RSS, GitHub, and custom plugins via JavaScript."
     tags:

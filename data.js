@@ -16,7 +16,8 @@ var PROJECTS = {
         "u": "https://github.com/sidefy-team/sidefy",
         "i": "fa-brands fa-github"
       }
-    ]
+    ],
+    "recommended": true
   },
   "SavePoint": {
     "links": [
@@ -25,7 +26,8 @@ var PROJECTS = {
         "u": "https://github.com/sha2kyou/Savepoint",
         "i": "fa-brands fa-github"
       }
-    ]
+    ],
+    "recommended": false
   },
   "ClaudePilot": {
     "links": [
@@ -34,6 +36,7 @@ var PROJECTS = {
         "u": "https://github.com/sha2kyou/ClaudePilot",
         "i": "fa-brands fa-github"
       }
-    ]
+    ],
+    "recommended": false
   }
 };

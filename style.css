@@ -313,6 +313,17 @@ body {
   outline-offset: 2px;
 }
 
+.card-recommended {
+  border-color: color-mix(in srgb, #ffd700 55%, var(--color-border));
+  box-shadow: 0 0 0 1px color-mix(in srgb, #ffd700 35%, transparent),
+              0 0 14px color-mix(in srgb, #ffd700 28%, transparent);
+}
+
+.card-recommended .card-title {
+  color: color-mix(in srgb, #ffd700 78%, var(--color-foreground));
+  text-shadow: 0 0 8px color-mix(in srgb, #ffd700 45%, transparent);
+}
+
 .card-header {
   padding: 14px 18px 10px;
   border-bottom: 1px solid var(--color-border);

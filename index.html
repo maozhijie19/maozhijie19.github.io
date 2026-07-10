@@ -1,169 +1,565 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hans">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="dark">
-<meta property="og:title" content="ØYNN (@sha2kyou) — Indie Developer">
-<meta property="og:description" content="Is your Mac menu bar long enough?">
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://tr1ck.cn">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ØYNN (@sha2kyou) — Indie Developer">
-<meta name="twitter:description" content="Is your Mac menu bar long enough?">
-<link rel="icon" type="image/png" href="./favicon.png">
-<title>ØYNN (@sha2kyou) — Indie Developer</title>
-<meta name="description" content="Is your Mac menu bar long enough?">
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Here Wallpaper — 主题预览 / Theme Preview</title>
+  <style>
+    :root {
+      --page-bg: #111318;
+      --page-text: #e8eaed;
+      --page-muted: #9aa0a6;
+      --card-bg: #1a1d24;
+      --border: #2a2f3a;
+    }
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-BQQVDH3FBC"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-BQQVDH3FBC');
-</script>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "PingFang SC", sans-serif;
+      background: var(--page-bg);
+      color: var(--page-text);
+      line-height: 1.5;
+      padding: 32px 24px 64px;
+    }
+
+    header {
+      max-width: 1200px;
+      margin: 0 auto 40px;
+    }
+
+    .page-title-zh {
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .page-title-en {
+      margin-top: 6px;
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--page-muted);
+      line-height: 1.2;
+    }
+
+    h2 {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--page-muted);
+      margin-bottom: 20px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: baseline;
+    }
+
+    .section-title-zh,
+    .section-title-en {
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .section-title-zh {
+      font-size: 15px;
+      color: var(--page-text);
+    }
+
+    .section-title-en {
+      font-size: 13px;
+      color: var(--page-muted);
+    }
+
+    .section-count {
+      margin-left: auto;
+      font-size: 12px;
+      color: var(--page-muted);
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .theme-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .theme-meta {
+      padding: 16px 16px 12px;
+    }
+
+    .theme-meta h3 {
+      font-size: 17px;
+      font-weight: 600;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .theme-title-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+      flex: 1;
+    }
+
+    .theme-title-zh {
+      line-height: 1.25;
+    }
+
+    .theme-title-en {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--page-muted);
+      line-height: 1.25;
+    }
+
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #2a3140;
+      color: #aeb6c2;
+    }
+
+    .badge.pro { background: #2b2240; color: #c4a8e8; }
+
+    .theme-meta p {
+      margin-top: 6px;
+      font-size: 13px;
+      color: var(--page-muted);
+      line-height: 1.45;
+    }
+
+    .theme-desc-en {
+      margin-top: 4px;
+      font-size: 12px;
+      color: #7d848c;
+    }
+
+    section {
+      max-width: 1200px;
+      margin: 0 auto 48px;
+    }
+
+    .phone-wrap {
+      padding: 0 16px 16px;
+    }
+
+    .phone {
+      width: 100%;
+      aspect-ratio: 393 / 852;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .wallpaper {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+    }
+
+    .layer-land { position: absolute; inset: 0; }
+
+    .layer-water {
+      position: absolute;
+      right: 8%;
+      top: 22%;
+      width: 34%;
+      height: 22%;
+      border-radius: 18% 42% 38% 28%;
+      opacity: 0.95;
+    }
+
+    .layer-park {
+      position: absolute;
+      left: 6%;
+      top: 38%;
+      width: 28%;
+      height: 14%;
+      border-radius: 12px;
+      opacity: 0.9;
+    }
+
+    .layer-building {
+      position: absolute;
+      left: 42%;
+      top: 30%;
+      width: 18%;
+      height: 20%;
+      border-radius: 4px;
+      opacity: 0.85;
+    }
+
+    .roads {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .fade-bottom {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 25%;
+      pointer-events: none;
+    }
+
+    .poster-text {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 7%;
+      text-align: center;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .poster-text .city {
+      font-size: clamp(18px, 5.5vw, 26px);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+    }
+
+    .poster-text .region {
+      margin-top: 4px;
+      font-size: clamp(10px, 2.8vw, 13px);
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      opacity: 0.85;
+    }
+
+    .swatches {
+      display: flex;
+      gap: 6px;
+      padding: 0 16px 16px;
+      flex-wrap: wrap;
+    }
+
+    .swatch {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      min-width: 52px;
+    }
+
+    .swatch-color {
+      height: 22px;
+      border-radius: 6px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .swatch-label {
+      font-size: 10px;
+      color: var(--page-muted);
+    }
+
+    .swatch-hex {
+      font-size: 9px;
+      color: #6b7280;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    }
+  </style>
 </head>
 <body>
-
-<div class="backdrop-base" aria-hidden="true"></div>
-<div class="backdrop-filler" aria-hidden="true"></div>
-<div class="backdrop-glow" aria-hidden="true"></div>
-<div class="backdrop-noise" aria-hidden="true"></div>
-
-<div class="shell">
-
-  <header class="header">
-    <div class="header-brand"><strong>ØYNN</strong> · <span style="font-family:var(--font-mondwest);font-weight:400;text-transform:none;letter-spacing:0">macOS Menu Bar Tools</span></div>
-    <div class="header-right">
-      <div class="theme-switcher" id="theme-switcher">
-        <button class="theme-btn" id="theme-btn" aria-label="Switch theme">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="8" cy="8" r="3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41"/></svg>
-        </button>
-        <div class="theme-dropdown" id="theme-dropdown">
-          <button class="theme-option active" data-theme="default">
-            <span class="theme-swatch" style="background:#041c1c"></span>
-            <span class="theme-swatch" style="background:#ffe6cb"></span>
-            <span>Hermes Teal</span>
-          </button>
-          <button class="theme-option" data-theme="midnight">
-            <span class="theme-swatch" style="background:#0a0a1f"></span>
-            <span class="theme-swatch" style="background:#d4c8ff"></span>
-            <span>Midnight</span>
-          </button>
-          <button class="theme-option" data-theme="ember">
-            <span class="theme-swatch" style="background:#1a0a06"></span>
-            <span class="theme-swatch" style="background:#ffd8b0"></span>
-            <span>Ember</span>
-          </button>
-          <button class="theme-option" data-theme="mono">
-            <span class="theme-swatch" style="background:#0e0e0e"></span>
-            <span class="theme-swatch" style="background:#eaeaea"></span>
-            <span>Mono</span>
-          </button>
-          <button class="theme-option" data-theme="cyberpunk">
-            <span class="theme-swatch" style="background:#040608"></span>
-            <span class="theme-swatch" style="background:#9bffcf"></span>
-            <span>Cyberpunk</span>
-          </button>
-          <button class="theme-option" data-theme="rose">
-            <span class="theme-swatch" style="background:#1a0f15"></span>
-            <span class="theme-swatch" style="background:#ffd4e1"></span>
-            <span>Rosé</span>
-          </button>
-        </div>
-      </div>
-    </div>
+  <header>
+    <div class="page-title-zh">Here Wallpaper 主题预览</div>
+    <div class="page-title-en">Here Wallpaper Theme Preview</div>
   </header>
 
-  <main class="page">
+  <section id="basic-section">
+    <h2>
+      <span class="section-title-zh">基础</span>
+      <span class="section-title-en">Basic</span>
+      <span class="section-count">7</span>
+    </h2>
+    <div class="grid" id="basic-grid"></div>
+  </section>
 
-    <!-- Profile -->
-    <section class="profile">
-      <div class="profile-head">
-        <div class="profile-avatar">Ø</div>
-        <div class="profile-info">
-          <h1 class="profile-name">Hi, I'm ØYNN <a class="profile-username" href="https://github.com/sha2kyou" target="_blank" rel="noopener noreferrer">(@sha2kyou)</a></h1>
-          <p class="profile-bio">I build small tools that fit in your menu bar and try to stay out of your way.</p>
-        </div>
-      </div>
-    </section>
+  <section id="pro-section">
+    <h2>
+      <span class="section-title-zh">PRO</span>
+      <span class="section-title-en">Pro</span>
+      <span class="section-count">8</span>
+    </h2>
+    <div class="grid" id="pro-grid"></div>
+  </section>
 
-    <!-- Projects -->
-    <div class="section-label">Projects</div>
+  <script>
+    const basicThemes = [
+      {
+        id: "night_atlas",
+        nameZh: "夜间地图册", nameEn: "Night Atlas",
+        descZh: "深海军蓝底色，暖金色道路，经典锁屏风格。",
+        descEn: "Deep navy canvas with warm gold roads — a calm lock-screen classic.",
+        tier: "basic",
+        ui: { bg: "#0B1829", text: "#C9A24D" },
+        map: {
+          land: "#0B1829", water: "#071220", parks: "#102035", buildings: "#5A4D3A",
+          roads: { major: "#C9A24D", minor_mid: "#2E3440", minor_low: "#222830", path: "#3A3830" }
+        }
+      },
+      {
+        id: "paper_white",
+        nameZh: "报纸", nameEn: "Newspaper",
+        descZh: "泛黄新闻纸底色，油墨感炭黑道路，复古报纸版式。",
+        descEn: "Yellowed newsprint base with inky charcoal roads — classic broadsheet feel.",
+        tier: "basic",
+        ui: { bg: "#F4F0E8", text: "#2C2824" },
+        map: {
+          land: "#F4F0E8", water: "#D8D2C8", parks: "#E8E4DC", buildings: "#B8A898",
+          roads: { major: "#3A3430", minor_mid: "#A89888", minor_low: "#B8A898", path: "#D0C8BC" }
+        }
+      },
+      {
+        id: "pure_white",
+        nameZh: "纯白", nameEn: "Pure White",
+        descZh: "净白底色，浅灰道路，明亮极简。",
+        descEn: "Clean white canvas with soft grey roads — bright and minimal.",
+        tier: "basic",
+        ui: { bg: "#FFFFFF", text: "#2A2A2A" },
+        map: {
+          land: "#FFFFFF", water: "#ECECEC", parks: "#F6F6F6", buildings: "#C8C8C8",
+          roads: { major: "#909090", minor_mid: "#D0D0D0", minor_low: "#DADADA", path: "#E4E4E4" }
+        }
+      },
+      {
+        id: "ink_black",
+        nameZh: "墨黑", nameEn: "Ink Black",
+        descZh: "近黑底色，银白道路，硬朗图形感。",
+        descEn: "Near-black field with silver-white roads — bold and graphic.",
+        tier: "basic",
+        ui: { bg: "#0E0E0E", text: "#E8E4DC" },
+        map: {
+          land: "#0E0E0E", water: "#161616", parks: "#1A1A1A", buildings: "#4A4A4A",
+          roads: { major: "#F0EDE6", minor_mid: "#686868", minor_low: "#404040", path: "#3A3A3A" }
+        }
+      },
+      {
+        id: "harbor_mist",
+        nameZh: "港雾", nameEn: "Harbor Mist",
+        descZh: "雾灰海港色调，低饱和石板蓝水体与柔和码头色。",
+        descEn: "Foggy coastal grey with muted slate water and soft harbour tones.",
+        tier: "basic",
+        ui: { bg: "#C4CED6", text: "#3A5060" },
+        map: {
+          land: "#C4CED6", water: "#7A98A8", parks: "#B8C4CC", buildings: "#688898",
+          roads: { major: "#4A6878", minor_mid: "#90A0AC", minor_low: "#A0B0BA", path: "#A8B4BC" }
+        }
+      },
+      {
+        id: "meadow_sage",
+        nameZh: "鼠尾草草甸", nameEn: "Meadow Sage",
+        descZh: "灰绿鼠尾草底色，更深的草甸绿公园与森林色道路。",
+        descEn: "Dusty sage fields with deeper meadow-green parks and forest roads.",
+        tier: "basic",
+        ui: { bg: "#D8E4D8", text: "#3A5848" },
+        map: {
+          land: "#D8E4D8", water: "#A8C0B0", parks: "#B8D0A8", buildings: "#789878",
+          roads: { major: "#486850", minor_mid: "#90A898", minor_low: "#A0B8A8", path: "#B8C8B4" }
+        }
+      },
+      {
+        id: "warm_clay",
+        nameZh: "暖陶土", nameEn: "Warm Clay",
+        descZh: "陶土与沙色大地色调，深褐道路。",
+        descEn: "Earthy clay and sand tones with burnt umber roads.",
+        tier: "basic",
+        ui: { bg: "#E8DDD0", text: "#5A4030" },
+        map: {
+          land: "#E8DDD0", water: "#C8B8A4", parks: "#DDD0C0", buildings: "#A88868",
+          roads: { major: "#6A4838", minor_mid: "#B89880", minor_low: "#C8A890", path: "#D0C0B0" }
+        }
+      }
+    ];
 
-    <div class="projects">
-      <article class="card card-recommended" data-project="Sidefy" tabindex="0" role="button">
-        <div class="card-header">
-          <div class="card-title">Sidefy</div>
-          <span class="card-stars">★ 16</span>
-        </div>
-        <div class="card-body">
-          <p class="card-desc">Unified info stream on your screen edge — Calendar, Reminders, RSS, GitHub, and custom plugins via JavaScript.</p>
-          <div class="tags">
-            <span class="tag tag-platform">macOS 14+</span>
-            <span class="tag">SwiftUI</span>
-            <span class="tag">Productivity</span>
-            <span class="tag tag-green">Plugins</span>
-            <span class="tag tag-license">Proprietary</span>
+    const proThemes = [
+      {
+        id: "aurora_borealis",
+        nameZh: "极光", nameEn: "Aurora",
+        descZh: "极夜蓝黑天空，明亮绿色光带与紫罗兰边缘。",
+        descEn: "Arctic night sky with luminous green bands and violet aurora fringe.",
+        tier: "pro",
+        ui: { bg: "#050A18", text: "#78F8C8" },
+        map: {
+          land: "#050A18", water: "#081428", parks: "#0C1C30", buildings: "#5848A0",
+          roads: { major: "#40E8A0", minor_mid: "#142030", minor_low: "#0A1018", path: "#182838" }
+        }
+      },
+      {
+        id: "ember_glow",
+        nameZh: "余烬", nameEn: "Ember",
+        descZh: "炭黑底色，燃烧的余烬橙道路。",
+        descEn: "Charred dark base with glowing ember-orange arteries.",
+        tier: "pro",
+        ui: { bg: "#1A1008", text: "#FFB060" },
+        map: {
+          land: "#1A1008", water: "#241408", parks: "#2E1A0C", buildings: "#A86838",
+          roads: { major: "#FF7830", minor_mid: "#403028", minor_low: "#302418", path: "#4A3828" }
+        }
+      },
+      {
+        id: "lavender_dusk",
+        nameZh: "薰衣草黄昏", nameEn: "Lavender Dusk",
+        descZh: "暮光紫灰，淡紫道路高光。",
+        descEn: "Twilight purple-grey with soft lilac road highlights.",
+        tier: "pro",
+        ui: { bg: "#1E1828", text: "#C8A8E0" },
+        map: {
+          land: "#1E1828", water: "#282038", parks: "#322848", buildings: "#7868A0",
+          roads: { major: "#A880C8", minor_mid: "#403848", minor_low: "#302838", path: "#484058" }
+        }
+      },
+      {
+        id: "polar_ice",
+        nameZh: "极地冰", nameEn: "Polar Ice",
+        descZh: "极地白，冰川蓝水体与冷钢色道路。",
+        descEn: "Crisp arctic white with glacier-blue water and frozen steel roads.",
+        tier: "pro",
+        ui: { bg: "#F2F8FC", text: "#1860A0" },
+        map: {
+          land: "#F2F8FC", water: "#78B8E0", parks: "#E4F0F8", buildings: "#4890B8",
+          roads: { major: "#2070A8", minor_mid: "#88B8D8", minor_low: "#98C8E0", path: "#B8D8EC" }
+        }
+      },
+      {
+        id: "synthwave_84",
+        nameZh: "Synthwave '84", nameEn: "Synthwave '84",
+        descZh: "复古日落紫，霓虹粉网格道路与电青光晕。",
+        descEn: "Retro sunset purple with hot-pink grid roads and electric cyan glow.",
+        tier: "pro",
+        ui: { bg: "#262335", text: "#03EDF9" },
+        map: {
+          land: "#262335", water: "#1E1830", parks: "#302848", buildings: "#8050A8",
+          roads: { major: "#FF7EDB", minor_mid: "#3D3258", minor_low: "#2E2645", path: "#34294F" }
+        }
+      },
+      {
+        id: "cyberpunk",
+        nameZh: "赛博朋克", nameEn: "Cyberpunk",
+        descZh: "工业蓝黑夜景，霓虹洋红道路与酸黄招牌。",
+        descEn: "Industrial blue-black night with neon magenta roads and acid-yellow signs.",
+        tier: "pro",
+        ui: { bg: "#080C14", text: "#00F5FF" },
+        map: {
+          land: "#080C14", water: "#0A1420", parks: "#101828", buildings: "#C8D020",
+          roads: { major: "#FF007A", minor_mid: "#202838", minor_low: "#141C28", path: "#1A2030" }
+        }
+      },
+      {
+        id: "gilded_imperial",
+        nameZh: "鎏金", nameEn: "Gilded Imperial",
+        descZh: "宫墙朱红底色，鎏金道路，盛唐宫殿气派。",
+        descEn: "Palace cinnabar walls with gilt-gold roads — Tang hall grandeur.",
+        tier: "pro",
+        ui: { bg: "#6E1418", text: "#E8C868" },
+        map: {
+          land: "#6E1418", water: "#4A0C10", parks: "#581418", buildings: "#B8860B",
+          roads: { major: "#D4AF37", minor_mid: "#481018", minor_low: "#3A0C10", path: "#501418" }
+        }
+      },
+      {
+        id: "tokyo_night",
+        nameZh: "东京之夜", nameEn: "Tokyo Night",
+        descZh: "深靛蓝夜色，电蓝道路与青绿霓虹，都市深夜灯海。",
+        descEn: "Deep indigo night with electric blue arteries and cyan neon accents.",
+        tier: "pro",
+        ui: { bg: "#1A1B26", text: "#C0CAF5" },
+        map: {
+          land: "#1A1B26", water: "#16161E", parks: "#1F2335", buildings: "#565F89",
+          roads: { major: "#7AA2F7", minor_mid: "#24283B", minor_low: "#1A1B26", path: "#292E42" }
+        }
+      }
+    ];
+
+    function roadSVG(colors) {
+      const { major, minor_mid, minor_low, path } = colors;
+      return `
+        <svg class="roads" viewBox="0 0 393 852" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M-20 180 Q 120 200, 200 260 T 420 320" stroke="${path}" stroke-width="5" fill="none" opacity="0.7"/>
+          <path d="M80 420 Q 180 400, 280 430 T 420 470" stroke="${minor_low}" stroke-width="7" fill="none"/>
+          <path d="M-10 520 Q 140 500, 260 540 T 420 600" stroke="${minor_mid}" stroke-width="9" fill="none"/>
+          <path d="M40 650 L 360 690" stroke="${minor_mid}" stroke-width="8" fill="none"/>
+          <path d="M-30 740 Q 200 700, 420 760" stroke="${major}" stroke-width="12" fill="none"/>
+          <path d="M180 -20 L 210 900" stroke="${major}" stroke-width="10" fill="none" opacity="0.85"/>
+          <path d="M20 300 L 380 340" stroke="${major}" stroke-width="11" fill="none"/>
+        </svg>`;
+    }
+
+    function renderTheme(theme) {
+      const { ui, map } = theme;
+      const fade = `linear-gradient(to top, ${ui.bg} 0%, transparent 100%)`;
+      const badgeClass = theme.tier === "pro" ? "badge pro" : "badge";
+      const badgeZh = theme.tier === "pro" ? "PRO" : "基础";
+      const badgeEn = theme.tier === "pro" ? "PRO" : "Basic";
+
+      const swatchItems = [
+        ["背景 / BG", ui.bg],
+        ["文字 / Text", ui.text],
+        ["主路 / Major", map.roads.major],
+        ["水体 / Water", map.water],
+        ["公园 / Parks", map.parks]
+      ].map(([label, color]) => `
+        <div class="swatch">
+          <div class="swatch-color" style="background:${color}"></div>
+          <div class="swatch-label">${label}</div>
+          <div class="swatch-hex">${color}</div>
+        </div>`).join("");
+
+      return `
+        <article class="theme-card">
+          <div class="theme-meta">
+            <h3>
+              <span class="theme-title-wrap">
+                <span class="theme-title-zh">${theme.nameZh}</span>
+                <span class="theme-title-en">${theme.nameEn}</span>
+              </span>
+              <span class="${badgeClass}" title="${badgeEn}">${badgeZh}</span>
+            </h3>
+            <p>${theme.descZh}</p>
+            <p class="theme-desc-en">${theme.descEn}</p>
           </div>
-        </div>
-      </article>
-
-      <article class="card" data-project="SavePoint" tabindex="0" role="button">
-        <div class="card-header">
-          <div class="card-title">SavePoint</div>
-          <span class="card-stars">★ 6</span>
-        </div>
-        <div class="card-body">
-          <p class="card-desc">Automatic file version snapshots — monitors changes, creates checkpoints, visual diff and one-click restore.</p>
-          <div class="tags">
-            <span class="tag tag-platform">macOS 14+</span>
-            <span class="tag">SwiftUI</span>
-            <span class="tag">Utilities</span>
-            <span class="tag tag-license">Apache-2.0</span>
+          <div class="phone-wrap">
+            <div class="phone">
+              <div class="wallpaper">
+                <div class="layer-land" style="background:${map.land}"></div>
+                <div class="layer-water" style="background:${map.water}"></div>
+                <div class="layer-park" style="background:${map.parks}"></div>
+                <div class="layer-building" style="background:${map.buildings}"></div>
+                ${roadSVG(map.roads)}
+                <div class="fade-bottom" style="background:${fade}"></div>
+                <div class="poster-text">
+                  <div class="city" style="color:${ui.text}">XI'AN</div>
+                  <div class="region" style="color:${ui.text}">CHINA</div>
+                </div>
+              </div>
+            </div>
           </div>
-          <p class="card-warning">HELP NEEDED: File bookmark permission loss unresolved</p>
-        </div>
-      </article>
+          <div class="swatches">${swatchItems}</div>
+        </article>`;
+    }
 
-      <article class="card" data-project="ClaudePilot" tabindex="0" role="button">
-        <div class="card-header">
-          <div class="card-title">ClaudePilot</div>
-          <span class="card-stars">★ 3</span>
-        </div>
-        <div class="card-body">
-          <p class="card-desc">Manage multiple Claude API profiles from the menu bar. Switch endpoints, models, and apply to local CLI settings.</p>
-          <div class="tags">
-            <span class="tag tag-platform">macOS 14+</span>
-            <span class="tag">SwiftUI</span>
-            <span class="tag">Developer Tools</span>
-            <span class="tag tag-license">Apache-2.0</span>
-          </div>
-        </div>
-      </article>
-    </div>
-
-  </main>
-
-  <footer class="footer">
-    <span>© 2026 ØYNN</span>
-  </footer>
-
-</div>
-
-<div class="modal-overlay" id="project-modal" role="dialog" aria-modal="true">
-  <div class="modal-box">
-    <div class="modal-box-inner">
-      <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
-      <div class="modal-title" id="modal-title"></div>
-      <div class="modal-link-list" id="modal-links"></div>
-    </div>
-  </div>
-</div>
-
-<script src="data.js"></script>
-<script src="script.js"></script>
+    document.getElementById("basic-grid").innerHTML = basicThemes.map(renderTheme).join("");
+    document.getElementById("pro-grid").innerHTML = proThemes.map(renderTheme).join("");
+  </script>
 </body>
 </html>
